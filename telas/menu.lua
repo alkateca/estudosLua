@@ -4,9 +4,9 @@ local foraDeServico
 local fonteIoskeley
 
 function Menu.load()
-    foraDeServico = love.graphics.newImage("foraDeServico.png")
+    foraDeServico = love.graphics.newImage("assets/images/foraDeServico.png")
 
-    fonteIoskeley = love.graphics.newFont("IoskeleyMonoNerdFont-CondensedBold.ttf", 20)
+    fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 20)
 
 
 end

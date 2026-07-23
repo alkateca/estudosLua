@@ -1,10 +1,10 @@
 local logicaPartida = {}
 
 
-local heroi = require("herois")
-local magia = require("magias")
-local item = require("itens")
-local acao = require("acoes")
+local heroi = require("cartas.herois")
+local magia = require("cartas.magias")
+local item = require("cartas.itens")
+local acao = require("cartas.acoes")
 
 logicaPartida.jogador1 = {
     baralho = {

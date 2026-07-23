@@ -1,9 +1,9 @@
 
-local Menu = require("menu")
+local Menu = require("telas.menu")
 
-local Partida = require("partida")
+local Partida = require("telas.partida")
 
-lurker = require("lurker")
+lurker = require("libs.lurker")
 
 
 function love.load()
@@ -13,7 +13,7 @@ function love.load()
 end
 
 function love.update(dt)
-    require("lurker").update()
+    require("libs.lurker").update()
 
     if estadoAtual == "tutorial" or estadoAtual == "partida" then
         if Partida.update then

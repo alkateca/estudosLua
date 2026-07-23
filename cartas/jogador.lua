@@ -1,7 +1,7 @@
-local heroi = require("herois")
-local magia = require("magias")
-local acao = require("acoes")
-local item = require("itens")
+local heroi = require("cartas.herois")
+local magia = require("cartas.magias")
+local acao = require("cartas.acoes")
+local item = require("cartas.itens")
 
 local jogador = {}
 

@@ -1,6 +1,6 @@
 local Partida = {}
 
-local logicaPartida = require("logicaPartida")
+local logicaPartida = require("logica.logicaPartida")
 
 local carta1 = logicaPartida.jogador1.aliados[1]
 local carta2 = logicaPartida.jogador2.aliados[1]
@@ -14,8 +14,8 @@ local vencedor
 local fonteIoskeley
 
 function Partida.load()
-    fonteEmoji = love.graphics.newFont("NotoEmoji-VariableFont_wght.ttf", 30)
-    fonteIoskeley = love.graphics.newFont("IoskeleyMonoNerdFont-CondensedBold.ttf", 16)
+    fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
+    fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)
 
     tempoHover = 0 
     tempoNecessario = 0.8
