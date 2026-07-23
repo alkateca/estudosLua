@@ -1,4 +1,4 @@
-local partida = {}
+local logicaPartida = {}
 
 
 local heroi = require("herois")
@@ -6,7 +6,7 @@ local magia = require("magias")
 local item = require("itens")
 local acao = require("acoes")
 
-partida.jogador1 = {
+logicaPartida.jogador1 = {
     baralho = {
         item.brocheCristal,
         item.brocheCristal,
@@ -32,7 +32,7 @@ partida.jogador1 = {
     heroiDoturno = nil
 }
 
-partida.jogador2 = {
+logicaPartida.jogador2 = {
     baralho = { 
         item.brocheCristal,
         item.brocheCristal,
@@ -58,26 +58,10 @@ partida.jogador2 = {
     heroiDoturno = nil
 }
 
--- código gerado pelo gemini para gerir animações
-            partida.filaDeEventos = {}
-
-            -- Esta função recebe APENAS Lógica. Zero informações de tela (sem X, Y, ou cores).
-            function partida.registrarEvento(acao, cartaAlvo, atributo, valor)
-                table.insert(partida.filaDeEventos, {
-                    acao = acao,         -- Ex: "dano", "cura", "buff"
-                    carta = cartaAlvo,   -- A tabela da carta exata que sofreu o efeito
-                    atributo = atributo, -- Ex: "ataque", "espirito"
-                    valor = valor        -- Ex: 1, 5, -2
-                })
-            end
--- código gerado pelo gemini para gerir animações
-
-
-
 math.randomseed(os.time())
 
 
-function partida.comprarCartas(jogador, numeroDeCartas)
+function logicaPartida.comprarCartas(jogador, numeroDeCartas)
     local cartasCompradas 
     for i = 1, numeroDeCartas do
         cartasCompradas = table.remove(jogador.baralho, 1)
@@ -86,58 +70,58 @@ function partida.comprarCartas(jogador, numeroDeCartas)
     cartasCompradas = {}
 end
 
-function partida.embaralharCartas(jogador)
+function logicaPartida.embaralharCartas(jogador)
     for i = #jogador.baralho, 2, -1 do
         local j = math.random(i)
         jogador.baralho[i], jogador.baralho[j] = jogador.baralho[j], jogador.baralho[i]
     end
 end
 
-function partida.inicioDaPartida(jogador1, jogador2)
-    partida.embaralharCartas(jogador1)
-    partida.embaralharCartas(jogador2)
-    partida.comprarCartas(jogador1, 5)
-    partida.comprarCartas(jogador2, 5)
+function logicaPartida.inicioDaPartida(jogador1, jogador2)
+    logicaPartida.embaralharCartas(jogador1)
+    logicaPartida.embaralharCartas(jogador2)
+    logicaPartida.comprarCartas(jogador1, 5)
+    logicaPartida.comprarCartas(jogador2, 5)
 
-    partida.efeitos()
+    logicaPartida.efeitos()
 
 end
 
 
-function partida.efeitos()
+function logicaPartida.efeitos()
     
-    local aliados = partida.jogador1.aliados
-    local inimigos = partida.jogador2.aliados
+    local aliados = logicaPartida.jogador1.aliados
+    local inimigos = logicaPartida.jogador2.aliados
 
     for i, aliado in ipairs(aliados) do
         if type(aliado.efeitoInicioDaPartida) == "function" and aliado.efeitoAtivo == false then
-            aliado.efeitoInicioDaPartida(aliado, partida.jogador1.aliados)
+            aliado.efeitoInicioDaPartida(aliado, logicaPartida.jogador1.aliados)
             aliado.efeitoAtivo = true 
         end
     end
 
     for i, inimigo in ipairs(inimigos) do
         if type(inimigo.efeitoInicioDaPartida) == "function" and inimigo.efeitoAtivo == false then
-            inimigo.efeitoInicioDaPartida(inimigo, partida.jogador2.aliados)
+            inimigo.efeitoInicioDaPartida(inimigo, logicaPartida.jogador2.aliados)
             inimigo.efeitoAtivo = true
         end
     end
 
 end
 
-function partida.calcularDanoFisico()
+function logicaPartida.calcularDanoFisico()
     
 
-    local heroi = partida.jogador1.heroiDoturno
-    local inimigo = partida.jogador2.heroiDoturno
+    local heroi = logicaPartida.jogador1.heroiDoturno
+    local inimigo = logicaPartida.jogador2.heroiDoturno
 
 
     if type(heroi.efeitoInicioDoTurno) == "function" then
-        heroi.efeitoInicioDoTurno(heroi, partida.jogador1.aliados, inimigo, partida.jogador1, partida)
+        heroi.efeitoInicioDoTurno(heroi, logicaPartida.jogador1.aliados, inimigo, logicaPartida.jogador1, logicaPartida)
     end
 
     if type(inimigo.efeitoInicioDoTurno) == "function" then
-        inimigo.efeitoInicioDoTurno(inimigo, partida.jogador2.aliados, heroi, partida.jogador2, partida)
+        inimigo.efeitoInicioDoTurno(inimigo, logicaPartida.jogador2.aliados, heroi, logicaPartida.jogador2, logicaPartida)
     end
     
 
@@ -150,32 +134,32 @@ function partida.calcularDanoFisico()
     end
 
     if type(inimigo.efeitoFinalDoTurno) == "function" then
-        inimigo.efeitoFinalDoTurno(inimigo, partida.jogador2.aliados, heroi, partida.jogador2, partida)   
+        inimigo.efeitoFinalDoTurno(inimigo, logicaPartida.jogador2.aliados, heroi, logicaPartida.jogador2, logicaPartida)   
     end
 
     for _, item in ipairs(heroi.itemEquipado) do
         if heroi.itemEquipado and type(heroi.itemEquipado.efeitoFinalDeTurno) == "function" then
-            heroi.itemEquipado.efeitoFinalDeTurno(heroi.itemEquipado, heroi, inimigo, partida.jogador1, partida)
+            heroi.itemEquipado.efeitoFinalDeTurno(heroi.itemEquipado, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
         end
     end
 
 
     if type(heroi.efeitoFinalDoTurno) == "function" then
-        heroi.efeitoFinalDoTurno(heroi, partida.jogador1.aliados, inimigo, partida.jogador1, partida)
+        heroi.efeitoFinalDoTurno(heroi, logicaPartida.jogador1.aliados, inimigo, logicaPartida.jogador1, logicaPartida)
     end
 
     for _, item in ipairs(inimigo.itemEquipado) do
         if type(item.efeitoFinalDeTurno) == "function" then
-            item.efeitoFinalDeTurno(item, inimigo, heroi, partida.jogador2, partida)
+            item.efeitoFinalDeTurno(item, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
         end
     end
     
-    if #partida.jogador1.mao < 5 then
-        partida.comprarCartas(partida.jogador1, 5 - #partida.jogador1.mao)
+    if #logicaPartida.jogador1.mao < 5 then
+        logicaPartida.comprarCartas(logicaPartida.jogador1, 5 - #logicaPartida.jogador1.mao)
     end            
             
-    if #partida.jogador2.mao < 5 then
-        partida.comprarCartas(partida.jogador2, 5 - #partida.jogador2.mao)
+    if #logicaPartida.jogador2.mao < 5 then
+        logicaPartida.comprarCartas(logicaPartida.jogador2, 5 - #logicaPartida.jogador2.mao)
     end
 
 
@@ -190,33 +174,33 @@ function partida.calcularDanoFisico()
     end
 
     
-    partida.jogador1.heroiDoturno = heroi
+    logicaPartida.jogador1.heroiDoturno = heroi
 
-    partida.jogador2.heroiDoturno = inimigo
+    logicaPartida.jogador2.heroiDoturno = inimigo
 
 end
 
-function partida.resolverCartasDaMao()
+function logicaPartida.resolverCartasDaMao()
 
-    local escolhidasJ1 = partida.jogador1.cartasEscolhidas
-    local escolhidasJ2 = partida.jogador2.cartasEscolhidas
+    local escolhidasJ1 = logicaPartida.jogador1.cartasEscolhidas
+    local escolhidasJ2 = logicaPartida.jogador2.cartasEscolhidas
     local resolverTurno = {}
 
     for i = 1, 2 do
         if escolhidasJ1[i] then
             table.insert(resolverTurno, { 
                 carta = escolhidasJ1[i], 
-                aliado = partida.jogador1.heroiDoturno, 
-                inimigo = partida.jogador2.heroiDoturno,
-                dono = partida.jogador1
+                aliado = logicaPartida.jogador1.heroiDoturno, 
+                inimigo = logicaPartida.jogador2.heroiDoturno,
+                dono = logicaPartida.jogador1
             })
         end
         if escolhidasJ2[i] then
             table.insert(resolverTurno, { 
                 carta = escolhidasJ2[i], 
-                aliado = partida.jogador2.heroiDoturno, 
-                inimigo = partida.jogador1.heroiDoturno ,
-                dono = partida.jogador2
+                aliado = logicaPartida.jogador2.heroiDoturno, 
+                inimigo = logicaPartida.jogador1.heroiDoturno ,
+                dono = logicaPartida.jogador2
             })
         end
     end
@@ -227,7 +211,7 @@ function partida.resolverCartasDaMao()
         local dono = jogada.dono
         
         if type(cartaDaVez.efeito) == "function" then
-            cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, partida)
+            cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida)
                 if cartaDaVez.tipo == 3 then
                     table.insert(jogada.aliado.itemEquipado, cartaDaVez)
                 else                 
@@ -240,14 +224,14 @@ function partida.resolverCartasDaMao()
         end
     end
 
-    partida.jogador1.cartasEscolhidas = {}
-    partida.jogador2.cartasEscolhidas = {}
+    logicaPartida.jogador1.cartasEscolhidas = {}
+    logicaPartida.jogador2.cartasEscolhidas = {}
 
 
 end
 
 
-partida.inicioDaPartida(partida.jogador1, partida.jogador2)
+logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
 
 
-return partida 
+return logicaPartida

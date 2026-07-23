@@ -13,4 +13,5 @@ magias.bolaDeFogo = {
     end
 }
 
+
 return magias
