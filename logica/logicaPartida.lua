@@ -108,6 +108,60 @@ function logicaPartida.efeitos()
 
 end
 
+-- gerenciamento de ativo / desativo gerada pelo gemini 
+
+function logicaPartida.atualizarEstadoAtivo()
+    local todosInativos1 = true
+    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        if aliado.estaVivo and aliado.estaAtivo then
+            todosInativos1 = false
+            break
+        end
+    end
+
+    if todosInativos1 then
+        for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
+            if aliado.estaVivo then
+                aliado.estaAtivo = true
+            end
+        end
+    end
+
+    local todosInativos2 = true
+    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        if inimigo.estaVivo and inimigo.estaAtivo then
+            todosInativos2 = false
+            break
+        end
+    end
+
+    if todosInativos2 then
+        for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+            if inimigo.estaVivo then
+                inimigo.estaAtivo = true
+            end
+        end
+    end
+end
+
+function logicaPartida.selecionarPrimeiroAtivo()
+    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        if aliado.estaVivo and aliado.estaAtivo then
+            logicaPartida.jogador1.heroiDoturno = aliado
+            break
+        end
+    end
+    
+    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        if inimigo.estaVivo and inimigo.estaAtivo then
+            logicaPartida.jogador2.heroiDoturno = inimigo
+            break
+        end
+    end
+end
+
+-- gerenciamento de ativo / desativo criado pelo gemini
+
 
 function logicaPartida.calcularDanoFisico()
     
@@ -176,6 +230,10 @@ function logicaPartida.calcularDanoFisico()
     heroi.estaAtivo = false
     inimigo.estaAtivo = false
 
+
+    logicaPartida.atualizarEstadoAtivo()
+    
+    logicaPartida.selecionarPrimeiroAtivo()
     
     logicaPartida.jogador1.heroiDoturno = heroi
 

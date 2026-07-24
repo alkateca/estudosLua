@@ -297,9 +297,14 @@ end
 
 function Partida.selecionarCartaMaoAliado(x, y)
 
+    if faseDoTurno == "preparacao" then
+        return
+    end
+
     local mao = logicaPartida.jogador1.mao
 
-    for i = #mao, 1, -1 do
+    
+        for i = #mao, 1, -1 do
         local xPos = 180 + ((i - 1) * 90)
         local yPos = 590
         local w = 80
@@ -332,6 +337,10 @@ function Partida.desenharCartasEscolhidasAliadas()
 end
 
 function Partida.selecionarCartaMaoInimiga(x, y)
+
+    if faseDoTurno == "preparacao" then
+        return
+    end
 
     local mao = logicaPartida.jogador2.mao
 
@@ -369,7 +378,11 @@ function Partida.desenharCartasEscolhidasInimigas()
 end
 
 function Partida.deSelecionarCartaMaoAliada(x, y)
-
+    
+    if faseDoTurno == "preparacao" then
+        return
+    end
+    
     local mao = logicaPartida.jogador1.mao
 
     for i = #logicaPartida.jogador1.cartasEscolhidas, 1, -1 do
@@ -388,6 +401,10 @@ function Partida.deSelecionarCartaMaoAliada(x, y)
 end
 
 function Partida.deSelecionarCartaMaoInimiga(x, y)
+
+    if faseDoTurno == "preparacao" then
+        return
+    end
 
     local mao = logicaPartida.jogador2.mao
 
@@ -448,58 +465,6 @@ function Partida.selecionarHeroiInimigo(x, y)
     end
 end
 
-function Partida.atualizarEstadoAtivo()
-    carta1.estaAtivo = false
-    carta2.estaAtivo = false
-
-    local todosInativos1 = true
-    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
-        if aliado.estaVivo and aliado.estaAtivo then
-            todosInativos1 = false
-            break
-        end
-    end
-
-    if todosInativos1 then
-        for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
-            if aliado.estaVivo then
-                aliado.estaAtivo = true
-            end
-        end
-    end
-
-    local todosInativos2 = true
-    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
-        if inimigo.estaVivo and inimigo.estaAtivo then
-            todosInativos2 = false
-            break
-        end
-    end
-
-    if todosInativos2 then
-        for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
-            if inimigo.estaVivo then
-                inimigo.estaAtivo = true
-            end
-        end
-    end
-end
-
-function Partida.selecionarPrimeiroAtivo()
-    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
-        if aliado.estaVivo and aliado.estaAtivo then
-            carta1 = aliado
-            break
-        end
-    end
-    
-    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
-        if inimigo.estaVivo and inimigo.estaAtivo then
-            carta2 = inimigo
-            break
-        end
-    end
-end
 
 function Partida.botaoTurno(x, y)
     
@@ -514,9 +479,7 @@ function Partida.botaoTurno(x, y)
                 logicaPartida.resolverCartasDaMao()
                 logicaPartida.calcularDanoFisico()
                 Partida.checarFinalDeJogo()
-                
-                Partida.atualizarEstadoAtivo()
-                Partida.selecionarPrimeiroAtivo()
+            
             end    
             
             faseDoTurno = "preparacao"
