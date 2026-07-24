@@ -87,7 +87,6 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
 
 end
 
-
 function logicaPartida.efeitos()
     
     local aliados = logicaPartida.jogador1.aliados
@@ -108,6 +107,7 @@ function logicaPartida.efeitos()
     end
 
 end
+
 
 function logicaPartida.calcularDanoFisico()
     
@@ -172,6 +172,9 @@ function logicaPartida.calcularDanoFisico()
         inimigo.estaVivo = false
 
     end
+
+    heroi.estaAtivo = false
+    inimigo.estaAtivo = false
 
     
     logicaPartida.jogador1.heroiDoturno = heroi

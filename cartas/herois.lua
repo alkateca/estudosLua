@@ -13,7 +13,8 @@ local herois = {}
         modificadorDeDano = 0,
         descricao = "Um dragão com as 7 cores do espectro visivel",
         itemEquipado = {},
-        estaVivo = true
+        estaVivo = true,
+        estaAtivo = true
     }
 
     herois.elfoGelido = {
@@ -27,7 +28,8 @@ local herois = {}
         modificadorDeDano = 0,
         descricao = "Um Elfo das planices do sul",
         itemEquipado = {},
-        estaVivo = true
+        estaVivo = true,
+        estaAtivo = true
     }
 
     herois.alucinacaoCintilante = {
@@ -41,7 +43,8 @@ local herois = {}
         modificadorDeDano = 0,
         descricao = "Um erro",
         itemEquipado = {},
-        estaVivo = true
+        estaVivo = true,
+        estaAtivo = true
     }
 
 -- goblins
@@ -49,7 +52,7 @@ local herois = {}
     herois.esquadraoGoblin = {
         tipo = 1,
         raca = "Goblin",
-        nome = "Esquadrão Goblin",
+        nome = "Esquadrão\nGoblin",
         espirito = 0,
         ataque = 4,
         defesa = 0,
@@ -100,7 +103,8 @@ local herois = {}
 
         end,
         
-        estaVivo = true
+        estaVivo = true,
+        estaAtivo = true
     }
 
     herois.reiGoblin = {
@@ -115,7 +119,8 @@ local herois = {}
         modificadorDeDano = 0,
         itemEquipado = {},
         descricao = "Aura:\nSeus Goblins aliados recebem +1 em seus efeitos",
-        estaVivo = true
+        estaVivo = true,
+        estaAtivo = true
     }
 
     herois.traidorGoblin = {
@@ -157,7 +162,8 @@ local herois = {}
             self.defesa = self.defesa + goblins
 
         end,
-        estaVivo = true
+        estaVivo = true,
+        estaAtivo = true
     }
 
 -- zumbis
@@ -174,13 +180,14 @@ local herois = {}
         modificadorDeDano = 0,
         itemEquipado = {},
         descricao = "Inicio da Partida:\nEu estou morta",
-        estaVivo = true        
+        estaVivo = true,
+        estaAtivo = true       
     }
 
     herois.quimeraCarniceira = {
         tipo = 1,
         raca = "",
-        nome = "Quimera Carniceira",
+        nome = "Quimera\nCarniceira",
         espirito = 1,
         ataque = 7,
         defesa = 3,
@@ -203,7 +210,8 @@ local herois = {}
                 end
             end
         end,
-        estaVivo = true        
+        estaVivo = true,
+        estaAtivo = true       
     }
 
     herois.necromanteDasAreais = {
@@ -218,7 +226,8 @@ local herois = {}
         modificadorDeDano = 0,
         itemEquipado = {},
         descricao = "Inicio da Partida:\nEu estou morta",
-        estaVivo = true        
+        estaVivo = true,
+        estaAtivo = true     
     }
 
 return herois
