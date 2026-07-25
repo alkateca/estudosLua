@@ -1,10 +1,11 @@
 local logicaPartida = {}
 
-
 local heroi = require("cartas.herois")
 local magia = require("cartas.magias")
 local item = require("cartas.itens")
 local acao = require("cartas.acoes")
+
+logicaPartida.turnoAtual = 1
 
 logicaPartida.jogador1 = {
     baralho = {
@@ -62,12 +63,12 @@ math.randomseed(os.time())
 
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
-    local cartasCompradas 
     for i = 1, numeroDeCartas do
-        cartasCompradas = table.remove(jogador.baralho, 1)
-        table.insert(jogador.mao, cartasCompradas)
+        if #jogador.baralho > 0 then -- Evita crash se o baralho acabar
+            local cartaComprada = table.remove(jogador.baralho, 1)
+            table.insert(jogador.mao, cartaComprada)
+        end
     end
-    cartasCompradas = {}
 end
 
 function logicaPartida.embaralharCartas(jogador)
@@ -84,11 +85,10 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
     logicaPartida.comprarCartas(jogador2, 5)
 
     logicaPartida.efeitos()
-
+    logicaPartida.selecionarPrimeiroAtivo() -- Previne que o herói inicie nulo
 end
 
 function logicaPartida.efeitos()
-    
     local aliados = logicaPartida.jogador1.aliados
     local inimigos = logicaPartida.jogador2.aliados
 
@@ -105,11 +105,9 @@ function logicaPartida.efeitos()
             inimigo.efeitoAtivo = true
         end
     end
-
 end
 
--- gerenciamento de ativo / desativo gerada pelo gemini 
-
+-- Gerenciamento de ativo / desativo
 function logicaPartida.atualizarEstadoAtivo()
     local todosInativos1 = true
     for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
@@ -160,15 +158,9 @@ function logicaPartida.selecionarPrimeiroAtivo()
     end
 end
 
--- gerenciamento de ativo / desativo criado pelo gemini
-
-
 function logicaPartida.calcularDanoFisico()
-    
-
     local heroi = logicaPartida.jogador1.heroiDoturno
     local inimigo = logicaPartida.jogador2.heroiDoturno
-
 
     if type(heroi.efeitoInicioDoTurno) == "function" then
         heroi.efeitoInicioDoTurno(heroi, logicaPartida.jogador1.aliados, inimigo, logicaPartida.jogador1, logicaPartida)
@@ -178,8 +170,7 @@ function logicaPartida.calcularDanoFisico()
         inimigo.efeitoInicioDoTurno(inimigo, logicaPartida.jogador2.aliados, heroi, logicaPartida.jogador2, logicaPartida)
     end
     
-
-        if inimigo.ataque > heroi.defesa then
+    if inimigo.ataque > heroi.defesa then
         heroi.vidaAtual = heroi.vidaAtual - (inimigo.ataque - heroi.defesa)
     end
 
@@ -191,20 +182,24 @@ function logicaPartida.calcularDanoFisico()
         inimigo.efeitoFinalDoTurno(inimigo, logicaPartida.jogador2.aliados, heroi, logicaPartida.jogador2, logicaPartida)   
     end
 
-    for _, item in ipairs(heroi.itemEquipado) do
-        if heroi.itemEquipado and type(heroi.itemEquipado.efeitoFinalDeTurno) == "function" then
-            heroi.itemEquipado.efeitoFinalDeTurno(heroi.itemEquipado, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
+    -- Corrigido: checa a tabela inteira e puxa o efeito do item individual
+    if heroi.itemEquipado then
+        for _, itm in ipairs(heroi.itemEquipado) do
+            if type(itm.efeitoFinalDeTurno) == "function" then
+                itm.efeitoFinalDeTurno(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
+            end
         end
     end
-
 
     if type(heroi.efeitoFinalDoTurno) == "function" then
         heroi.efeitoFinalDoTurno(heroi, logicaPartida.jogador1.aliados, inimigo, logicaPartida.jogador1, logicaPartida)
     end
 
-    for _, item in ipairs(inimigo.itemEquipado) do
-        if type(item.efeitoFinalDeTurno) == "function" then
-            item.efeitoFinalDeTurno(item, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+    if inimigo.itemEquipado then
+        for _, itm in ipairs(inimigo.itemEquipado) do
+            if type(itm.efeitoFinalDeTurno) == "function" then
+                itm.efeitoFinalDeTurno(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+            end
         end
     end
     
@@ -216,33 +211,22 @@ function logicaPartida.calcularDanoFisico()
         logicaPartida.comprarCartas(logicaPartida.jogador2, 5 - #logicaPartida.jogador2.mao)
     end
 
-
     if heroi.vidaAtual <= 0 then
         heroi.estaVivo = false
-
     end
 
     if inimigo.vidaAtual <= 0 then
         inimigo.estaVivo = false
-
     end
 
     heroi.estaAtivo = false
     inimigo.estaAtivo = false
 
-
     logicaPartida.atualizarEstadoAtivo()
-    
     logicaPartida.selecionarPrimeiroAtivo()
-    
-    logicaPartida.jogador1.heroiDoturno = heroi
-
-    logicaPartida.jogador2.heroiDoturno = inimigo
-
 end
 
 function logicaPartida.resolverCartasDaMao()
-
     local escolhidasJ1 = logicaPartida.jogador1.cartasEscolhidas
     local escolhidasJ2 = logicaPartida.jogador2.cartasEscolhidas
     local resolverTurno = {}
@@ -260,7 +244,7 @@ function logicaPartida.resolverCartasDaMao()
             table.insert(resolverTurno, { 
                 carta = escolhidasJ2[i], 
                 aliado = logicaPartida.jogador2.heroiDoturno, 
-                inimigo = logicaPartida.jogador1.heroiDoturno ,
+                inimigo = logicaPartida.jogador1.heroiDoturno,
                 dono = logicaPartida.jogador2
             })
         end
@@ -274,6 +258,10 @@ function logicaPartida.resolverCartasDaMao()
         if type(cartaDaVez.efeito) == "function" then
             cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida)
                 if cartaDaVez.tipo == 3 then
+                    -- Corrigido: Garante que a mochila do herói existe antes de equipar
+                    if not jogada.aliado.itemEquipado then 
+                        jogada.aliado.itemEquipado = {} 
+                    end
                     table.insert(jogada.aliado.itemEquipado, cartaDaVez)
                 else                 
                     table.insert(jogada.dono.descarte, cartaDaVez)
@@ -287,12 +275,36 @@ function logicaPartida.resolverCartasDaMao()
 
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
-
-
 end
 
+-- Lógica do turno da IA
+function logicaPartida.jogadaDaIA()
+    -- 1. Escolhe o próprio herói (Atacante)
+    for _, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        if inimigo.estaVivo and inimigo.estaAtivo then
+            logicaPartida.jogador2.heroiDoturno = inimigo
+            break
+        end
+    end
+
+    -- 2. Escolhe o alvo (Vítima no time do Jogador 1)
+    for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        if aliado.estaVivo then 
+            logicaPartida.jogador1.heroiDoturno = aliado
+            break
+        end
+    end
+
+    -- 3. Escolhe até 2 cartas da mão
+    logicaPartida.jogador2.cartasEscolhidas = {}
+    local numCartas = math.min(2, #logicaPartida.jogador2.mao)
+    for i = 1, numCartas do
+        if #logicaPartida.jogador2.mao > 0 then
+            table.insert(logicaPartida.jogador2.cartasEscolhidas, table.remove(logicaPartida.jogador2.mao, 1))
+        end
+    end
+end
 
 logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
-
 
 return logicaPartida

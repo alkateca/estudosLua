@@ -2,6 +2,7 @@ local Partida = {}
 
 local logicaPartida = require("logica.logicaPartida")
 
+
 local carta1 = logicaPartida.jogador1.aliados[1]
 local carta2 = logicaPartida.jogador2.aliados[1]
 
@@ -297,8 +298,8 @@ end
 
 function Partida.selecionarCartaMaoAliado(x, y)
 
-    if faseDoTurno == "preparacao" then
-        return
+    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+        return 
     end
 
     local mao = logicaPartida.jogador1.mao
@@ -338,8 +339,8 @@ end
 
 function Partida.selecionarCartaMaoInimiga(x, y)
 
-    if faseDoTurno == "preparacao" then
-        return
+    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+        return 
     end
 
     local mao = logicaPartida.jogador2.mao
@@ -379,8 +380,8 @@ end
 
 function Partida.deSelecionarCartaMaoAliada(x, y)
     
-    if faseDoTurno == "preparacao" then
-        return
+    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+        return 
     end
     
     local mao = logicaPartida.jogador1.mao
@@ -402,8 +403,8 @@ end
 
 function Partida.deSelecionarCartaMaoInimiga(x, y)
 
-    if faseDoTurno == "preparacao" then
-        return
+    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+        return 
     end
 
     local mao = logicaPartida.jogador2.mao
@@ -424,8 +425,10 @@ function Partida.deSelecionarCartaMaoInimiga(x, y)
 end
 
 function Partida.selecionarHeroiAliado(x, y)
-    if faseDoTurno == "resolucao" then return end
-
+    
+    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+        return 
+    end
     local aliados = logicaPartida.jogador1.aliados
 
     for i, aliado in ipairs(aliados) do
@@ -445,7 +448,10 @@ function Partida.selecionarHeroiAliado(x, y)
 end
 
 function Partida.selecionarHeroiInimigo(x, y)
-    if faseDoTurno == "resolucao" then return end
+    
+    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+        return 
+    end
 
     local inimigos = logicaPartida.jogador2.aliados
 
@@ -467,25 +473,42 @@ end
 
 
 function Partida.botaoTurno(x, y)
-    
     if x >= 565 and x <= 715 and y >= 250 and y <= 350 then
-        if faseDoTurno == "preparacao" then
-            faseDoTurno = "resolucao"
-        elseif faseDoTurno == "resolucao" then
-            logicaPartida.jogador1.heroiDoturno = carta1
-            logicaPartida.jogador2.heroiDoturno = carta2
+        
+        if logicaPartida.turnoAtual == 1 then
+            if faseDoTurno == "preparacao" then
+                faseDoTurno = "resolucao"
+            elseif faseDoTurno == "resolucao" then
+                logicaPartida.jogador1.heroiDoturno = carta1
+                logicaPartida.jogador2.heroiDoturno = carta2
 
+                if carta1.estaVivo and carta2.estaVivo then
+                    logicaPartida.resolverCartasDaMao()
+                    logicaPartida.calcularDanoFisico()
+                    Partida.checarFinalDeJogo()
+                end    
+                
+                logicaPartida.turnoAtual = 2 
+                faseDoTurno = "preparacao"
+            end
+            
+        elseif logicaPartida.turnoAtual == 2 then
+            
+            logicaPartida.jogadaDaIA()
+            
+            carta2 = logicaPartida.jogador2.heroiDoturno
+            carta1 = logicaPartida.jogador1.heroiDoturno
+            
             if carta1.estaVivo and carta2.estaVivo then
                 logicaPartida.resolverCartasDaMao()
                 logicaPartida.calcularDanoFisico()
                 Partida.checarFinalDeJogo()
+            end
             
-            end    
-            
-            faseDoTurno = "preparacao"
+            logicaPartida.turnoAtual = 1 
         end
-    end
 
+    end
 end
 
 function Partida.checarFinalDeJogo()
@@ -604,10 +627,14 @@ function Partida.draw()
     love.graphics.rectangle("fill", 565, 250, 150, 100, 15, 15)
     love.graphics.setColor(0,0,0)
     
-    if faseDoTurno == "preparacao" then
-        love.graphics.printf("Iniciar\nturno", 565, 280, 150, "center")
+    if logicaPartida.turnoAtual == 1 then
+        if faseDoTurno == "preparacao" then
+            love.graphics.printf("Iniciar\nturno", 565, 280, 150, "center")
+        else
+            love.graphics.printf("Resolver\nturno", 565, 280, 150, "center")
+        end
     else
-        love.graphics.printf("Resolver\nturno", 565, 280, 150, "center")
+        love.graphics.printf("Turno do\nInimigo", 565, 280, 150, "center")
     end
 
     love.graphics.setColor(0,0,1)
