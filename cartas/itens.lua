@@ -32,15 +32,17 @@ itens.brocheCristal = {
 
 itens.dragaoCristal = {
     tipo = 3,
+    dano = 6,
     nome = "Dragão de cristal",
+    efeito = function (self, aliado, inimigo, dono, partida)
+        
+    end,
     efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida)
         
-        if inimigo.espirito <= 4 then    
-            local dano = 4 - inimigo.espirito
-            inimigo.vidaAtual = inimigo.vidaAtual - dano
-        end
+        inimigo.vidaAtual = inimigo.vidaAtual - (self.dano - inimigo.espirito)
+    
     end,
-    descricao = "No final do turno:\nCause 4 de dano mágico ao inimigo"
+    descricao = "No final do turno:\nCause 6 de dano mágico ao inimigo"
 }
 
 return itens

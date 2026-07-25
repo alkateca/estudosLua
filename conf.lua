@@ -6,4 +6,5 @@ function love.conf(t)
         
     t.window.resizable = false -- Se 'true', permite que o jogador estique a janela com o mouse
     t.window.fullscreen = false -- Se 'true', o jogo já abre em tela cheia
+    t.console = true
 end 

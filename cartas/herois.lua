@@ -113,7 +113,7 @@ local herois = {}
         tipo = 1,
         raca = "Goblin",
         nome = "Rei Goblin",
-        espirito = 1,
+        espirito = 3,
         ataque = 2,
         defesa = 1,
         vidaMaxima = 12,
@@ -200,7 +200,7 @@ local herois = {}
         descricao = "Inicio do Combate:\nPara cada aliado morto:\nEspirito +1 e Ataque +1\nRecupera 2 de vida",
         efeitoInicioDoTurno = function (self, aliados, inimigo, dono, partida)
             for i, aliado in ipairs(aliados) do
-                if aliado.raca == "Zumbi" or type(aliado.estaVivo) == false then
+                if aliado.raca == "Zumbi" or aliado.estaVivo == false then
                     self.ataque = self.ataque + 1
                     self.defesa = self.defesa + 1
                     if self.vidaAtual < self.vidaMaxima then
