@@ -85,7 +85,7 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
     logicaPartida.comprarCartas(jogador2, 5)
 
     logicaPartida.efeitos()
-    logicaPartida.selecionarPrimeiroAtivo() -- Previne que o herói inicie nulo
+    --logicaPartida.selecionarPrimeiroAtivo() -- Previne que o herói inicie nulo
 end
 
 function logicaPartida.efeitos()
@@ -223,7 +223,7 @@ function logicaPartida.calcularDanoFisico()
     inimigo.estaAtivo = false
 
     logicaPartida.atualizarEstadoAtivo()
-    logicaPartida.selecionarPrimeiroAtivo()
+    --logicaPartida.selecionarPrimeiroAtivo()
 end
 
 function logicaPartida.resolverCartasDaMao()
@@ -297,6 +297,19 @@ function logicaPartida.jogadaDaIA()
 
     -- 3. Escolhe até 2 cartas da mão
     logicaPartida.jogador2.cartasEscolhidas = {}
+    local numCartas = math.min(2, #logicaPartida.jogador2.mao)
+    for i = 1, numCartas do
+        if #logicaPartida.jogador2.mao > 0 then
+            table.insert(logicaPartida.jogador2.cartasEscolhidas, table.remove(logicaPartida.jogador2.mao, 1))
+        end
+    end
+end
+
+-- Lógica de defesa da IA (Usada no Turno 1)
+function logicaPartida.defesaDaIA()
+    logicaPartida.jogador2.cartasEscolhidas = {}
+    
+    -- A IA escolhe até 2 cartas para se defender do ataque
     local numCartas = math.min(2, #logicaPartida.jogador2.mao)
     for i = 1, numCartas do
         if #logicaPartida.jogador2.mao > 0 then

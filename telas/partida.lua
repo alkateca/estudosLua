@@ -3,8 +3,8 @@ local Partida = {}
 local logicaPartida = require("logica.logicaPartida")
 
 
-local carta1 = logicaPartida.jogador1.aliados[1]
-local carta2 = logicaPartida.jogador2.aliados[1]
+local carta1 = nil
+local carta2 = nil
 
 local fonteEmoji
 local tempoHover
@@ -110,6 +110,13 @@ end
 
 function Partida.desenharHeroiAliado(carta1)
 
+        if carta1 == nil then
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.rectangle("fill", 260, 60, 280, 380, 15, 15)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.printf("Selecione seu herói", 260, 240, 280, "center")
+            return
+        end
     love.graphics.setColor(0,0,1)
     love.graphics.rectangle("fill", 260, 60, 280, 380, 15, 15)
     love.graphics.setColor(1,1,1)
@@ -127,7 +134,13 @@ function Partida.desenharHeroiAliado(carta1)
 end
 
 function Partida.desenharHeroiInimigo(carta2)
-    
+        if carta2 == nil then
+            love.graphics.setColor(0.2, 0.2, 0.2)
+            love.graphics.rectangle("fill", 740, 60, 280, 380, 15, 15)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.printf("Selecione o herói inimigo", 740, 240, 280, "center")
+            return
+        end
     love.graphics.setColor(1,0,0)
     love.graphics.rectangle("fill", 740, 60, 280, 380, 15, 15)
     love.graphics.setColor(1,1,1)
@@ -298,7 +311,11 @@ end
 
 function Partida.selecionarCartaMaoAliado(x, y)
 
-    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
+    if faseDoTurno == "preparacao" then 
+        return 
+    end
+
+    if carta1 == nil or carta2 == nil then 
         return 
     end
 
@@ -338,7 +355,8 @@ function Partida.desenharCartasEscolhidasAliadas()
 end
 
 function Partida.selecionarCartaMaoInimiga(x, y)
-
+    return
+--[[
     if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
         return 
     end
@@ -359,6 +377,7 @@ function Partida.selecionarCartaMaoInimiga(x, y)
             break
         end
     end
+]]
 
 end
 
@@ -380,10 +399,6 @@ end
 
 function Partida.deSelecionarCartaMaoAliada(x, y)
     
-    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
-        return 
-    end
-    
     local mao = logicaPartida.jogador1.mao
 
     for i = #logicaPartida.jogador1.cartasEscolhidas, 1, -1 do
@@ -402,7 +417,8 @@ function Partida.deSelecionarCartaMaoAliada(x, y)
 end
 
 function Partida.deSelecionarCartaMaoInimiga(x, y)
-
+return
+   --[[
     if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
         return 
     end
@@ -422,6 +438,7 @@ function Partida.deSelecionarCartaMaoInimiga(x, y)
         end
     end
 
+   ]]
 end
 
 function Partida.selecionarHeroiAliado(x, y)
@@ -475,37 +492,60 @@ end
 function Partida.botaoTurno(x, y)
     if x >= 565 and x <= 715 and y >= 250 and y <= 350 then
         
+        -- TURNO DO JOGADOR
         if logicaPartida.turnoAtual == 1 then
             if faseDoTurno == "preparacao" then
-                faseDoTurno = "resolucao"
-            elseif faseDoTurno == "resolucao" then
+                
+                -- Trava: Impede o botão de funcionar se faltar algum herói
+                if carta1 == nil or carta2 == nil then return end
+                
+                -- Os heróis estão confirmados para a batalha!
                 logicaPartida.jogador1.heroiDoturno = carta1
                 logicaPartida.jogador2.heroiDoturno = carta2
-
+                
+                -- A IA joga as cartas dela em resposta aos heróis confirmados
+                logicaPartida.defesaDaIA()
+                
+                faseDoTurno = "resolucao"
+                
+            elseif faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
                     logicaPartida.resolverCartasDaMao()
                     logicaPartida.calcularDanoFisico()
                     Partida.checarFinalDeJogo()
                 end    
                 
+                -- Passa o turno para a IA
                 logicaPartida.turnoAtual = 2 
-                faseDoTurno = "preparacao"
+                logicaPartida.jogadaDaIA()
+                
+                faseDoTurno = "resolucao" 
+                
+                carta1 = logicaPartida.jogador1.heroiDoturno
+                carta2 = logicaPartida.jogador2.heroiDoturno
             end
             
+        -- TURNO DO ADVERSÁRIO (IA)
         elseif logicaPartida.turnoAtual == 2 then
-            
-            logicaPartida.jogadaDaIA()
-            
-            carta2 = logicaPartida.jogador2.heroiDoturno
-            carta1 = logicaPartida.jogador1.heroiDoturno
-            
-            if carta1.estaVivo and carta2.estaVivo then
-                logicaPartida.resolverCartasDaMao()
-                logicaPartida.calcularDanoFisico()
-                Partida.checarFinalDeJogo()
+            if faseDoTurno == "preparacao" then
+                -- O jogador terminou de escolher as cartas de defesa e confirmou
+                faseDoTurno = "resolucao"
+                
+            elseif faseDoTurno == "resolucao" then
+                if carta1.estaVivo and carta2.estaVivo then
+                    logicaPartida.resolverCartasDaMao()
+                    logicaPartida.calcularDanoFisico()
+                    Partida.checarFinalDeJogo()
+                end
+                
+                -- Devolve o turno para o jogador
+                logicaPartida.turnoAtual = 1 
+                faseDoTurno = "preparacao"
+                
+                -- Esvazia a mesa para o próximo turno do jogador
+                carta1 = nil
+                carta2 = nil
             end
-            
-            logicaPartida.turnoAtual = 1 
         end
 
     end
@@ -634,7 +674,7 @@ function Partida.draw()
             love.graphics.printf("Resolver\nturno", 565, 280, 150, "center")
         end
     else
-        love.graphics.printf("Turno do\nInimigo", 565, 280, 150, "center")
+        love.graphics.printf("Resolver\nturno", 565, 280, 150, "center")
     end
 
     love.graphics.setColor(0,0,1)
