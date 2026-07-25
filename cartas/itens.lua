@@ -11,9 +11,6 @@ itens.quimera = {
         end
     end,
     efeito = function (self, aliado, inimigo, dono, partida)
-        
-        aliado.itemEquipado = self
-
         aliado.espirito = aliado.espirito + 1
         aliado.ataque = aliado.ataque + 1
         aliado.defesa = aliado.defesa + 1
@@ -36,9 +33,6 @@ itens.brocheCristal = {
 itens.dragaoCristal = {
     tipo = 3,
     nome = "Dragão de cristal",
-    efeito = function (self, aliado, inimigo, dono, partida)
-        aliado.itemEquipado = self
-    end,
     efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida)
         
         if inimigo.espirito <= 4 then    

@@ -16,6 +16,8 @@ local fonteIoskeley
 
 local faseDoTurno
 
+local IA = require("logica.ia")
+
 function Partida.load()
     fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
     fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)
@@ -504,7 +506,7 @@ function Partida.botaoTurno(x, y)
                 logicaPartida.jogador2.heroiDoturno = carta2
                 
                 -- A IA joga as cartas dela em resposta aos heróis confirmados
-                logicaPartida.defesaDaIA()
+                IA.escolherCartas(logicaPartida)                
                 
                 faseDoTurno = "resolucao"
                 
@@ -517,8 +519,10 @@ function Partida.botaoTurno(x, y)
                 
                 -- Passa o turno para a IA
                 logicaPartida.turnoAtual = 2 
-                logicaPartida.jogadaDaIA()
-                
+
+                IA.escolherHerois(logicaPartida)
+                IA.escolherCartas(logicaPartida)
+
                 faseDoTurno = "resolucao" 
                 
                 carta1 = logicaPartida.jogador1.heroiDoturno

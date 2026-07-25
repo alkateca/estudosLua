@@ -94,11 +94,13 @@ local herois = {}
                 end
             end
 
+            self.vidaAtual = self.vidaAtual + valorBuff
+
+
             if self.vidaAtual > self.vidaMaxima then
                 self.vidaAtual = self.vidaMaxima
             end
 
-            self.vidaAtual = self.vidaAtual + valorBuff
             
 
         end,

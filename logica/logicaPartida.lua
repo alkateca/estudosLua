@@ -277,46 +277,7 @@ function logicaPartida.resolverCartasDaMao()
     logicaPartida.jogador2.cartasEscolhidas = {}
 end
 
--- Lógica do turno da IA
-function logicaPartida.jogadaDaIA()
-    -- 1. Escolhe o próprio herói (Atacante)
-    for _, inimigo in ipairs(logicaPartida.jogador2.aliados) do
-        if inimigo.estaVivo and inimigo.estaAtivo then
-            logicaPartida.jogador2.heroiDoturno = inimigo
-            break
-        end
-    end
 
-    -- 2. Escolhe o alvo (Vítima no time do Jogador 1)
-    for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
-        if aliado.estaVivo then 
-            logicaPartida.jogador1.heroiDoturno = aliado
-            break
-        end
-    end
-
-    -- 3. Escolhe até 2 cartas da mão
-    logicaPartida.jogador2.cartasEscolhidas = {}
-    local numCartas = math.min(2, #logicaPartida.jogador2.mao)
-    for i = 1, numCartas do
-        if #logicaPartida.jogador2.mao > 0 then
-            table.insert(logicaPartida.jogador2.cartasEscolhidas, table.remove(logicaPartida.jogador2.mao, 1))
-        end
-    end
-end
-
--- Lógica de defesa da IA (Usada no Turno 1)
-function logicaPartida.defesaDaIA()
-    logicaPartida.jogador2.cartasEscolhidas = {}
-    
-    -- A IA escolhe até 2 cartas para se defender do ataque
-    local numCartas = math.min(2, #logicaPartida.jogador2.mao)
-    for i = 1, numCartas do
-        if #logicaPartida.jogador2.mao > 0 then
-            table.insert(logicaPartida.jogador2.cartasEscolhidas, table.remove(logicaPartida.jogador2.mao, 1))
-        end
-    end
-end
 
 logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
 
