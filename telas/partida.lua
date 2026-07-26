@@ -18,6 +18,15 @@ local faseDoTurno
 
 local IA = require("logica.ia")
 
+function Partida.atualizarTela()
+
+    love.graphics.clear()
+    Partida.draw()
+    love.graphics.present()
+    love.timer.sleep(0.3)
+
+end
+
 function Partida.load()
     fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
     fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)
@@ -40,17 +49,6 @@ function Partida.update(dt)
         if mouseX >= xPos and mouseX <= (xPos + 80) and mouseY >= yPos and mouseY <= (yPos + 100) then
             alvoAtual = carta
             break
-        end
-    end
-
-    if not alvoAtual then
-        for i, carta in ipairs(logicaPartida.jogador2.mao) do
-            local xPos = 1020 - ((i - 1) * 90)
-            local yPos = 590
-            if mouseX >= xPos and mouseX <= (xPos + 80) and mouseY >= yPos and mouseY <= (yPos + 100) then
-                alvoAtual = carta
-                break
-            end
         end
     end
 
@@ -304,8 +302,8 @@ function Partida.desenharMaoInimiga()
         local xPos = 1020 - ((i - 1) * 90)
         love.graphics.setColor(1,0,0)
         love.graphics.rectangle("fill", xPos, 590, 80, 100, 8, 8)
-        love.graphics.setColor(1,1,1)
-        love.graphics.printf(carta.nome, xPos, 610, 80, "center")
+        --love.graphics.setColor(1,1,1)
+        --love.graphics.printf(carta.nome, xPos, 610, 80, "center")
 
     end
     
@@ -512,7 +510,7 @@ function Partida.botaoTurno(x, y)
                 
             elseif faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
-                    logicaPartida.resolverCartasDaMao()
+                    logicaPartida.resolverCartasDaMao(Partida.atualizarTela)
                     logicaPartida.calcularDanoFisico()
                     Partida.checarFinalDeJogo()
                 end    
@@ -537,7 +535,7 @@ function Partida.botaoTurno(x, y)
                 
             elseif faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
-                    logicaPartida.resolverCartasDaMao()
+                    logicaPartida.resolverCartasDaMao(Partida.atualizarTela)
                     logicaPartida.calcularDanoFisico()
                     Partida.checarFinalDeJogo()
                 end

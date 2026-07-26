@@ -39,7 +39,11 @@ itens.dragaoCristal = {
     end,
     efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida)
         
-        inimigo.vidaAtual = inimigo.vidaAtual - (self.dano - inimigo.espirito)
+        local danoFinal = self.dano - inimigo.espirito
+
+        if danoFinal > 0 then
+            inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+        end
     
     end,
     descricao = "No final do turno:\nCause 6 de dano mágico ao inimigo"

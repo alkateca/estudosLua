@@ -46,7 +46,7 @@ local herois = {}
         estaVivo = true,
         estaAtivo = true
     }
-
+    
 -- goblins
 
     herois.esquadraoGoblin = {

@@ -7,7 +7,7 @@ magias.bolaDeFogo = {
     descricao = "Cause 4 mais seu espirito de dano mágico ao inimigo",
     efeito = function (self, aliado, inimigo, dono, partida)
 
-        local danoFinal = self.dano - (inimigo.espirito + aliado.espirito)
+        local danoFinal = self.dano - (inimigo.espirito - aliado.espirito)
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal

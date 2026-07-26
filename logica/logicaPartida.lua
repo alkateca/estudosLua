@@ -113,6 +113,8 @@ function logicaPartida.comprarCartas(jogador, numeroDeCartas)
     end
 end
 ]]
+
+
 -- Criar cópias profundas ao comprar
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
     for i = 1, numeroDeCartas do
@@ -370,7 +372,7 @@ function logicaPartida.calcularDanoFisico()
     print(string.rep("=", 50) .. "\n")
 end
 
-function logicaPartida.resolverCartasDaMao()
+function logicaPartida.resolverCartasDaMao(callbackAtualizacao)
     printHeader("🎴 RESOLVENDO CARTAS DA MÃO")
     
     local escolhidasJ1 = logicaPartida.jogador1.cartasEscolhidas
@@ -422,14 +424,20 @@ function logicaPartida.resolverCartasDaMao()
             print("   ⚡ Ativando efeito da carta...")
             cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida)
             
+            if callbackAtualizacao then
+                callbackAtualizacao()
+            end
+
             print("   📊 Após efeito:")
             printStatus(heroi)
             printStatus(inimigo)
+
+
             
             -- Decide destino da carta
             if cartaDaVez.tipo == 3 then
                 if not jogada.aliado.itemEquipado then 
-                    jogada.aliado.itemEquipado = {} 
+                    jogada.aliado.itemEquipado = {}
                 end
                 table.insert(jogada.aliado.itemEquipado, cartaDaVez)
                 print(string.format("   🎒 %s equipado por %s", cartaDaVez.nome, heroi.nome))
@@ -437,16 +445,30 @@ function logicaPartida.resolverCartasDaMao()
                 table.insert(jogada.dono.descarte, cartaDaVez)
                 print(string.format("   🗑️ %s enviada ao descarte", cartaDaVez.nome))
             end
+
+            if callbackAtualizacao then
+                callbackAtualizacao()
+            end
+
+
         end
 
         -- Efeito ao jogar carta do herói
         if type(heroi.efeitoAoJogarCarta) == "function" then
             print(string.format("   🦸 Ativando efeito especial de %s ao jogar carta", heroi.nome))
             heroi.efeitoAoJogarCarta(heroi, cartaDaVez, dono.aliados)
+            
+            if callbackAtualizacao then
+                callbackAtualizacao()
+            end
+
+
             print("   📊 Após efeito especial:")
             printStatus(heroi)
         end
     end
+
+
 
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
