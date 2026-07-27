@@ -41,18 +41,14 @@ magias.paraRaios = {
     nome = "Para-raios",
     tipo = 2,
     dano = 0,
-    efeitoAtivo = false,
     descricao = "Espirito +1 até o Final do Turno\nCrie e Jogue uma Estatica",
     efeito = function (self, aliado, inimigo, dono, partida)
         aliado.espirito = aliado.espirito + 1
         magias.estatica.efeito(magias.estatica, aliado, inimigo, dono, partida)
         self.efeitoAtivo = true
     end,
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida)
-        if self.efeitoAtivo == true then
+    efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida)
             aliado.espirito = aliado.espirito - 1
-            self.efeitoAtivo = false
-        end
     end
 }
 

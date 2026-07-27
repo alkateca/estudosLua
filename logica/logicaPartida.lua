@@ -388,10 +388,11 @@ function logicaPartida.calcularDanoFisico()
         print(string.format("   ✅ %s continua vivo (Vida: %d)", inimigo.nome, inimigo.vidaAtual))
     end
 
-    -- Desativa heróis do turno
     heroi.estaAtivo = false
     inimigo.estaAtivo = false
     print(string.format("\n💤 Heróis do turno desativados: %s e %s", heroi.nome, inimigo.nome))
+
+    
 
     logicaPartida.atualizarEstadoAtivo()
     
@@ -494,8 +495,6 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao)
             printStatus(heroi)
         end
     end
-
-
 
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
