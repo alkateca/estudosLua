@@ -23,7 +23,7 @@ function Partida.atualizarTela()
     love.graphics.clear()
     Partida.draw()
     love.graphics.present()
-    love.timer.sleep(0.3)
+    love.timer.sleep(0.5)
 
 end
 
