@@ -7,7 +7,7 @@ local acao = require("cartas.acoes")
 
 logicaPartida.turnoAtual = 1
 
-logicaPartida.jogador1 = {
+logicaPartida.jogador2 = {
     baralho = {
         item.brocheCristal,
         item.brocheCristal,
@@ -33,27 +33,27 @@ logicaPartida.jogador1 = {
     heroiDoturno = nil
 }
 
-logicaPartida.jogador2 = {
+logicaPartida.jogador1 = {
     baralho = { 
         item.brocheCristal,
         item.brocheCristal,
         item.quimera,
         item.dragaoCristal,
         item.dragaoCristal,
-        magia.bolaDeFogo,
-        magia.bolaDeFogo,
-        magia.bolaDeFogo,
-        acao.racaoDeEmergencia,
-        acao.racaoDeEmergencia,
-        acao.racaoDeEmergencia,
+        magia.estatica,
+        magia.estatica,
+        magia.estatica,
+        magia.paraRaios,
+        magia.paraRaios,
+        magia.paraRaios,
     },
     nome = "",
     mao = {},
     descarte = {},
     aliados = {
-        heroi.rainhaGoblin,
-        heroi.quimeraCarniceira,
-        heroi.necromanteDasAreais
+        heroi.santaDasLaminas,
+        heroi.aprendizDasLaminas,
+        heroi.artesaDasLaminas
     },
     cartasEscolhidas = {},
     heroiDoturno = nil
@@ -154,22 +154,49 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
 end
 
 function logicaPartida.efeitos()
-    local aliados = logicaPartida.jogador1.aliados
-    local inimigos = logicaPartida.jogador2.aliados
 
-    for i, aliado in ipairs(aliados) do
-        if type(aliado.efeitoInicioDaPartida) == "function" and aliado.efeitoAtivo == false then
+    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        if type(aliado.efeitoInicioDaPartida) == "function" and not aliado.efeitoAtivo then
             aliado.efeitoInicioDaPartida(aliado, logicaPartida.jogador1.aliados)
             aliado.efeitoAtivo = true 
         end
     end
 
-    for i, inimigo in ipairs(inimigos) do
-        if type(inimigo.efeitoInicioDaPartida) == "function" and inimigo.efeitoAtivo == false then
+
+    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        if type(inimigo.efeitoInicioDaPartida) == "function" and not inimigo.efeitoAtivo then
             inimigo.efeitoInicioDaPartida(inimigo, logicaPartida.jogador2.aliados)
             inimigo.efeitoAtivo = true
         end
     end
+
+
+    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        if aliado.itemEquipado then
+            for j, itm in ipairs(aliado.itemEquipado) do
+                if type(itm.efeitoInicioDaPartida) == "function" and not itm.efeitoAtivo then
+                    print(string.format("   🎒 Ativando efeito inicial do item [%s] em %s", itm.nome, aliado.nome))
+                    itm.efeitoInicioDaPartida(itm, aliado, logicaPartida.jogador1, logicaPartida)
+                    itm.efeitoAtivo = true
+                end
+            end
+        end
+    end
+
+
+    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        if inimigo.itemEquipado then
+            for j, itm in ipairs(inimigo.itemEquipado) do
+                if type(itm.efeitoInicioDaPartida) == "function" and not itm.efeitoAtivo then
+                    print(string.format("   🎒 Ativando efeito inicial do item [%s] em %s", itm.nome, inimigo.nome))
+                    itm.efeitoInicioDaPartida(itm, inimigo, logicaPartida.jogador2, logicaPartida)
+                    itm.efeitoAtivo = true
+                end
+            end
+        end
+    end
+    
+
 end
 
 -- Gerenciamento de ativo / desativo

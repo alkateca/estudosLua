@@ -30,10 +30,21 @@ itens.brocheCristal = {
     descricao = "+1 de Defesa\n+1 de Espirito"
 }
 
+itens.laminaDeCristal = {
+    tipo = 3,
+    nome = "Lamina de Cristal",
+    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida)
+        aliado.espirito = aliado.espirito + 1
+        aliado.ataque = aliado.ataque + 1
+
+    end,
+    descricao = "+1 de Espirito\n+1 de Ataque"            
+}
+
 itens.dragaoCristal = {
     tipo = 3,
     dano = 6,
-    nome = "Dragão de cristal",
+    nome = "Dragão de Cristal",
     efeito = function (self, aliado, inimigo, dono, partida)
         
     end,
