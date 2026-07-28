@@ -7,6 +7,9 @@ local passos = {}
 function Tutorial.load()
     Partida.load()
     passoAtual = 1
+
+    local fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
+    love.graphics.setFont(fonteEmoji)
     
     passos = {
         {
@@ -50,11 +53,16 @@ function Tutorial.load()
             alvoX = 530, alvoY = 750, alvoW = 480, alvoH = 120 -- Cobre a mão do jogador
         },
         {
+            texto = "Agora, escolha até DUAS cartas da sua mão. Elas serão resolvidas de forma intercalada com as do oponente!",
+            caixaX = 540, caixaY = 600,
+            alvoX = 530, alvoY = 750, alvoW = 480, alvoH = 120 -- Cobre a mão do jogador
+        },
+        {
             texto = "Tudo pronto! Clique em 'Resolver turno' para iniciar o combate.",
             caixaX = 750, caixaY = 400,
             alvoX = 1290, alvoY = 390, alvoW = 150, alvoH = 120 -- Cobre o Botão de turno
         },
-        {
+        {   
             texto = "Após o combate, os Heróis envolvidos ficarão inativos (💤) e não poderão lutar no próximo turno.",
             caixaX = 480, caixaY = 350,
             alvoX = 0, alvoY = 0, alvoW = 1440, alvoH = 900 -- Tela toda
@@ -122,15 +130,6 @@ function Tutorial.mousereleased(x, y, button)
         Partida.mousereleased(x, y, button)
         
         passoAtual = passoAtual + 1
-    else
-        -- Opcional: Permite avançar clicando na própria caixa de texto do tutorial
-        if x >= passo.caixaX and x <= (passo.caixaX + 480) and y >= passo.caixaY and y <= (passo.caixaY + 100) then
-            if passoAtual == #passos then
-                estadoAtual = "menu"
-                return
-            end
-            passoAtual = passoAtual + 1
-        end
     end
 end
 

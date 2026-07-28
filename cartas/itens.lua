@@ -34,7 +34,6 @@ itens.laminaDeCristal = {
     tipo = 3,
     nome = "Lamina de Cristal",
     efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida)
-        aliado.espirito = aliado.espirito + 1
         aliado.ataque = aliado.ataque + 1
 
     end,

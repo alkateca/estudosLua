@@ -13,12 +13,48 @@ Cristais
 ==================================================
 📋 Cartas escolhidas pelo Jogador 1:
    1. Para-raios (Magia)
-   2. Para-raios (Magia)
-📋 Cartas escolhidas pelo Jogador 2:
-   1. Dragão de Cristal (Item)
    2. Quimera (Item)
+📋 Cartas escolhidas pelo Jogador 2:
+   1. Broche de Cristal (Item)
+   2. Broche de Cristal (Item)
 
 🎯 Resolvendo carta 1: Para-raios
+   👤 Usada por: Isenora,
+Santa das
+Laminas
+📊 Isenora,
+Santa das
+Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 3 | ✅ VIVO
+   ⚡ Ativando efeito da carta...
+   📊 Após efeito:
+📊 Isenora,
+Santa das
+Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 4 | Def: 0 | Esp: 0 | ✅ VIVO
+   🗑️ Para-raios enviada ao descarte
+
+🎯 Resolvendo carta 2: Broche de Cristal
+   👤 Usada por: Esquadrão
+Goblin
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 4 | Def: 0 | Esp: 0 | ✅ VIVO
+   ⚡ Ativando efeito da carta...
+   📊 Após efeito:
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 4 | Def: 1 | Esp: 1 | ✅ VIVO
+📊 Isenora,
+Santa das
+Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
+   🎒 Broche de Cristal equipado por Esquadrão
+Goblin
+   🦸 Ativando efeito especial de Esquadrão
+Goblin ao jogar carta
+   📊 Após efeito especial:
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
+
+🎯 Resolvendo carta 3: Quimera
    👤 Usada por: Isenora,
 Santa das
 Laminas
@@ -29,46 +65,32 @@ Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
    📊 Após efeito:
 📊 Isenora,
 Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-📊 Rei Goblin | Vida: 7/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   🗑️ Para-raios enviada ao descarte
-
-🎯 Resolvendo carta 2: Dragão de Cristal
-   👤 Usada por: Rei Goblin
-📊 Rei Goblin | Vida: 7/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Rei Goblin | Vida: 7/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-   🎒 Dragão de Cristal equipado por Rei Goblin
-
-🎯 Resolvendo carta 3: Para-raios
-   👤 Usada por: Isenora,
+Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
+   🎒 Quimera equipado por Isenora,
 Santa das
 Laminas
-📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 6 | ✅ VIVO
-📊 Rei Goblin | Vida: 1/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   🗑️ Para-raios enviada ao descarte
 
-🎯 Resolvendo carta 4: Quimera
-   👤 Usada por: Rei Goblin
-📊 Rei Goblin | Vida: 1/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
+🎯 Resolvendo carta 4: Broche de Cristal
+   👤 Usada por: Esquadrão
+Goblin
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
    ⚡ Ativando efeito da carta...
    📊 Após efeito:
-📊 Rei Goblin | Vida: 1/12 | Atk: 3 | Def: 2 | Esp: 4 | ✅ VIVO
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 6 | Def: 2 | Esp: 2 | ✅ VIVO
 📊 Isenora,
 Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 6 | ✅ VIVO
-   🎒 Quimera equipado por Rei Goblin
+Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
+   🎒 Broche de Cristal equipado por Esquadrão
+Goblin
+   🦸 Ativando efeito especial de Esquadrão
+Goblin ao jogar carta
+   📊 Após efeito especial:
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
 
 ✅ Todas as cartas resolvidas!
 
@@ -78,50 +100,61 @@ Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 6 | ✅ VIVO
 📊 Status inicial dos combatentes:
 📊 Isenora,
 Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 6 | ✅ VIVO
-📊 Rei Goblin | Vida: 1/12 | Atk: 3 | Def: 2 | Esp: 4 | ✅ VIVO
+Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
+📊 Esquadrão
+Goblin | Vida: 5/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
 
 🔮 EFEITOS DE INÍCIO DO TURNO:
    ❌ Isenora,
 Santa das
 Laminas não tem efeito de início do turno
-   ❌ Rei Goblin não tem efeito de início do turno
+   ❌ Esquadrão
+Goblin não tem efeito de início do turno
 
 💥 CALCULANDO DANO FÍSICO:
-   🔴 Rei Goblin atacando Isenora,
+   🔴 Esquadrão
+Goblin atacando Isenora,
 Santa das
 Laminas
-   Ataque: 3 vs Defesa: 2
-   💔 DANO CAUSADO: 1 (Vida: 14 → 13)
+   Ataque: 8 vs Defesa: 3
+   💔 DANO CAUSADO: 5 (Vida: 14 → 9)
 
    🔵 Isenora,
 Santa das
-Laminas atacando Rei Goblin
-   Ataque: 7 vs Defesa: 2
-   💔 DANO CAUSADO: 5 (Vida: 1 → -4)
+Laminas atacando Esquadrão
+Goblin
+   Ataque: 8 vs Defesa: 2
+   💔 DANO CAUSADO: 6 (Vida: 5 → -1)
 
 🌙 EFEITOS DE FINAL DO TURNO:
+   ▶️ Esquadrão
+Goblin ativando efeito de final do turno...
+   📊 Após efeito:
+📊 Esquadrão
+Goblin | Vida: 1/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
 
    🎒 Itens equipados de Isenora,
 Santa das
 Laminas:
+   ▶️ Ativando Quimera...
+Isenora,
+Santa das
+Laminas curou 5 pontos de dano
+
+   📊 Após efeito:
+📊 Isenora,
+Santa das
+Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
    ▶️ Isenora,
 Santa das
 Laminas ativando efeito de final do turno...
    📊 Após efeito:
 📊 Isenora,
 Santa das
-Laminas | Vida: 13/14 | Atk: 7 | Def: 2 | Esp: 6 | ✅ VIVO
+Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
 
-   🎒 Itens equipados de Rei Goblin:
-   ▶️ Ativando Dragão de Cristal...
-   📊 Após efeito:
-📊 Rei Goblin | Vida: -9/12 | Atk: 3 | Def: 2 | Esp: 4 | ✅ VIVO
-   ▶️ Ativando Quimera...
-Rei Goblin curou 4 pontos de dano
-
-   📊 Após efeito:
-📊 Rei Goblin | Vida: -5/12 | Atk: 3 | Def: 2 | Esp: 4 | ✅ VIVO
+   🎒 Itens equipados de Esquadrão
+Goblin:
 
 🃏 COMPRANDO CARTAS:
    Jogador 1 comprou 2 carta(s). Mão agora tem 5 cartas.
@@ -130,306 +163,14 @@ Rei Goblin curou 4 pontos de dano
 💀 VERIFICAÇÃO DE MORTE:
    ✅ Isenora,
 Santa das
-Laminas continua vivo (Vida: 13)
-   ☠️ Rei Goblin MORREU! (Vida: -5)
+Laminas continua vivo (Vida: 14)
+   ☠️ Esquadrão
+Goblin MORREU! (Vida: -4)
 
 💤 Heróis do turno desativados: Isenora,
 Santa das
-Laminas e Rei Goblin
-
-🏁 FIM DO TURNO DE COMBATE
-==================================================
-
-
-==================================================
-🔹 🎴 RESOLVENDO CARTAS DA MÃO
-==================================================
-📋 Cartas escolhidas pelo Jogador 1:
-   1. Dragão de Cristal (Item)
-   2. Estatica (Magia)
-📋 Cartas escolhidas pelo Jogador 2:
-   1. Broche de Cristal (Item)
-   2. Dragão de Cristal (Item)
-
-🎯 Resolvendo carta 1: Dragão de Cristal
-   👤 Usada por: Moyra,
-Aprendiz da
-Santa
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Esquadrão
-Goblin | Vida: 12/12 | Atk: 4 | Def: 0 | Esp: 0 | ✅ VIVO
-   🎒 Dragão de Cristal equipado por Moyra,
-Aprendiz da
-Santa
-   🦸 Ativando efeito especial de Moyra,
-Aprendiz da
-Santa ao jogar carta
-   📊 Após efeito especial:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-
-🎯 Resolvendo carta 2: Broche de Cristal
-   👤 Usada por: Esquadrão
+Laminas e Esquadrão
 Goblin
-📊 Esquadrão
-Goblin | Vida: 12/12 | Atk: 4 | Def: 0 | Esp: 0 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: 12/12 | Atk: 4 | Def: 1 | Esp: 1 | ✅ VIVO
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   🎒 Broche de Cristal equipado por Esquadrão
-Goblin
-   🦸 Ativando efeito especial de Esquadrão
-Goblin ao jogar carta
-   📊 Após efeito especial:
-📊 Esquadrão
-Goblin | Vida: 12/12 | Atk: 5 | Def: 1 | Esp: 1 | ✅ VIVO
-
-🎯 Resolvendo carta 3: Estatica
-   👤 Usada por: Moyra,
-Aprendiz da
-Santa
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Esquadrão
-Goblin | Vida: 7/12 | Atk: 5 | Def: 1 | Esp: 1 | ✅ VIVO
-   🗑️ Estatica enviada ao descarte
-   🦸 Ativando efeito especial de Moyra,
-Aprendiz da
-Santa ao jogar carta
-   📊 Após efeito especial:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 9 | Def: 1 | Esp: 3 | ✅ VIVO
-
-🎯 Resolvendo carta 4: Dragão de Cristal
-   👤 Usada por: Esquadrão
-Goblin
-📊 Esquadrão
-Goblin | Vida: 7/12 | Atk: 5 | Def: 1 | Esp: 1 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: 7/12 | Atk: 5 | Def: 1 | Esp: 1 | ✅ VIVO
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 9 | Def: 1 | Esp: 3 | ✅ VIVO
-   🎒 Dragão de Cristal equipado por Esquadrão
-Goblin
-   🦸 Ativando efeito especial de Esquadrão
-Goblin ao jogar carta
-   📊 Após efeito especial:
-📊 Esquadrão
-Goblin | Vida: 7/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
-
-✅ Todas as cartas resolvidas!
-
-==================================================
-🔹 ⚔️ FASE DE COMBATE
-==================================================
-📊 Status inicial dos combatentes:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 9 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Esquadrão
-Goblin | Vida: 7/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
-
-🔮 EFEITOS DE INÍCIO DO TURNO:
-   ▶️ Moyra,
-Aprendiz da
-Santa ativando efeito de início do turno...
-   📊 Após efeito:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 15/15 | Atk: 9 | Def: 1 | Esp: 3 | ✅ VIVO
-   ❌ Esquadrão
-Goblin não tem efeito de início do turno
-
-💥 CALCULANDO DANO FÍSICO:
-   🔴 Esquadrão
-Goblin atacando Moyra,
-Aprendiz da
-Santa
-   Ataque: 6 vs Defesa: 1
-   💔 DANO CAUSADO: 5 (Vida: 15 → 10)
-
-   🔵 Moyra,
-Aprendiz da
-Santa atacando Esquadrão
-Goblin
-   Ataque: 9 vs Defesa: 1
-   💔 DANO CAUSADO: 8 (Vida: 4 → -4)
-
-🌙 EFEITOS DE FINAL DO TURNO:
-   ▶️ Esquadrão
-Goblin ativando efeito de final do turno...
-   📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: -3/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
-
-   🎒 Itens equipados de Moyra,
-Aprendiz da
-Santa:
-   ▶️ Ativando Dragão de Cristal...
-   📊 Após efeito:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 10/15 | Atk: 9 | Def: 1 | Esp: 3 | ✅ VIVO
-   ▶️ Moyra,
-Aprendiz da
-Santa ativando efeito de final do turno...
-   📊 Após efeito:
-📊 Moyra,
-Aprendiz da
-Santa | Vida: 10/15 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-
-   🎒 Itens equipados de Esquadrão
-Goblin:
-   ▶️ Ativando Dragão de Cristal...
-   📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: -8/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
-
-🃏 COMPRANDO CARTAS:
-   Jogador 1 comprou 2 carta(s). Mão agora tem 5 cartas.
-   Jogador 2 comprou 2 carta(s). Mão agora tem 5 cartas.
-
-💀 VERIFICAÇÃO DE MORTE:
-   ✅ Moyra,
-Aprendiz da
-Santa continua vivo (Vida: 7)
-   ☠️ Esquadrão
-Goblin MORREU! (Vida: -8)
-
-💤 Heróis do turno desativados: Moyra,
-Aprendiz da
-Santa e Esquadrão
-Goblin
-
-🏁 FIM DO TURNO DE COMBATE
-==================================================
-
-
-==================================================
-🔹 🎴 RESOLVENDO CARTAS DA MÃO
-==================================================
-📋 Cartas escolhidas pelo Jogador 1:
-   1. Dragão de Cristal (Item)
-   2. Estatica (Magia)
-📋 Cartas escolhidas pelo Jogador 2:
-   1. Bola de fogo (Magia)
-   2. Ração de emergencia (Ação)
-
-🎯 Resolvendo carta 1: Dragão de Cristal
-   👤 Usada por: Naelis, Grande Artesã de
-Cristais
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 14/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 14/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Traidor Goblin | Vida: 12/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-   🎒 Dragão de Cristal equipado por Naelis, Grande Artesã de
-Cristais
-
-🎯 Resolvendo carta 2: Bola de fogo
-   👤 Usada por: Traidor Goblin
-📊 Traidor Goblin | Vida: 12/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Traidor Goblin | Vida: 12/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 13/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   🗑️ Bola de fogo enviada ao descarte
-
-🎯 Resolvendo carta 3: Estatica
-   👤 Usada por: Naelis, Grande Artesã de
-Cristais
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 13/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 13/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Traidor Goblin | Vida: 6/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-   🗑️ Estatica enviada ao descarte
-
-🎯 Resolvendo carta 4: Ração de emergencia
-   👤 Usada por: Traidor Goblin
-📊 Traidor Goblin | Vida: 6/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Traidor Goblin | Vida: 6/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 13/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-   🗑️ Ração de emergencia enviada ao descarte
-
-✅ Todas as cartas resolvidas!
-
-==================================================
-🔹 ⚔️ FASE DE COMBATE
-==================================================
-📊 Status inicial dos combatentes:
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 13/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Traidor Goblin | Vida: 6/12 | Atk: 9 | Def: 4 | Esp: 0 | ✅ VIVO
-
-🔮 EFEITOS DE INÍCIO DO TURNO:
-   ❌ Naelis, Grande Artesã de
-Cristais não tem efeito de início do turno
-   ❌ Traidor Goblin não tem efeito de início do turno
-
-💥 CALCULANDO DANO FÍSICO:
-   🔴 Traidor Goblin atacando Naelis, Grande Artesã de
-Cristais
-   Ataque: 9 vs Defesa: 1
-   💔 DANO CAUSADO: 8 (Vida: 13 → 5)
-
-   🔵 Naelis, Grande Artesã de
-Cristais atacando Traidor Goblin
-   Ataque: 6 vs Defesa: 4
-   💔 DANO CAUSADO: 2 (Vida: 6 → 4)
-
-🌙 EFEITOS DE FINAL DO TURNO:
-
-   🎒 Itens equipados de Naelis, Grande Artesã de
-Cristais:
-   ▶️ Ativando Dragão de Cristal...
-   📊 Após efeito:
-📊 Naelis, Grande Artesã de
-Cristais | Vida: 5/14 | Atk: 6 | Def: 1 | Esp: 3 | ✅ VIVO
-
-   🎒 Itens equipados de Traidor Goblin:
-
-🃏 COMPRANDO CARTAS:
-   Jogador 1 comprou 2 carta(s). Mão agora tem 5 cartas.
-   Jogador 2 já está com a mão cheia (5 cartas)
-
-💀 VERIFICAÇÃO DE MORTE:
-   ✅ Naelis, Grande Artesã de
-Cristais continua vivo (Vida: 5)
-   ☠️ Traidor Goblin MORREU! (Vida: -2)
-
-💤 Heróis do turno desativados: Naelis, Grande Artesã de
-Cristais e Traidor Goblin
 
 🏁 FIM DO TURNO DE COMBATE
 ==================================================

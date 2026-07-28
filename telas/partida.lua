@@ -30,6 +30,10 @@ end
 function Partida.load()
     fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
     fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)
+    
+    local fonteEmojiInline = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 16)
+    
+    fonteIoskeley:setFallbacks(fonteEmojiInline)
 
     tempoHover = 0 
     tempoNecessario = 0.8
