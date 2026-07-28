@@ -1,11 +1,8 @@
    🎒 Ativando efeito inicial do item [Lamina de Cristal] em Isenora,
-Santa das
-Laminas
+Santa das Laminas
    🎒 Ativando efeito inicial do item [Lamina de Cristal] em Moyra,
-Aprendiz da
-Santa
-   🎒 Ativando efeito inicial do item [Lamina de Cristal] em Naelis, Grande Artesã de
-Cristais
+Aprendiz da Santa
+   🎒 Ativando efeito inicial do item [Lamina de Cristal] em Naelis, Grande Artesã de Cristais
 [lurker] Initing lurker
 
 ==================================================
@@ -13,84 +10,54 @@ Cristais
 ==================================================
 📋 Cartas escolhidas pelo Jogador 1:
    1. Para-raios (Magia)
-   2. Quimera (Item)
+   2. Para-raios (Magia)
 📋 Cartas escolhidas pelo Jogador 2:
-   1. Broche de Cristal (Item)
-   2. Broche de Cristal (Item)
+   1. Ração de emergencia (Ação)
+   2. Ração de emergencia (Ação)
 
 🎯 Resolvendo carta 1: Para-raios
    👤 Usada por: Isenora,
-Santa das
-Laminas
+Santa das Laminas
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 3 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 3 | ✅ VIVO
    ⚡ Ativando efeito da carta...
    📊 Após efeito:
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 4 | Def: 0 | Esp: 0 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
+📊 Rei Goblin | Vida: 8/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
    🗑️ Para-raios enviada ao descarte
 
-🎯 Resolvendo carta 2: Broche de Cristal
-   👤 Usada por: Esquadrão
-Goblin
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 4 | Def: 0 | Esp: 0 | ✅ VIVO
+🎯 Resolvendo carta 2: Ração de emergencia
+   👤 Usada por: Rei Goblin
+📊 Rei Goblin | Vida: 8/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
    ⚡ Ativando efeito da carta...
    📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 4 | Def: 1 | Esp: 1 | ✅ VIVO
+📊 Rei Goblin | Vida: 8/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
-   🎒 Broche de Cristal equipado por Esquadrão
-Goblin
-   🦸 Ativando efeito especial de Esquadrão
-Goblin ao jogar carta
-   📊 Após efeito especial:
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
+   🗑️ Ração de emergencia enviada ao descarte
 
-🎯 Resolvendo carta 3: Quimera
+🎯 Resolvendo carta 3: Para-raios
    👤 Usada por: Isenora,
-Santa das
-Laminas
+Santa das Laminas
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
    ⚡ Ativando efeito da carta...
    📊 Após efeito:
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
-   🎒 Quimera equipado por Isenora,
-Santa das
-Laminas
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
+📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
+   🗑️ Para-raios enviada ao descarte
 
-🎯 Resolvendo carta 4: Broche de Cristal
-   👤 Usada por: Esquadrão
-Goblin
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 6 | Def: 1 | Esp: 1 | ✅ VIVO
+🎯 Resolvendo carta 4: Ração de emergencia
+   👤 Usada por: Rei Goblin
+📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
    ⚡ Ativando efeito da carta...
    📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 6 | Def: 2 | Esp: 2 | ✅ VIVO
+📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
-   🎒 Broche de Cristal equipado por Esquadrão
-Goblin
-   🦸 Ativando efeito especial de Esquadrão
-Goblin ao jogar carta
-   📊 Após efeito especial:
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
+   🗑️ Ração de emergencia enviada ao descarte
 
 ✅ Todas as cartas resolvidas!
 
@@ -99,78 +66,48 @@ Goblin | Vida: 5/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
 ==================================================
 📊 Status inicial dos combatentes:
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
-📊 Esquadrão
-Goblin | Vida: 5/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
+📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
 
 🔮 EFEITOS DE INÍCIO DO TURNO:
    ❌ Isenora,
-Santa das
-Laminas não tem efeito de início do turno
-   ❌ Esquadrão
-Goblin não tem efeito de início do turno
+Santa das Laminas não tem efeito de início do turno
+   ❌ Rei Goblin não tem efeito de início do turno
 
 💥 CALCULANDO DANO FÍSICO:
-   🔴 Esquadrão
-Goblin atacando Isenora,
-Santa das
-Laminas
-   Ataque: 8 vs Defesa: 3
-   💔 DANO CAUSADO: 5 (Vida: 14 → 9)
+   🔴 Rei Goblin atacando Isenora,
+Santa das Laminas
+   Ataque: 2 vs Defesa: 2
+   🛡️ Defesa bloqueou o ataque! (Ataque 2 ≤ Defesa 2)
 
    🔵 Isenora,
-Santa das
-Laminas atacando Esquadrão
-Goblin
-   Ataque: 8 vs Defesa: 2
-   💔 DANO CAUSADO: 6 (Vida: 5 → -1)
+Santa das Laminas atacando Rei Goblin
+   Ataque: 7 vs Defesa: 1
+   💔 DANO CAUSADO: 6 (Vida: 3 → -3)
 
 🌙 EFEITOS DE FINAL DO TURNO:
-   ▶️ Esquadrão
-Goblin ativando efeito de final do turno...
-   📊 Após efeito:
-📊 Esquadrão
-Goblin | Vida: 1/12 | Atk: 8 | Def: 2 | Esp: 2 | ✅ VIVO
 
    🎒 Itens equipados de Isenora,
-Santa das
-Laminas:
-   ▶️ Ativando Quimera...
-Isenora,
-Santa das
-Laminas curou 5 pontos de dano
-
-   📊 Após efeito:
-📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
+Santa das Laminas:
    ▶️ Isenora,
-Santa das
-Laminas ativando efeito de final do turno...
+Santa das Laminas ativando efeito de final do turno...
    📊 Após efeito:
 📊 Isenora,
-Santa das
-Laminas | Vida: 14/14 | Atk: 8 | Def: 3 | Esp: 5 | ✅ VIVO
+Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
 
-   🎒 Itens equipados de Esquadrão
-Goblin:
+   🎒 Itens equipados de Rei Goblin:
 
 🃏 COMPRANDO CARTAS:
    Jogador 1 comprou 2 carta(s). Mão agora tem 5 cartas.
-   Jogador 2 comprou 2 carta(s). Mão agora tem 5 cartas.
+   Jogador 2 já está com a mão cheia (5 cartas)
 
 💀 VERIFICAÇÃO DE MORTE:
    ✅ Isenora,
-Santa das
-Laminas continua vivo (Vida: 14)
-   ☠️ Esquadrão
-Goblin MORREU! (Vida: -4)
+Santa das Laminas continua vivo (Vida: 14)
+   ☠️ Rei Goblin MORREU! (Vida: -8)
 
 💤 Heróis do turno desativados: Isenora,
-Santa das
-Laminas e Esquadrão
-Goblin
+Santa das Laminas e Rei Goblin
 
 🏁 FIM DO TURNO DE COMBATE
 ==================================================

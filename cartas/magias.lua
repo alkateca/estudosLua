@@ -52,5 +52,4 @@ magias.paraRaios = {
     end
 }
 
-
 return magias

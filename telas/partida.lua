@@ -56,6 +56,24 @@ function Partida.update(dt)
         end
     end
 
+    for i, carta in ipairs(logicaPartida.jogador1.aliados) do
+        local xPos = 20 + ((i - 1) * 150)
+        local yPos = 580
+        if mouseX >= xPos and mouseX <= (xPos + 140) and mouseY >= yPos and mouseY <= (yPos + 190) then
+            alvoAtual = carta
+            break
+        end
+    end
+
+    for i, carta in ipairs(logicaPartida.jogador2.aliados) do
+        local xPos = 20 + ((i - 1) * 150)
+        local yPos = 130
+        if mouseX >= xPos and mouseX <= (xPos + 140) and mouseY >= yPos and mouseY <= (yPos + 190) then
+            alvoAtual = carta
+            break
+        end
+    end
+
     if alvoAtual then
         if cartaInspecionada ~= alvoAtual then
             cartaInspecionada = alvoAtual
