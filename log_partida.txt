@@ -1,114 +1,96 @@
-   🎒 Ativando efeito inicial do item [Lamina de Cristal] em Isenora,
-Santa das Laminas
-   🎒 Ativando efeito inicial do item [Lamina de Cristal] em Moyra,
-Aprendiz da Santa
-   🎒 Ativando efeito inicial do item [Lamina de Cristal] em Naelis, Grande Artesã de Cristais
 [lurker] Initing lurker
 
 ==================================================
-🔹 🎴 RESOLVENDO CARTAS DA MÃO
-==================================================
-📋 Cartas escolhidas pelo Jogador 1:
-   1. Para-raios (Magia)
-   2. Para-raios (Magia)
-📋 Cartas escolhidas pelo Jogador 2:
-   1. Ração de emergencia (Ação)
-   2. Ração de emergencia (Ação)
-
-🎯 Resolvendo carta 1: Para-raios
-   👤 Usada por: Isenora,
-Santa das Laminas
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
-📊 Rei Goblin | Vida: 8/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   🗑️ Para-raios enviada ao descarte
-
-🎯 Resolvendo carta 2: Ração de emergencia
-   👤 Usada por: Rei Goblin
-📊 Rei Goblin | Vida: 8/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Rei Goblin | Vida: 8/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
-   🗑️ Ração de emergencia enviada ao descarte
-
-🎯 Resolvendo carta 3: Para-raios
-   👤 Usada por: Isenora,
-Santa das Laminas
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 4 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   🗑️ Para-raios enviada ao descarte
-
-🎯 Resolvendo carta 4: Ração de emergencia
-   👤 Usada por: Rei Goblin
-📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-   ⚡ Ativando efeito da carta...
-   📊 Após efeito:
-📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-   🗑️ Ração de emergencia enviada ao descarte
-
-✅ Todas as cartas resolvidas!
-
-==================================================
-🔹 ⚔️ FASE DE COMBATE
-==================================================
-📊 Status inicial dos combatentes:
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-📊 Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 1 | Esp: 3 | ✅ VIVO
-
-🔮 EFEITOS DE INÍCIO DO TURNO:
-   ❌ Isenora,
-Santa das Laminas não tem efeito de início do turno
-   ❌ Rei Goblin não tem efeito de início do turno
-
-💥 CALCULANDO DANO FÍSICO:
-   🔴 Rei Goblin atacando Isenora,
-Santa das Laminas
-   Ataque: 2 vs Defesa: 2
-   🛡️ Defesa bloqueou o ataque! (Ataque 2 ≤ Defesa 2)
-
-   🔵 Isenora,
-Santa das Laminas atacando Rei Goblin
-   Ataque: 7 vs Defesa: 1
-   💔 DANO CAUSADO: 6 (Vida: 3 → -3)
-
-🌙 EFEITOS DE FINAL DO TURNO:
-
-   🎒 Itens equipados de Isenora,
-Santa das Laminas:
-   ▶️ Isenora,
-Santa das Laminas ativando efeito de final do turno...
-   📊 Após efeito:
-📊 Isenora,
-Santa das Laminas | Vida: 14/14 | Atk: 7 | Def: 2 | Esp: 5 | ✅ VIVO
-
-   🎒 Itens equipados de Rei Goblin:
-
-🃏 COMPRANDO CARTAS:
-   Jogador 1 comprou 2 carta(s). Mão agora tem 5 cartas.
-   Jogador 2 já está com a mão cheia (5 cartas)
-
-💀 VERIFICAÇÃO DE MORTE:
-   ✅ Isenora,
-Santa das Laminas continua vivo (Vida: 14)
-   ☠️ Rei Goblin MORREU! (Vida: -8)
-
-💤 Heróis do turno desativados: Isenora,
-Santa das Laminas e Rei Goblin
-
-🏁 FIM DO TURNO DE COMBATE
+RESOLVENDO CARTAS DA MAO
 ==================================================
 
+==================================================
+FASE DE COMBATE
+==================================================
+Status inicial dos combatentes:
+Status Moyra,
+Aprendiz da Santa | Vida: 11/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
+Status Esquadrão
+Goblin | Vida: 7/12 | Atk: 4 | Def: 5 | Esp: 5 | VIVO
+
+EFEITOS DE INICIO DO TURNO:
+Status Moyra,
+Aprendiz da Santa | Vida: 11/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
+
+CALCULANDO DANO FISICO:
+
+EFEITOS DE FINAL DO TURNO:
+
+==================================================
+RESOLVENDO CARTAS DA MAO
+==================================================
+
+==================================================
+FASE DE COMBATE
+==================================================
+Status inicial dos combatentes:
+Status Isenora,
+Santa das Laminas | Vida: 10/13 | Atk: 7 | Def: 2 | Esp: 5 | VIVO
+Status Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 2 | Esp: 4 | VIVO
+
+EFEITOS DE INICIO DO TURNO:
+
+CALCULANDO DANO FISICO:
+
+EFEITOS DE FINAL DO TURNO:
+
+==================================================
+RESOLVENDO CARTAS DA MAO
+==================================================
+
+==================================================
+FASE DE COMBATE
+==================================================
+Status inicial dos combatentes:
+Status Naelis, Grande Artesã de Cristais | Vida: 12/12 | Atk: 6 | Def: 1 | Esp: 2 | VIVO
+Status Traidor Goblin | Vida: 12/12 | Atk: 10 | Def: 5 | Esp: 1 | VIVO
+
+EFEITOS DE INICIO DO TURNO:
+
+CALCULANDO DANO FISICO:
+
+EFEITOS DE FINAL DO TURNO:
+
+==================================================
+RESOLVENDO CARTAS DA MAO
+==================================================
+
+==================================================
+FASE DE COMBATE
+==================================================
+Status inicial dos combatentes:
+Status Isenora,
+Santa das Laminas | Vida: 10/13 | Atk: 7 | Def: 2 | Esp: 5 | VIVO
+Status Esquadrão
+Goblin | Vida: -2/12 | Atk: 6 | Def: 7 | Esp: 5 | VIVO
+
+EFEITOS DE INICIO DO TURNO:
+
+CALCULANDO DANO FISICO:
+
+EFEITOS DE FINAL DO TURNO:
+
+==================================================
+RESOLVENDO CARTAS DA MAO
+==================================================
+
+==================================================
+FASE DE COMBATE
+==================================================
+Status inicial dos combatentes:
+Status Moyra,
+Aprendiz da Santa | Vida: 13/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
+Status Traidor Goblin | Vida: -9/12 | Atk: 10 | Def: 6 | Esp: 2 | VIVO
+
+EFEITOS DE INICIO DO TURNO:
+Status Moyra,
+Aprendiz da Santa | Vida: 13/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
+
+CALCULANDO DANO FISICO:
+
+EFEITOS DE FINAL DO TURNO:

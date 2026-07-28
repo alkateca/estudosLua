@@ -53,23 +53,22 @@ local herois = {}
         tipo = 1,
         raca = "Goblin",
         nome = "Esquadrão\nGoblin",
-        espirito = 0,
+        espirito = 2,
         ataque = 4,
-        defesa = 0,
+        defesa = 2,
         vidaMaxima = 12,
         vidaAtual = 12,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Ao jogar\nMagia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do turno: Cura 1\n",
+        descricao = "Ao jogar\nMagia: Espirito +2\nItem: Ataque +2\nAção: Defesa +2\nFinal do turno: Cura 2\n",
         
-        efeitoAoJogarCarta = function (self, cartaJogada, aliados)
-            if type(aliados) ~= "table" then return end
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
-            local valorBuff = 1
+            local valorBuff = 2
             
-            for i, aliado in ipairs(aliados) do
+            for i, aliado in ipairs(dono.aliados) do
                 if aliado.nome == "Rei Goblin" and aliado.estaVivo then
-                    valorBuff = 2
+                    valorBuff = 3
                     break
                 end
             end
@@ -83,11 +82,10 @@ local herois = {}
             end
         end,
 
-        efeitoFinalDoTurno = function (self, aliados)
-            if type(aliados) ~= "table" then return end
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             local valorBuff = 1
-            for i, aliado in ipairs(aliados) do
+            for i, aliado in ipairs(dono.aliados) do
                 if aliado.nome == "Rei Goblin" and aliado.estaVivo then
                     valorBuff = 2
                     break
@@ -100,7 +98,9 @@ local herois = {}
             if self.vidaAtual > self.vidaMaxima then
                 self.vidaAtual = self.vidaMaxima
             end
-
+            if partida.emitirVFX then
+                partida.emitirVFX("cura", self == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+            end
             
 
         end,
@@ -138,16 +138,16 @@ local herois = {}
         itemEquipado = {},
         descricao = "Início da Partida:\nAtaque +1 e Defesa +1 para cada aliado Goblin",
         efeitoAtivo = false,
-        efeitoInicioDaPartida = function (self, aliados)
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
-            if type(aliados) ~= "table" then 
+            if type(aliado) ~= "table" then 
                 return 
             end
 
             local oReiGoblin = false
             local goblins = -1
 
-            for i, aliado in ipairs(aliados) do
+            for i, aliado in ipairs(dono.aliados) do
                 if aliado.raca == "Goblin" then
                     goblins = goblins + 1
                     if aliado.nome == "Rei Goblin" then
@@ -198,19 +198,26 @@ local herois = {}
         modificadorDeDano = 0,
         itemEquipado = {},
         descricao = "Inicio do Combate:\nPara cada aliado morto:\nEspirito +1 e Ataque +1\nRecupera 2 de vida",
-        efeitoInicioDoTurno = function (self, aliados, inimigo, dono, partida)
-            for i, aliado in ipairs(aliados) do
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            for i, aliado in ipairs(dono.aliados) do
                 if aliado.raca == "Zumbi" or aliado.estaVivo == false then
                     self.ataque = self.ataque + 1
                     self.defesa = self.defesa + 1
+                    if partida.emitirVFX then
+                        partida.emitirVFX("buff", self == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+                    end
                     if self.vidaAtual < self.vidaMaxima then
                         self.vidaAtual = self.vidaAtual + 2
+                        if partida.emitirVFX then
+                            partida.emitirVFX("cura", self == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+                        end
                         if self.vidaAtual > self.vidaMaxima then
                             self.vidaAtual = self.vidaMaxima
                         end
                     end
                 end
             end
+
         end,
         estaVivo = true,
         estaAtivo = true       
@@ -241,22 +248,25 @@ local herois = {}
         espirito = 2,
         ataque = 5,
         defesa = 1,
-        vidaMaxima = 14,
-        vidaAtual = 14,
+        vidaMaxima = 13,
+        vidaAtual = 13,
         efeitoAtivo = false,
         itemEquipado = {},
         descricao = "Aura:\n Seus Aliados recebem\nEspirito +1\nAtaque +1\nDefesa +1\nFinal do Turno:\nCause 5 de Dano Mágico",
-        efeitoInicioDaPartida = function (self, aliados) 
-            for i, aliado in ipairs(aliados) do
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) 
+            for i, aliado in ipairs(dono.aliados) do
                 aliado.espirito = aliado.espirito + 1
                 aliado.ataque = aliado.ataque + 1
                 aliado.defesa = aliado.defesa + 1               
             end
         end,
-        efeitoFinalDoTurno = function (self, aliados, inimigo, dono, partida)
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             local dano = 5
             if dano > inimigo.espirito then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
+            end
+            if partida.emitirVFX then
+                partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
             end
         end,
         estaVivo = true,
@@ -270,25 +280,31 @@ local herois = {}
         espirito = 1,
         ataque = 4,
         defesa = 0,
-        vidaMaxima = 15,
-        vidaAtual = 15,
+        vidaMaxima = 13,
+        vidaAtual = 13,
         modificadorDeDano = 0,
         itemEquipado = {},
         descricao = "Inicio do turno:\nCause 3 de dano mágico\nAo jogar: Magia\nAtaque +3 até o final do turno",
         efeitoDoTurno = false,
-        efeitoInicioDoTurno = function (self, aliados, inimigo, dono, partida)
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             local dano = 3
             if dano > inimigo.espirito then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
+                end
             end
         end,
-        efeitoAoJogarCarta = function (self, cartaJogada, aliados)
-            if cartaJogada.tipo == 2 and self.efeitoDoTurno == false then
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if cartaJogada and cartaJogada.tipo == 2 and self.efeitoDoTurno == false then
                 self.ataque = self.ataque + 3
+                    if partida.emitirVFX then
+                        partida.emitirVFX("buff", dono == partida.jogador1 and "inimigo" or "aliado")
+                    end
                 self.efeitoDoTurno = true
             end
         end,
-        efeitoFinalDoTurno = function (self, aliados, inimigo, dono, partida)
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)            
             if self.efeitoDoTurno == true then
                 self.ataque = self.ataque + -3
                 self.efeitoDoTurno = false     
@@ -305,16 +321,17 @@ local herois = {}
         espirito = 1,
         ataque = 4,
         defesa = 0,
-        vidaMaxima = 14,
-        vidaAtual = 14,
+        vidaMaxima = 12,
+        vidaAtual = 12,
         modificadorDeDano = 0,
         itemEquipado = {},
         descricao = "Início da Partida:\nAnexe uma Lamina de Cristal em seus aliados",
         efeitoAtivo = false,
-        efeitoInicioDaPartida = function (self, aliados)
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
             local itemModulo = require("cartas.itens")
             if itemModulo and itemModulo.laminaDeCristal then
-                for i, aliado in ipairs(aliados) do
+                
+                for i, aliado in ipairs(dono.aliados) do
                     if aliado.itemEquipado then
 
                         local copiaItem = {}
@@ -322,6 +339,7 @@ local herois = {}
                             copiaItem[k] = v
                         end
                         table.insert(aliado.itemEquipado, copiaItem)
+                        aliado.ataque = aliado.ataque + 1
                     end
                 end
             end

@@ -17,14 +17,52 @@ local IA = require("logica.ia")
 local faseDoTurno
 
 
+-- Novas variáveis para o sistema de VFX
+local efeitosVisuais = {}
+local animacoesCarregadas = {}
 
-function Partida.atualizarTela()
+-- Adicione junto das suas outras variáveis locais
+local rotinaTurno = nil
+local tempoEspera = 0
 
-    love.graphics.clear()
-    Partida.draw()
-    love.graphics.present()
-    love.timer.sleep(0.5)
+-- A função mágica que pausa apenas a lógica, mas não congela a tela
+local function esperar(segundos)
+    coroutine.yield(segundos)
+end
 
+local function criarQuads(imagem, larguraFrame, alturaFrame)
+    local quads = {}
+    local larguraImg = imagem:getWidth()
+    local alturaImg = imagem:getHeight()
+    
+
+    for y = 0, alturaImg - alturaFrame, alturaFrame do
+        for x = 0, larguraImg - larguraFrame, larguraFrame do
+            table.insert(quads, love.graphics.newQuad(x, y, larguraFrame, alturaFrame, larguraImg, alturaImg))
+        end
+    end
+    
+    return quads
+end
+
+local function criarQuadsGrid(imagem, colunas, linhas)
+    local quads = {}
+    local larguraImg = imagem:getWidth()
+    local alturaImg = imagem:getHeight()
+    
+    local larguraFrame = larguraImg / colunas
+    local alturaFrame = alturaImg / linhas
+    
+    for y = 0, linhas - 1 do
+        for x = 0, colunas - 1 do
+            local pixelX = x * larguraFrame
+            local pixelY = y * alturaFrame
+            
+            table.insert(quads, love.graphics.newQuad(pixelX, pixelY, larguraFrame, alturaFrame, larguraImg, alturaImg))
+        end
+    end
+    
+    return quads
 end
 
 function Partida.load()
@@ -40,6 +78,58 @@ function Partida.load()
     cartaInspecionada = nil
     descarteAberto = nil
     faseDoTurno = "preparacao"
+
+
+    local imgDanoMagico = love.graphics.newImage("assets/images/BlueExplosionA_spritesheet.png")
+    local imgDanoFisico = love.graphics.newImage("assets/images/DustExplosion_spritesheet.png")
+    local imgCurarPersonagem = love.graphics.newImage("assets/images/HealingEffect_spritesheet.png")
+    local imgBuffPersonage = love.graphics.newImage("assets/images/1712.png")
+
+    animacoesCarregadas["buff"] = {
+        imagem = imgBuffPersonage,
+        quads = criarQuads(imgBuffPersonage, 64, 72),
+        duracaoFrame = 0.06,
+        escala = 6
+    }
+
+    animacoesCarregadas["danoMagico"] = {
+        imagem = imgDanoMagico,
+        quads = criarQuads(imgDanoMagico, 65, 63),
+        duracaoFrame = 0.06,
+        escala = 6
+    }
+    
+    animacoesCarregadas["danoFisico"] = {
+        imagem = imgDanoFisico,
+        quads = criarQuads(imgDanoFisico, 65, 63),
+        duracaoFrame = 0.06,
+        escala = 6
+    }
+
+    animacoesCarregadas["cura"] = {
+        imagem = imgCurarPersonagem,
+        quads = criarQuadsGrid(imgCurarPersonagem, 5, 3), 
+        duracaoFrame = 0.06,
+        escala = 4
+    }
+
+end
+
+function Partida.tocarAnimacao(nomeAnimacao, x, y)
+    local anim = animacoesCarregadas[nomeAnimacao]
+    
+    if not anim then 
+        print("Erro: Animação " .. nomeAnimacao .. " não encontrada.")
+        return 
+    end
+
+    table.insert(efeitosVisuais, {
+        animacaoBase = anim,
+        frameAtual = 1,
+        tempoAcumulado = 0,
+        x = x,
+        y = y
+    })
 end
 
 function Partida.update(dt)
@@ -86,7 +176,66 @@ function Partida.update(dt)
         cartaInspecionada = nil
     end
 
+    for i = #efeitosVisuais, 1, -1 do
+        local ef = efeitosVisuais[i]
+        
+        -- Acumula o tempo que passou
+        ef.tempoAcumulado = ef.tempoAcumulado + dt
+        
+        -- Se o tempo acumulado bater a duração do frame, muda de quadro
+        if ef.tempoAcumulado >= ef.animacaoBase.duracaoFrame then
+            ef.tempoAcumulado = ef.tempoAcumulado - ef.animacaoBase.duracaoFrame
+            ef.frameAtual = ef.frameAtual + 1
+            
+            -- Se o frameAtual passou do total de frames, a animação acabou
+            if ef.frameAtual > #ef.animacaoBase.quads then
+                table.remove(efeitosVisuais, i)
+            end
+        end
+    end
+
+    if rotinaTurno and coroutine.status(rotinaTurno) ~= "dead" then
+        tempoEspera = tempoEspera - dt
+        
+        -- Quando o tempo de espera acaba, retomamos a execução das regras
+        if tempoEspera <= 0 then
+            local sucesso, tempo = coroutine.resume(rotinaTurno)
+            
+            if sucesso and tempo then
+                tempoEspera = tempo
+            elseif not sucesso then
+                print("Erro na sequência do turno: ", tempo)
+            end
+        end
+    end
+
 end
+
+function Partida.atualizarTela(tempoDePausa)
+    -- Removemos o love.timer.sleep! 
+    -- Agora apenas pedimos para a corrotina esperar o tempo desejado
+    esperar(tempoDePausa or 0.8)
+end
+
+local function dispararEventoVisual(tipoAnimacao, quemSofreu)
+    local centroX, centroY
+
+    if quemSofreu == "inimigo" then
+        centroX = 1000 + (280 / 2)
+        centroY = 40 + (380 / 2)
+    elseif quemSofreu == "aliado" then
+        centroX = 1000 + (280 / 2)
+        centroY = 480 + (380 / 2)
+    end
+
+    if centroX and centroY then
+        -- 1. Toca a animação
+        Partida.tocarAnimacao(tipoAnimacao, centroX, centroY)
+        -- 2. Pausa a resolução das regras para o jogador ver a animação acontecer
+        esperar(1.0) 
+    end
+end
+
 
 function Partida.desenharInspecaoDeCarta()
 
@@ -94,7 +243,7 @@ function Partida.desenharInspecaoDeCarta()
         local mouseX, mouseY = love.mouse.getPosition()
         
         local larguraTooltip = 280
-        local alturaTooltip = 180
+        local alturaTooltip = 200
         
         local drawX = mouseX - 100
         local drawY = mouseY - 130
@@ -106,10 +255,10 @@ function Partida.desenharInspecaoDeCarta()
         love.graphics.rectangle("line", drawX, drawY, larguraTooltip, alturaTooltip, 10, 10)
 
         love.graphics.setColor(1, 1, 0)
-        love.graphics.printf(cartaInspecionada.nome or "Desconhecido", drawX + 10, drawY + 10, larguraTooltip - 20, "center")
+        love.graphics.printf(cartaInspecionada.nome, drawX + 10, drawY + 10, larguraTooltip - 20, "center")
         
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf(cartaInspecionada.descricao or "Sem efeito.", drawX + 10, drawY + 40, larguraTooltip - 20, "center")
+        love.graphics.printf(cartaInspecionada.descricao or "Sem efeito.", drawX + 10, drawY + 60, larguraTooltip - 20, "center")
     end
 end
 
@@ -364,29 +513,56 @@ function Partida.selecionarCartaMaoAliado(x, y)
 end
 
 function Partida.desenharCartasEscolhidasAliadas()
-    local escolhidas = logicaPartida.jogador1.cartasEscolhidas
+    local cartasParaDesenhar = {}
+    
+    -- Checa se a corrotina está ativa (ou seja, as animações e regras estão rodando agora)
+    local resolvendoBatalha = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
 
-    for i, carta in ipairs(escolhidas) do
+    -- Se não estiver rodando, o jogador está apenas clicando para escolher as cartas
+    if not resolvendoBatalha then
+        for i, carta in ipairs(logicaPartida.jogador1.cartasEscolhidas) do
+            table.insert(cartasParaDesenhar, { carta = carta, resolvida = false })
+        end
+    else
+        -- Se estiver rodando, puxa da fila dinâmica para renderizar os efeitos visuais
+        for i, jogada in ipairs(logicaPartida.filaDeResolucao) do
+            if jogada.dono == logicaPartida.jogador1 then
+                table.insert(cartasParaDesenhar, jogada)
+            end
+        end
+    end
+
+    for i, jogada in ipairs(cartasParaDesenhar) do
         local xPos = 880 - ((i - 1) * 90)
         local yPos = 480
+
         
         love.graphics.setColor(0, 0, 1)
         love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
         
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
+        love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
     end
 end
 
-function Partida.selecionarCartaMaoInimiga(x, y)
-    return
-end
-
 function Partida.desenharCartasEscolhidasInimigas()
+    local cartasParaDesenhar = {}
+    
+    local resolvendoBatalha = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
 
-    local escolhidas = logicaPartida.jogador2.cartasEscolhidas
+    if not resolvendoBatalha then
+        for i, carta in ipairs(logicaPartida.jogador2.cartasEscolhidas) do
+            table.insert(cartasParaDesenhar, { carta = carta, resolvida = false })
+        end
+    else
+        for i, jogada in ipairs(logicaPartida.filaDeResolucao) do
+            if jogada.dono == logicaPartida.jogador2 then
+                table.insert(cartasParaDesenhar, jogada)
+            end
+        end
+    end
 
-    for i, carta in ipairs(escolhidas) do
+    for i, jogada in ipairs(cartasParaDesenhar) do
         local xPos = 880 - ((i - 1) * 90)
         local yPos = 320
         
@@ -394,8 +570,12 @@ function Partida.desenharCartasEscolhidasInimigas()
         love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
         
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
+        love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
     end
+end
+
+function Partida.selecionarCartaMaoInimiga(x, y)
+    return
 end
 
 function Partida.deSelecionarCartaMaoAliada(x, y)
@@ -471,61 +651,77 @@ end
 function Partida.botaoTurno(x, y)
     if x >= 1300 and x <= 1430 and y >= 400 and y <= 500 then
         
+        -- TRAVA DE SEGURANÇA: Se as animações ainda estão acontecendo, o botão é ignorado.
+        if rotinaTurno and coroutine.status(rotinaTurno) ~= "dead" then
+            return
+        end
+
         -- TURNO DO JOGADOR
         if logicaPartida.turnoAtual == 1 then
             if faseDoTurno == "preparacao" then
                 
-                -- Trava: Impede o botão de funcionar se faltar algum herói
                 if carta1 == nil or carta2 == nil then return end
                 
-                -- Os heróis estão confirmados para a batalha!
                 logicaPartida.jogador1.heroiDoturno = carta1
                 logicaPartida.jogador2.heroiDoturno = carta2
                 
-                -- A IA joga as cartas dela em resposta aos heróis confirmados
                 IA.escolherCartas(logicaPartida)                
-                
                 faseDoTurno = "resolucao"
                 
             elseif faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
-                    logicaPartida.resolverCartasDaMao(Partida.atualizarTela)
-                    logicaPartida.calcularDanoFisico()
-                    Partida.checarFinalDeJogo()
+                    
+                    -- Empacota a sequência do Jogador
+                    rotinaTurno = coroutine.create(function()
+                        logicaPartida.resolverCartasDaMao(Partida.atualizarTela, dispararEventoVisual)
+                        esperar(0.5) 
+                        
+                        logicaPartida.calcularDanoFisico(Partida.atualizarTela, dispararEventoVisual)
+                        Partida.checarFinalDeJogo()
+                        
+                        -- Passa o turno para a IA
+                        logicaPartida.turnoAtual = 2 
+                        IA.escolherHerois(logicaPartida)
+                        IA.escolherCartas(logicaPartida)
+                        
+                        faseDoTurno = "resolucao"
+                        carta1 = logicaPartida.jogador1.heroiDoturno
+                        carta2 = logicaPartida.jogador2.heroiDoturno
+                    end)
+
+                    local sucesso, tempo = coroutine.resume(rotinaTurno)
+                    tempoEspera = tempo or 0
                 end    
-                
-                -- Passa o turno para a IA
-                logicaPartida.turnoAtual = 2 
-
-                IA.escolherHerois(logicaPartida)
-                IA.escolherCartas(logicaPartida)
-
-                faseDoTurno = "resolucao" 
-                
-                carta1 = logicaPartida.jogador1.heroiDoturno
-                carta2 = logicaPartida.jogador2.heroiDoturno
             end
             
         -- TURNO DO ADVERSÁRIO (IA)
         elseif logicaPartida.turnoAtual == 2 then
             if faseDoTurno == "preparacao" then
-                -- O jogador terminou de escolher as cartas de defesa e confirmou
                 faseDoTurno = "resolucao"
                 
             elseif faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
-                    logicaPartida.resolverCartasDaMao(Partida.atualizarTela)
-                    logicaPartida.calcularDanoFisico()
-                    Partida.checarFinalDeJogo()
+                    
+                    -- Empacota a sequência da IA
+                    rotinaTurno = coroutine.create(function()
+                        logicaPartida.resolverCartasDaMao(Partida.atualizarTela, dispararEventoVisual)
+                        esperar(0.5) 
+                        
+                        logicaPartida.calcularDanoFisico(Partida.atualizarTela, dispararEventoVisual)
+                        Partida.checarFinalDeJogo()
+                        
+                        -- TUDO ISSO AQUI ENTROU NA CORROTINA:
+                        -- Só devolve o turno e limpa a mesa DEPOIS que a poeira baixar!
+                        logicaPartida.turnoAtual = 1 
+                        faseDoTurno = "preparacao"
+                        
+                        carta1 = nil
+                        carta2 = nil
+                    end)
+
+                    local sucesso, tempo = coroutine.resume(rotinaTurno)
+                    tempoEspera = tempo or 0
                 end
-                
-                -- Devolve o turno para o jogador
-                logicaPartida.turnoAtual = 1 
-                faseDoTurno = "preparacao"
-                
-                -- Esvazia a mesa para o próximo turno do jogador
-                carta1 = nil
-                carta2 = nil
             end
         end
 
@@ -719,7 +915,25 @@ function Partida.draw()
 
     Partida.desenharInspecaoDeCarta()
 
+    love.graphics.setColor(1, 1, 1)
+    
+    for i, ef in ipairs(efeitosVisuais) do
+        local img = ef.animacaoBase.imagem
+        local quad = ef.animacaoBase.quads[ef.frameAtual]
+        
+
+        local _, _, frameW, frameH = quad:getViewport()
+        
+
+        local escala = ef.animacaoBase.escala or 1
+
+        love.graphics.draw(img, quad, ef.x, ef.y, 0, escala, escala, frameW / 2, frameH / 2)
+    end
+
     Partida.anunciarVitoria()
+
+
+
 
     love.graphics.setColor(1, 1, 1)
 end
