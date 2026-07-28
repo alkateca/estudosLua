@@ -9,13 +9,12 @@ FASE DE COMBATE
 ==================================================
 Status inicial dos combatentes:
 Status Moyra,
-Aprendiz da Santa | Vida: 11/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
-Status Esquadrão
-Goblin | Vida: 7/12 | Atk: 4 | Def: 5 | Esp: 5 | VIVO
+Aprendiz da Santa | Vida: 12/13 | Atk: 9 | Def: 1 | Esp: 4 | VIVO
+Status Traidor Goblin | Vida: -1/12 | Atk: 9 | Def: 4 | Esp: 0 | VIVO
 
 EFEITOS DE INICIO DO TURNO:
 Status Moyra,
-Aprendiz da Santa | Vida: 11/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
+Aprendiz da Santa | Vida: 12/13 | Atk: 9 | Def: 1 | Esp: 4 | VIVO
 
 CALCULANDO DANO FISICO:
 
@@ -30,8 +29,8 @@ FASE DE COMBATE
 ==================================================
 Status inicial dos combatentes:
 Status Isenora,
-Santa das Laminas | Vida: 10/13 | Atk: 7 | Def: 2 | Esp: 5 | VIVO
-Status Rei Goblin | Vida: 3/12 | Atk: 2 | Def: 2 | Esp: 4 | VIVO
+Santa das Laminas | Vida: 13/13 | Atk: 7 | Def: 2 | Esp: 4 | VIVO
+Status Rei Goblin | Vida: 4/12 | Atk: 2 | Def: 2 | Esp: 4 | VIVO
 
 EFEITOS DE INICIO DO TURNO:
 
@@ -47,8 +46,9 @@ RESOLVENDO CARTAS DA MAO
 FASE DE COMBATE
 ==================================================
 Status inicial dos combatentes:
-Status Naelis, Grande Artesã de Cristais | Vida: 12/12 | Atk: 6 | Def: 1 | Esp: 2 | VIVO
-Status Traidor Goblin | Vida: 12/12 | Atk: 10 | Def: 5 | Esp: 1 | VIVO
+Status Naelis, Grande Artesã de Cristais | Vida: 8/12 | Atk: 6 | Def: 1 | Esp: 2 | VIVO
+Status Esquadrão
+Goblin | Vida: 8/12 | Atk: 7 | Def: 3 | Esp: 5 | VIVO
 
 EFEITOS DE INICIO DO TURNO:
 
@@ -65,9 +65,9 @@ FASE DE COMBATE
 ==================================================
 Status inicial dos combatentes:
 Status Isenora,
-Santa das Laminas | Vida: 10/13 | Atk: 7 | Def: 2 | Esp: 5 | VIVO
+Santa das Laminas | Vida: 13/13 | Atk: 8 | Def: 3 | Esp: 5 | VIVO
 Status Esquadrão
-Goblin | Vida: -2/12 | Atk: 6 | Def: 7 | Esp: 5 | VIVO
+Goblin | Vida: 11/12 | Atk: 11 | Def: 4 | Esp: 6 | VIVO
 
 EFEITOS DE INICIO DO TURNO:
 
@@ -84,13 +84,18 @@ FASE DE COMBATE
 ==================================================
 Status inicial dos combatentes:
 Status Moyra,
-Aprendiz da Santa | Vida: 13/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
-Status Traidor Goblin | Vida: -9/12 | Atk: 10 | Def: 6 | Esp: 2 | VIVO
+Aprendiz da Santa | Vida: -2/13 | Atk: 9 | Def: 1 | Esp: 4 | VIVO
+Status Esquadrão
+Goblin | Vida: 10/12 | Atk: 11 | Def: 6 | Esp: 8 | VIVO
 
 EFEITOS DE INICIO DO TURNO:
 Status Moyra,
-Aprendiz da Santa | Vida: 13/13 | Atk: 10 | Def: 2 | Esp: 4 | VIVO
+Aprendiz da Santa | Vida: -2/13 | Atk: 9 | Def: 1 | Esp: 4 | VIVO
 
 CALCULANDO DANO FISICO:
 
 EFEITOS DE FINAL DO TURNO:
+
+==================================================
+RESOLVENDO CARTAS DA MAO
+==================================================
