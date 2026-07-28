@@ -16,16 +16,19 @@ local fonteIoskeley
 local IA = require("logica.ia")
 local faseDoTurno
 
-
--- Novas variáveis para o sistema de VFX
 local efeitosVisuais = {}
 local animacoesCarregadas = {}
 
--- Adicione junto das suas outras variáveis locais
 local rotinaTurno = nil
 local tempoEspera = 0
 
--- A função mágica que pausa apenas a lógica, mas não congela a tela
+logicaPartida.estadoAlvo = {
+    ativo = false,
+    tipo = "",
+    dono = nil,
+    callback = nil
+}
+
 local function esperar(segundos)
     coroutine.yield(segundos)
 end
@@ -133,6 +136,10 @@ function Partida.tocarAnimacao(nomeAnimacao, x, y)
 end
 
 function Partida.update(dt)
+
+    if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
+        return
+    end
 
     local mouseX, mouseY = love.mouse.getPosition()
     local alvoAtual = nil
@@ -264,6 +271,65 @@ end
 
 function Partida.mousereleased(x, y, button)
     if button == 1 then
+        if logicaPartida.estadoAlvo.ativo then        
+                if logicaPartida.estadoAlvo.tipo == "mao" then
+                    for i, carta in ipairs(logicaPartida.jogador1.mao) do
+                        local xPos = 540 + ((i - 1) * 90)
+                        local yPos = 760
+                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            logicaPartida.estadoAlvo.callback(carta, i)
+                                if coroutine.status(rotinaTurno) == "suspended" then
+                                    coroutine.resume(rotinaTurno)
+                                end
+                            return 
+                        end
+                    end
+                end
+                if logicaPartida.estadoAlvo.tipo == "descarte" then
+                    for i, carta in ipairs(logicaPartida.jogador1.descarte) do
+                        local xPos = 540 + ((i - 1) * 90)
+                        local yPos = 760
+                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            logicaPartida.estadoAlvo.callback(carta, i)
+                                if coroutine.status(rotinaTurno) == "suspended" then
+                                    coroutine.resume(rotinaTurno)
+                                end
+                            return 
+                        end
+                    end
+                end
+                if logicaPartida.estadoAlvo.tipo == "aliado" then
+                    for i, carta in ipairs(logicaPartida.jogador1.aliados) do
+                        local xPos = 20 + ((i - 1) * 150)
+                        local yPos = 580
+                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            logicaPartida.estadoAlvo.callback(carta, i)
+                                if coroutine.status(rotinaTurno) == "suspended" then
+                                    coroutine.resume(rotinaTurno)
+                                end
+                            return 
+                        end
+                    end
+                end
+                if logicaPartida.estadoAlvo.tipo == "inimigo" then
+                    for i, carta in ipairs(logicaPartida.jogador2.aliados) do
+                        local xPos = 20 + ((i - 1) * 150)
+                        local yPos = 130
+                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            logicaPartida.estadoAlvo.callback(carta, i)
+                                if coroutine.status(rotinaTurno) == "suspended" then
+                                    coroutine.resume(rotinaTurno)
+                                end
+                            return 
+                        end
+                    end
+                end
+            return
+        end
 
         if Partida.checarCliqueDescarte(x, y) then
             return
@@ -914,6 +980,67 @@ function Partida.draw()
     Partida.abrirDescarteInimigo()
 
     Partida.desenharInspecaoDeCarta()
+
+if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
+        
+        -- 1. Escurece a tela inteira (Fundo preto com 80% de transparência)
+        love.graphics.setColor(0, 0, 0, 0.8)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+        
+        -- 2. Desenha a mensagem de instrução centralizada
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.printf(logicaPartida.estadoAlvo.mensagem, 0, 300, love.graphics.getWidth(), "center")
+        
+        -- 3. Renderiza apenas o alvo que o jogador precisa escolher
+        if logicaPartida.estadoAlvo.tipo == "mao" then
+            for i, carta in ipairs(logicaPartida.jogador1.mao) do
+                local xPos = 540 + ((i - 1) * 90)
+                local yPos = 760
+                
+                love.graphics.setColor(0.2, 0.8, 0.2) -- Cor verde para destacar
+                love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
+            end
+            
+        elseif logicaPartida.estadoAlvo.tipo == "descarte" then
+            for i, carta in ipairs(logicaPartida.jogador1.descarte) do
+                local xPos = 540 + ((i - 1) * 90)
+                local yPos = 760
+                
+                love.graphics.setColor(0.5, 0.5, 0.5) -- Cinza para o descarte
+                love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
+            end
+            
+        elseif logicaPartida.estadoAlvo.tipo == "aliado" then
+            for i, heroiAlvo in ipairs(logicaPartida.jogador1.aliados) do
+                if heroiAlvo.estaVivo then
+                    local xPos = 20 + ((i - 1) * 150)
+                    local yPos = 580
+                    
+                    love.graphics.setColor(0, 0.5, 1) -- Azul para aliados
+                    love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 80, "center")
+                end
+            end
+            
+        elseif logicaPartida.estadoAlvo.tipo == "inimigo" then
+            for i, heroiAlvo in ipairs(logicaPartida.jogador2.aliados) do
+                if heroiAlvo.estaVivo then
+                    local xPos = 20 + ((i - 1) * 150)
+                    local yPos = 130
+                    
+                    love.graphics.setColor(1, 0, 0) -- Vermelho para inimigos
+                    love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 80, "center")
+                end
+            end
+        end
+    end
 
     love.graphics.setColor(1, 1, 1)
     

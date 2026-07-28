@@ -13,6 +13,7 @@ logicaPartida.jogador2 = {
         item.dragaoCristal, item.dragaoCristal,
         magia.bolaDeFogo, magia.bolaDeFogo, magia.bolaDeFogo,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
+        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina
     },
     nome = "",
     mao = {},
@@ -28,8 +29,9 @@ logicaPartida.jogador1 = {
     baralho = { 
         item.brocheCristal, item.brocheCristal, item.quimera,
         item.dragaoCristal, item.dragaoCristal,
-        magia.estatica, magia.estatica, magia.estatica,
+        acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         magia.paraRaios, magia.paraRaios, magia.paraRaios,
+        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina
     },
     nome = "",
     mao = {},
