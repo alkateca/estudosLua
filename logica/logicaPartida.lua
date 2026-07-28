@@ -45,34 +45,6 @@ logicaPartida.jogador1 = {
 
 math.randomseed(os.time())
 
-local printOriginal = print
-local arquivoLog = io.open("log_partida.txt", "w")
-
-print = function(...)
-    local args = {...}
-    local msg = ""
-    for i, v in ipairs(args) do
-        if i > 1 then msg = msg .. "\t" end
-        msg = msg .. tostring(v)
-    end
-    printOriginal(msg)
-    if arquivoLog then
-        arquivoLog:write(msg .. "\n")
-        arquivoLog:flush()
-    end
-end
-
-local function printHeader(titulo)
-    print("\n" .. string.rep("=", 50))
-    print(titulo)
-    print(string.rep("=", 50))
-end
-
-local function printStatus(heroi)
-    local status = heroi.estaVivo and "VIVO" or "MORTO"
-    print(string.format("Status %s | Vida: %d/%d | Atk: %d | Def: %d | Esp: %d | %s", 
-        heroi.nome, heroi.vidaAtual, heroi.vidaMaxima, heroi.ataque, heroi.defesa, heroi.espirito, status))
-end
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
     for i = 1, numeroDeCartas do
@@ -180,27 +152,19 @@ end
 
 function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     logicaPartida.emitirVFX = callbackVisual 
-    printHeader("FASE DE COMBATE")
-    
     local heroi = logicaPartida.jogador1.heroiDoturno
     local inimigo = logicaPartida.jogador2.heroiDoturno
     
-    print("Status inicial dos combatentes:")
-    printStatus(heroi)
-    printStatus(inimigo)
 
-    print("\nEFEITOS DE INICIO DO TURNO:")
+
     if type(heroi.efeitoInicioDoTurno) == "function" then
         heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
-        printStatus(heroi)
     end
 
     if type(inimigo.efeitoInicioDoTurno) == "function" then
         inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
-        printStatus(inimigo)
     end
     
-    print("\nCALCULANDO DANO FISICO:")
     
     if inimigo.ataque > heroi.defesa then
         local dano = inimigo.ataque - heroi.defesa
@@ -216,7 +180,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    print("\nEFEITOS DE FINAL DO TURNO:")
     if type(inimigo.efeitoFinalDoTurno) == "function" then
         inimigo.efeitoFinalDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
         if callbackAtualizacao then callbackAtualizacao() end
@@ -262,7 +225,6 @@ end
 
 function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)    
     logicaPartida.emitirVFX = callbackVisual
-    printHeader("RESOLVENDO CARTAS DA MAO")
     
     local escolhidasJ1 = logicaPartida.jogador1.cartasEscolhidas
     local escolhidasJ2 = logicaPartida.jogador2.cartasEscolhidas
@@ -297,16 +259,17 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
         if type(cartaDaVez.efeito) == "function" then
             cartaDaVez.efeito(cartaDaVez, heroi, inimigo, dono, logicaPartida)
             
+            -- EQUIPA OS ITENS NA HORA (Eles precisam aplicar os buffs imediatamente)
             if cartaDaVez.tipo == 3 then
                 if not heroi.itemEquipado then heroi.itemEquipado = {} end
                 table.insert(heroi.itemEquipado, cartaDaVez)
-            else                
-                table.insert(dono.descarte, cartaDaVez)
             end
+            
+            -- ATENÇÃO: As cartas tipo 2 (Magia) e 4 (Ação) NÃO vão mais para o descarte aqui!
+            -- Elas ficam aguardando na fila.
         end
 
         if type(heroi.efeitoAoJogarCarta) == "function" then
-            -- Passamos a cartaDaVez como o sexto parâmetro!
             heroi.efeitoAoJogarCarta(heroi, heroi, inimigo, dono, logicaPartida, cartaDaVez)
         end
 
@@ -316,8 +279,24 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
+    -- =========================================================
+    -- NOVA LÓGICA: FAXINA DO DESCARTE (FIM DA RESOLUÇÃO)
+    -- =========================================================
+    for _, jogada in ipairs(logicaPartida.filaDeResolucao) do
+        local carta = jogada.carta
+        local dono = jogada.dono
+        
+        -- Apenas Magias (2) e Ações (4) vão para o descarte. Itens (3) já estão equipados no herói.
+        if carta.tipo ~= 3 then
+            table.insert(dono.descarte, carta)
+        end
+    end
+
+    -- Limpa a fila para não atrapalhar o próximo turno
+    logicaPartida.filaDeResolucao = {}
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
+
 end
 
 logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
