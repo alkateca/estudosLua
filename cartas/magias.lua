@@ -66,7 +66,7 @@ magias.paraRaios = {
         self.efeitoAtivo = true
     end,
     efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            aliado.espirito = aliado.espirito - 1
+        aliado.espirito = aliado.espirito - 1
     end
 }
 
@@ -121,6 +121,27 @@ magias.massacreCristalino = {
         if partida.emitirVFX then
             partida.emitirVFX("danoMagico", inimigo == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
         end
+    end
+}
+
+magias.pontoFinal = {
+    nome = "Ponto Final",
+    tipo = 2,
+    dano = 0,
+    efeitoDoTurno = false,
+    descricao = "Seu personagem recebe Ataque + X,\nonde X é seu Espirito vezes 2",
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        if dono.heroiDoturno.espirito <= 0 then
+            return
+        end
+        self.dano =  dono.heroiDoturno.espirito * 2
+        dono.heroiDoturno.ataque =  dono.heroiDoturno.ataque + self.dano
+        self.efeitoDoTurno = true
+    end,
+    efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        self.efeitoDoTurno = false
+        dono.heroiDoturno.ataque = dono.heroiDoturno.ataque - self.dano
+        self.dano = 0
     end
 }
 

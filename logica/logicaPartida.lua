@@ -15,7 +15,7 @@ logicaPartida.jogador2 = {
         magia.paraRaios, magia.paraRaios, magia.paraRaios,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
-        item.quimera, item.quimera
+        item.quimera, magia.pontoFinal
     },
     nome = "",
     mao = {},
@@ -29,7 +29,7 @@ logicaPartida.jogador2 = {
 
 logicaPartida.jogador1 = {
     baralho = { 
-        item.brocheCristal, item.brocheCristal, item.brocheCristal,
+        item.brocheCristal, item.brocheCristal, magia.pontoFinal,
         item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         magia.estatica, magia.estatica, magia.estatica,
@@ -186,8 +186,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     local heroi = logicaPartida.jogador1.heroiDoturno
     local inimigo = logicaPartida.jogador2.heroiDoturno
     
-
-
     if type(heroi.efeitoInicioDoTurno) == "function" then
         heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
     end
@@ -196,7 +194,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
     end
     
-    
+    -- Combate Físico
     if inimigo.ataque > heroi.defesa then
         local dano = inimigo.ataque - heroi.defesa
         heroi.vidaAtual = heroi.vidaAtual - dano
@@ -211,34 +209,77 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    if type(inimigo.efeitoFinalDoTurno) == "function" then
-        inimigo.efeitoFinalDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
-        if callbackAtualizacao then callbackAtualizacao() end
-    end
+    -- ==========================================
+    -- RESOLUÇÃO DOS EFEITOS DE FIM DE TURNO
+    -- ==========================================
 
-    if heroi.itemEquipado then
-        for _, itm in ipairs(heroi.itemEquipado) do
-            if type(itm.efeitoFinalDeTurno) == "function" then
-                itm.efeitoFinalDeTurno(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
-                if callbackAtualizacao then callbackAtualizacao() end
-            end
-        end
-    end
-
+    -- 1. Efeitos de Fim de Turno dos Heróis
     if type(heroi.efeitoFinalDoTurno) == "function" then
         heroi.efeitoFinalDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    if inimigo.itemEquipado then
-        for _, itm in ipairs(inimigo.itemEquipado) do
-            if type(itm.efeitoFinalDeTurno) == "function" then
-                itm.efeitoFinalDeTurno(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+    if type(inimigo.efeitoFinalDoTurno) == "function" then
+        inimigo.efeitoFinalDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+        if callbackAtualizacao then callbackAtualizacao() end
+    end
+
+    -- 2. Efeitos dos Itens Equipados
+    if heroi.itemEquipado then
+        for _, itm in ipairs(heroi.itemEquipado) do
+            local funcFinal = itm.efeitoFinalDeTurno or itm.efeitoFinalDoTurno
+            if type(funcFinal) == "function" then
+                funcFinal(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
+                if callbackAtualizacao then callbackAtualizacao() end
             end
         end
     end
+
+    if inimigo.itemEquipado then
+        for _, itm in ipairs(inimigo.itemEquipado) do
+            local funcFinal = itm.efeitoFinalDeTurno or itm.efeitoFinalDoTurno
+            if type(funcFinal) == "function" then
+                funcFinal(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+        end
+    end
+
+    -- 3. Efeitos das Magias e Ações (magiasAtivas)
+    if heroi.magiasAtivas then
+        -- Percorre de trás para frente porque estamos usando table.remove
+        for i = #heroi.magiasAtivas, 1, -1 do
+            local magia = heroi.magiasAtivas[i]
+            local funcFinal = magia.efeitoFinalDeTurno or magia.efeitoFinalDoTurno
+            if type(funcFinal) == "function" then
+                funcFinal(magia, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+            
+            -- O efeito terminou, então envia a carta para o descarte e tira do herói
+            table.insert(logicaPartida.jogador1.descarte, magia)
+            table.remove(heroi.magiasAtivas, i)
+        end
+    end
+
+    if inimigo.magiasAtivas then
+        for i = #inimigo.magiasAtivas, 1, -1 do
+            local magia = inimigo.magiasAtivas[i]
+            local funcFinal = magia.efeitoFinalDeTurno or magia.efeitoFinalDoTurno
+            if type(funcFinal) == "function" then
+                funcFinal(magia, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+            
+            -- O efeito terminou, então envia a carta para o descarte e tira do herói
+            table.insert(logicaPartida.jogador2.descarte, magia)
+            table.remove(inimigo.magiasAtivas, i)
+        end
+    end
     
-    -- Compra de Cartas e Checagem de Morte mantidos idênticos...
+    -- ==========================================
+
+    -- Compra de Cartas
     if #logicaPartida.jogador1.mao < 5 then
         logicaPartida.comprarCartas(logicaPartida.jogador1, 5 - #logicaPartida.jogador1.mao)
     end
@@ -246,6 +287,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         logicaPartida.comprarCartas(logicaPartida.jogador2, 5 - #logicaPartida.jogador2.mao)
     end
 
+    -- Checagem de Vida
     if heroi.vidaAtual <= 0 then heroi.estaVivo = false end
     if inimigo.vidaAtual <= 0 then inimigo.estaVivo = false end
 
@@ -290,14 +332,17 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
         if type(cartaDaVez.efeito) == "function" then
             cartaDaVez.efeito(cartaDaVez, heroi, inimigo, dono, logicaPartida)
             
-            -- EQUIPA OS ITENS NA HORA (Eles precisam aplicar os buffs imediatamente)
             if cartaDaVez.tipo == 3 then
+                -- Equipa os Itens na hora
                 if not heroi.itemEquipado then heroi.itemEquipado = {} end
                 table.insert(heroi.itemEquipado, cartaDaVez)
+            else
+                -- NOVO: Se a carta (Ação/Magia) tiver efeito final, entra em magiasAtivas
+                if type(cartaDaVez.efeitoFinalDeTurno) == "function" or type(cartaDaVez.efeitoFinalDoTurno) == "function" then
+                    if not heroi.magiasAtivas then heroi.magiasAtivas = {} end
+                    table.insert(heroi.magiasAtivas, cartaDaVez)
+                end
             end
-            
-            -- ATENÇÃO: As cartas tipo 2 (Magia) e 4 (Ação) NÃO vão mais para o descarte aqui!
-            -- Elas ficam aguardando na fila.
         end
 
         if type(heroi.efeitoAoJogarCarta) == "function" then
@@ -310,24 +355,23 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    -- =========================================================
-    -- NOVA LÓGICA: FAXINA DO DESCARTE (FIM DA RESOLUÇÃO)
-    -- =========================================================
+    -- Limpeza e Descarte
     for _, jogada in ipairs(logicaPartida.filaDeResolucao) do
         local carta = jogada.carta
         local dono = jogada.dono
         
-        -- Apenas Magias (2) e Ações (4) vão para o descarte. Itens (3) já estão equipados no herói.
         if carta.tipo ~= 3 then
-            table.insert(dono.descarte, carta)
+            -- NOVO: Só vai pro descarte agora se NÃO tiver efeito de final de turno. 
+            -- (Se tiver, ela está presa em magiasAtivas e será descartada depois)
+            if type(carta.efeitoFinalDeTurno) ~= "function" and type(carta.efeitoFinalDoTurno) ~= "function" then
+                table.insert(dono.descarte, carta)
+            end
         end
     end
 
-    -- Limpa a fila para não atrapalhar o próximo turno
     logicaPartida.filaDeResolucao = {}
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
-
 end
 
 logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)

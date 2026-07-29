@@ -344,6 +344,7 @@ local herois = {}
                 end
             end
         end,
+
         estaVivo = true,
         estaAtivo = true
     }

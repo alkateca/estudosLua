@@ -11,6 +11,7 @@ local tempoHover
 local tempoNecessario
 local cartaInspecionada
 local descarteAberto
+local inventarioAberto = nil -- NOVO: Variável para controlar qual herói está com o inventário aberto
 local vencedor
 local fonteIoskeley
 local IA = require("logica.ia")
@@ -80,6 +81,7 @@ function Partida.load()
     tempoNecessario = 0.8
     cartaInspecionada = nil
     descarteAberto = nil
+    inventarioAberto = nil -- NOVO: Resetando inventário ao recarregar a partida
     faseDoTurno = "preparacao"
 
 
@@ -144,30 +146,43 @@ function Partida.update(dt)
     local mouseX, mouseY = love.mouse.getPosition()
     local alvoAtual = nil
 
-    for i, carta in ipairs(logicaPartida.jogador1.mao) do
-        local xPos = 540 + ((i - 1) * 90)
-        local yPos = 760
-        if mouseX >= xPos and mouseX <= (xPos + 80) and mouseY >= yPos and mouseY <= (yPos + 100) then
-            alvoAtual = carta
-            break
+    -- NOVO: Se o inventário estiver aberto, o hover foca apenas nos itens dele.
+    if inventarioAberto then
+        for i, item in ipairs(inventarioAberto.itemEquipado) do
+            local xPos = 460 + ((i - 1) * 90)
+            local yPos = 320
+            if mouseX >= xPos and mouseX <= (xPos + 80) and mouseY >= yPos and mouseY <= (yPos + 100) then
+                alvoAtual = item
+                break
+            end
         end
-    end
-
-    for i, carta in ipairs(logicaPartida.jogador1.aliados) do
-        local xPos = 20 + ((i - 1) * 150)
-        local yPos = 580
-        if mouseX >= xPos and mouseX <= (xPos + 140) and mouseY >= yPos and mouseY <= (yPos + 190) then
-            alvoAtual = carta
-            break
+    else
+        -- Mantem a lógica de hover padrão para mão, campo aliado e campo inimigo
+        for i, carta in ipairs(logicaPartida.jogador1.mao) do
+            local xPos = 540 + ((i - 1) * 90)
+            local yPos = 760
+            if mouseX >= xPos and mouseX <= (xPos + 80) and mouseY >= yPos and mouseY <= (yPos + 100) then
+                alvoAtual = carta
+                break
+            end
         end
-    end
 
-    for i, carta in ipairs(logicaPartida.jogador2.aliados) do
-        local xPos = 20 + ((i - 1) * 150)
-        local yPos = 130
-        if mouseX >= xPos and mouseX <= (xPos + 140) and mouseY >= yPos and mouseY <= (yPos + 190) then
-            alvoAtual = carta
-            break
+        for i, carta in ipairs(logicaPartida.jogador1.aliados) do
+            local xPos = 20 + ((i - 1) * 150)
+            local yPos = 580
+            if mouseX >= xPos and mouseX <= (xPos + 140) and mouseY >= yPos and mouseY <= (yPos + 190) then
+                alvoAtual = carta
+                break
+            end
+        end
+
+        for i, carta in ipairs(logicaPartida.jogador2.aliados) do
+            local xPos = 20 + ((i - 1) * 150)
+            local yPos = 130
+            if mouseX >= xPos and mouseX <= (xPos + 140) and mouseY >= yPos and mouseY <= (yPos + 190) then
+                alvoAtual = carta
+                break
+            end
         end
     end
 
@@ -219,8 +234,6 @@ function Partida.update(dt)
 end
 
 function Partida.atualizarTela(tempoDePausa)
-    -- Removemos o love.timer.sleep! 
-    -- Agora apenas pedimos para a corrotina esperar o tempo desejado
     esperar(tempoDePausa or 0.8)
 end
 
@@ -242,7 +255,6 @@ local function dispararEventoVisual(tipoAnimacao, quemSofreu)
         esperar(1.0) 
     end
 end
-
 
 function Partida.desenharInspecaoDeCarta()
 
@@ -331,7 +343,18 @@ function Partida.mousereleased(x, y, button)
             return
         end
 
+        -- NOVO: Se o inventário está aberto, qualquer clique fecha ele e encerra o evento (ação modal)
+        if inventarioAberto then
+            inventarioAberto = nil
+            return
+        end
+
         if Partida.checarCliqueDescarte(x, y) then
+            return
+        end
+
+        -- NOVO: Verifica se o jogador clicou numa mochila no campo ativo
+        if Partida.checarCliqueMochila(x, y) then
             return
         end
 
@@ -341,6 +364,32 @@ function Partida.mousereleased(x, y, button)
         Partida.deSelecionarCartaMaoAliada(x, y)
         Partida.botaoTurno(x,y)
     end
+end
+
+function Partida.checarCliqueMochila(x, y)
+    for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        if #aliado.itemEquipado > 0 then
+            local xPos = 40 + ((i - 1) * 150)
+            local yPos = 730
+            if x >= xPos and x <= xPos + 40 and y >= yPos + 5 and y <= yPos + 55 then
+                inventarioAberto = aliado
+                return true
+            end
+        end
+    end
+
+    for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        if #inimigo.itemEquipado > 0 then
+            local xPos = 40 + ((i - 1) * 150)
+            local yPos = 280
+            if x >= xPos and x <= xPos + 40 and y >= yPos + 5 and y <= yPos + 55 then
+                inventarioAberto = inimigo
+                return true
+            end
+        end
+    end
+
+    return false
 end
 
 function Partida.desenharHeroiAliado(carta1)
@@ -362,6 +411,18 @@ function Partida.desenharHeroiAliado(carta1)
     love.graphics.printf(carta1.vidaAtual, 1000, 840, 270, "right")
     love.graphics.printf(carta1.descricao, 1040, 720, 200, "center")
     love.graphics.setFont(fonteEmoji)
+        
+        if #carta1.itemEquipado > 0 then
+            for i, item in ipairs(carta1.itemEquipado) do
+                local xPos = 1230 + ((i - 1) * 20)
+                love.graphics.setColor(0,0,0.8)
+                love.graphics.rectangle("fill", xPos, 600, 80, 100, 8, 8)
+                love.graphics.setColor(1,1,1)
+                love.graphics.setFont(fonteIoskeley)
+                love.graphics.printf(item.nome, xPos, 610, 80, "center")
+            end
+        end
+
         if carta1.estaVivo == false then
             love.graphics.print("💀", 1125, 660)
         end
@@ -386,6 +447,18 @@ function Partida.desenharHeroiInimigo(carta2)
     love.graphics.printf(carta2.vidaAtual, 1000, 400, 270, "right")
     love.graphics.printf(carta2.descricao, 1040, 280, 200, "center")
     love.graphics.setFont(fonteEmoji)
+        
+        if #carta2.itemEquipado > 0 then
+            for i, item in ipairs(carta2.itemEquipado) do
+                local xPos = 1230 + ((i - 1) * 20)
+                love.graphics.setColor(0.7,0,0)
+                love.graphics.rectangle("fill", xPos, 160, 80, 100, 8, 8)
+                love.graphics.setColor(1,1,1)
+                love.graphics.setFont(fonteIoskeley)
+                love.graphics.printf(item.nome, xPos, 170, 80, "center")
+            end
+        end
+    
         if carta2.estaVivo == false then
             love.graphics.print("💀", 1125, 220)
         end
@@ -419,6 +492,16 @@ function Partida.desenharAliados()
                     love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
                     love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
                     love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
+                        if #aliado.itemEquipado > 0 then
+                            local xPos = 40 + ((i - 1) * 150)
+                            local yPos = 730
+                            love.graphics.setColor(0,0,0.7)
+                            love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                            love.graphics.setColor(1,1,1)
+                            love.graphics.setFont(fonteEmoji, 14)
+                            love.graphics.print("🎒", xPos, yPos + 10)
+                            love.graphics.setColor(1,1,1)
+                        end
                     love.graphics.setFont(fonteEmoji)
                     love.graphics.print("💤", xPos + 55, yPos + 80)
                     love.graphics.setFont(fonteIoskeley)
@@ -435,7 +518,18 @@ function Partida.desenharAliados()
                     love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
                     love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
                     love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
-                end
+                        if #aliado.itemEquipado > 0 then
+                                local xPos = 40 + ((i - 1) * 150)
+                                local yPos = 730
+                                love.graphics.setColor(0,0,0.7)
+                                love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                                love.graphics.setColor(1,1,1)
+                                love.graphics.setFont(fonteEmoji, 14)
+                                love.graphics.print("🎒", xPos, yPos + 10)
+                                love.graphics.setColor(1,1,1)
+                                love.graphics.setFont(fonteIoskeley)
+                        end
+                    end
 
 
 
@@ -482,6 +576,16 @@ function Partida.desenharInimigos()
                     love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
                     love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
                     love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                        if #inimigo.itemEquipado > 0 then
+                            local xPos = 40 + ((i - 1) * 150)
+                            local yPos = 280
+                            love.graphics.setColor(0.7,0,0)
+                            love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                            love.graphics.setColor(1,1,1)
+                            love.graphics.setFont(fonteEmoji, 14)
+                            love.graphics.print("🎒", xPos, yPos + 10)
+                            love.graphics.setColor(1,1,1)
+                        end
                     love.graphics.setFont(fonteEmoji)
                     love.graphics.print("💤", xPos + 55, yPos + 80)
                     love.graphics.setFont(fonteIoskeley)
@@ -497,6 +601,17 @@ function Partida.desenharInimigos()
                     love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
                     love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
                     love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                        if #inimigo.itemEquipado > 0 then
+                                local xPos = 40 + ((i - 1) * 150)
+                                local yPos = 280
+                                love.graphics.setColor(0.7,0,0)
+                                love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                                love.graphics.setColor(1,1,1)
+                                love.graphics.setFont(fonteEmoji, 14)
+                                love.graphics.print("🎒", xPos, yPos + 10)
+                                love.graphics.setColor(1,1,1)
+                                love.graphics.setFont(fonteIoskeley)
+                        end
                 end
 
                 if inimigo.estaVivo == false then
@@ -526,7 +641,6 @@ function Partida.desenharMaoAliada()
         love.graphics.rectangle("fill", xPos, 760, 80, 100, 8, 8)
         love.graphics.setColor(1,1,1)
         love.graphics.printf(carta.nome, xPos, 770, 80, "center")
-
     end
     
 end
@@ -576,16 +690,15 @@ end
 function Partida.desenharCartasEscolhidasAliadas()
     local cartasParaDesenhar = {}
     
-    -- Checa se a corrotina está ativa (ou seja, as animações e regras estão rodando agora)
     local resolvendoBatalha = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
 
-    -- Se não estiver rodando, o jogador está apenas clicando para escolher as cartas
+    
     if not resolvendoBatalha then
         for i, carta in ipairs(logicaPartida.jogador1.cartasEscolhidas) do
             table.insert(cartasParaDesenhar, { carta = carta, resolvida = false })
         end
     else
-        -- Se estiver rodando, puxa da fila dinâmica para renderizar os efeitos visuais
+
         for i, jogada in ipairs(logicaPartida.filaDeResolucao) do
             if jogada.dono == logicaPartida.jogador1 then
                 table.insert(cartasParaDesenhar, jogada)
@@ -828,6 +941,28 @@ function Partida.anunciarVitoria()
     end
 end
 
+
+function Partida.desenharInventarioAberto()
+    if inventarioAberto then
+        love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+        love.graphics.rectangle("fill", 400, 250, 600, 250, 20, 20)
+        
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf("Inventário de " .. inventarioAberto.nome, 400, 270, 600, "center")
+        
+        for i, item in ipairs(inventarioAberto.itemEquipado) do
+            local xPos = 460 + ((i - 1) * 90)
+            local yPos = 320
+            
+            love.graphics.setColor(0.3, 0.3, 0.3)
+            love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+            
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.printf(item.nome, xPos, yPos + 10, 80, "center")
+        end
+    end
+end
+
 function Partida.abrirDescarteAliado()
     if descarteAberto == "aliado" then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
@@ -898,7 +1033,7 @@ function Partida.checarCliqueDescarte(x, y)
     end
 
     -- Hitbox Descarte Aliado
-    if x >= 420 and x <= 460 and y >= 810 and y <= 840 then
+    if x >= 420 and x <= 460 and y >= 810 and y <= 860 then
         descarteAberto = "aliado"
         return true
     end
@@ -965,7 +1100,11 @@ function Partida.draw()
 
     Partida.abrirDescarteAliado()
     Partida.abrirDescarteInimigo()
+    
+    -- NOVO: Renderiza o inventário por cima dos descartes/campo
+    Partida.desenharInventarioAberto()
 
+    -- A inspeção vem DEPOIS do inventário para garantir que a tooltip das cartas flutue por cima da janela do inventário
     Partida.desenharInspecaoDeCarta()
 
 if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
