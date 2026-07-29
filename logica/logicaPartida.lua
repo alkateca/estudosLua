@@ -9,11 +9,13 @@ logicaPartida.turnoAtual = 1
 
 logicaPartida.jogador2 = {
     baralho = {
-        item.brocheCristal, item.brocheCristal, item.quimera,
-        item.dragaoCristal, item.dragaoCristal,
+        item.brocheCristal, item.brocheCristal, item.brocheCristal,
+        item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         magia.bolaDeFogo, magia.bolaDeFogo, magia.bolaDeFogo,
+        magia.paraRaios, magia.paraRaios, magia.paraRaios,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
-        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina
+        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
+        item.quimera, item.quimera
     },
     nome = "",
     mao = {},
@@ -27,11 +29,13 @@ logicaPartida.jogador2 = {
 
 logicaPartida.jogador1 = {
     baralho = { 
-        item.brocheCristal, item.brocheCristal, item.quimera,
-        item.dragaoCristal, item.dragaoCristal,
+        item.brocheCristal, item.brocheCristal, item.brocheCristal,
+        item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
+        magia.estatica, magia.estatica, magia.estatica,
         magia.paraRaios, magia.paraRaios, magia.paraRaios,
-        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina
+        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
+        magia.massacreCristalino,  item.quimera
     },
     nome = "",
     mao = {},
@@ -44,6 +48,33 @@ logicaPartida.jogador1 = {
 }
 
 math.randomseed(os.time())
+
+
+local function deepcopy(orig, copies)
+    copies = copies or {}
+    local orig_type = type(orig)
+    local copy
+    
+    if orig_type == 'table' then
+
+        if copies[orig] then
+            copy = copies[orig]
+        else
+            copy = {}
+            copies[orig] = copy
+            for orig_key, orig_value in next, orig, nil do
+                copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
+            end
+            setmetatable(copy, deepcopy(getmetatable(orig), copies))
+        end
+    else
+        copy = orig
+    end
+    
+    return copy
+end
+
+logicaPartida.turnoAtual = 1
 
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)

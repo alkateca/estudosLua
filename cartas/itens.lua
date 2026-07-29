@@ -3,6 +3,7 @@ local itens = {}
 itens.quimera = {
     tipo = 3,
     nome = "Quimera",
+    raca = {"Cristal"},
     efeitoFinalDeTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
             if partida.emitirVFX then
                 partida.emitirVFX("cura", dono == partida.jogador2 and "inimigo" or "aliado")            
@@ -29,6 +30,7 @@ itens.quimera = {
 itens.brocheCristal = {
     tipo = 3,
     nome = "Broche de Cristal",
+    raca = {"Cristal"},
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.espirito = aliado.espirito + 1
         aliado.defesa = aliado.defesa + 1
@@ -42,6 +44,7 @@ itens.brocheCristal = {
 itens.laminaDeCristal = {
     tipo = 3,
     nome = "Lamina de Cristal",
+    raca = {"Cristal"},
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.ataque = aliado.ataque + 1
         if partida.emitirVFX then
@@ -55,6 +58,7 @@ itens.dragaoCristal = {
     tipo = 3,
     dano = 6,
     nome = "Dragão de Cristal",
+    raca = {"Cristal"},
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         
     end,

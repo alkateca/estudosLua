@@ -243,7 +243,7 @@ local herois = {}
 
     herois.santaDasLaminas = {
         tipo = 1,
-        raca = {"Lamina"},
+        raca = {"Cristal"},
         nome = "Isenora,\nSanta das Laminas",
         espirito = 2,
         ataque = 5,
@@ -275,7 +275,7 @@ local herois = {}
 
     herois.aprendizDasLaminas = {
         tipo = 1,
-        raca = {"Lamina"},
+        raca = {"Cristal"},
         nome = "Moyra,\nAprendiz da Santa",
         espirito = 1,
         ataque = 4,
@@ -316,7 +316,7 @@ local herois = {}
 
     herois.artesaDasLaminas = {
         tipo = 1,
-        raca = {"Lamina"},
+        raca = {"Cristal"},
         nome = "Naelis, Grande Artesã de Cristais",
         espirito = 1,
         ataque = 4,

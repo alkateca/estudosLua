@@ -338,8 +338,6 @@ function Partida.mousereleased(x, y, button)
         Partida.selecionarHeroiAliado(x, y)
         Partida.selecionarHeroiInimigo(x, y)
         Partida.selecionarCartaMaoAliado(x, y)
-        Partida.selecionarCartaMaoInimiga(x, y)
-        Partida.deSelecionarCartaMaoInimiga(x, y)
         Partida.deSelecionarCartaMaoAliada(x, y)
         Partida.botaoTurno(x,y)
     end
@@ -541,9 +539,6 @@ function Partida.desenharMaoInimiga()
         local xPos = 540 + ((i - 1) * 90)
         love.graphics.setColor(1,0,0)
         love.graphics.rectangle("fill", xPos, 40, 80, 100, 8, 8)
-        --love.graphics.setColor(1,1,1)
-        --love.graphics.printf(carta.nome, xPos, 50, 80, "center")
-
     end
     
 end
@@ -640,10 +635,6 @@ function Partida.desenharCartasEscolhidasInimigas()
     end
 end
 
-function Partida.selecionarCartaMaoInimiga(x, y)
-    return
-end
-
 function Partida.deSelecionarCartaMaoAliada(x, y)
     
     local mao = logicaPartida.jogador1.mao
@@ -661,10 +652,6 @@ function Partida.deSelecionarCartaMaoAliada(x, y)
         end
     end
 
-end
-
-function Partida.deSelecionarCartaMaoInimiga(x, y)
-    return
 end
 
 function Partida.selecionarHeroiAliado(x, y)
@@ -879,7 +866,7 @@ end
 
 function Partida.desenharBaralhoAliado()
     
-    local totalDeCartas = 6
+    local totalDeCartas = 20
     local cartasRestantes = #logicaPartida.jogador1.baralho
 
     love.graphics.setColor(0,0,1)
@@ -892,7 +879,7 @@ end
 
 function Partida.desenharBaralhoInimigo()
     
-    local totalDeCartas = 6
+    local totalDeCartas = 20
     local cartasRestantes = #logicaPartida.jogador2.baralho
 
     love.graphics.setColor(1,0,0)

@@ -70,4 +70,58 @@ magias.paraRaios = {
     end
 }
 
+magias.massacreCristalino = {
+    nome = "Massacre Cristalino",
+    raca = {"Cristal"},
+    tipo = 2,
+    dano = 0,
+    descricao = "Única\nCause X de Dano ao seu Inimigo, onde X é o total de cartas de Cristal em jogo ou no Descarte multiplicado por 2",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        local totalCristais = 0
+        
+        local function ehCristal(carta)
+            if type(carta.raca) == "table" then
+                for _, r in ipairs(carta.raca) do
+                    if r == "Cristal" then return true end
+                end
+            elseif type(carta.raca) == "string" then
+                return carta.raca == "Cristal"
+            end
+            return false
+        end
+
+        for i, aliadoAtual in ipairs(dono.aliados) do
+            if ehCristal(aliadoAtual) then
+                totalCristais = totalCristais + 1
+            end
+            
+            if aliadoAtual.itemEquipado and #aliadoAtual.itemEquipado > 0 then
+                for j, item in ipairs(aliadoAtual.itemEquipado) do
+                    if ehCristal(item) then
+                        totalCristais = totalCristais + 1
+                    end
+                end
+            end
+        end
+        
+        for i, carta in ipairs(dono.descarte) do
+            if ehCristal(carta) then
+                totalCristais = totalCristais + 1
+            end
+        end
+
+        local danoMagicoTotal = totalCristais * 2
+
+        if danoMagicoTotal > inimigo.espirito then
+            local danoFinal = danoMagicoTotal - inimigo.espirito
+            inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+        end
+
+        if partida.emitirVFX then
+            partida.emitirVFX("danoMagico", inimigo == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+        end
+    end
+}
+
 return magias
