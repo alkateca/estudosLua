@@ -971,8 +971,13 @@ function Partida.abrirDescarteAliado()
         local descarte = logicaPartida.jogador1.descarte
         
         for i, carta in ipairs(descarte) do
-            local xPos = 260 + ((i - 1) * 90)
-            local yPos = 200
+            local coluna = (i - 1) % 10 
+            
+            local linha = math.floor((i - 1) / 10) 
+            
+            local xPos = 260 + (coluna * 90)
+            local yPos = 200 + (linha * 110)
+            
             love.graphics.setColor(0, 0, 1)
             love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
             love.graphics.setColor(1, 1, 1)
@@ -982,16 +987,21 @@ function Partida.abrirDescarteAliado()
 end
 
 function Partida.abrirDescarteInimigo()
-    if descarteAberto == "inimigo" then
+     if descarteAberto == "inimigo" then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
         love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
         
-        local descarte = logicaPartida.jogador2.descarte 
+        local descarte = logicaPartida.jogador2.descarte
         
         for i, carta in ipairs(descarte) do
-            local xPos = 260 + ((i - 1) * 90)
-            local yPos = 200
-            love.graphics.setColor(1, 0, 0)
+            local coluna = (i - 1) % 10 
+            
+            local linha = math.floor((i - 1) / 10) 
+            
+            local xPos = 260 + (coluna * 90)
+            local yPos = 200 + (linha * 110)
+            
+            love.graphics.setColor(0, 0, 1)
             love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
             love.graphics.setColor(1, 1, 1)
             love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")

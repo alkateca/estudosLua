@@ -112,7 +112,7 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
 end
 
 function logicaPartida.efeitos()
-    -- Efeitos da Preparação (Inimigo é nil aqui, pois o combate não começou)
+
     for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if type(aliado.efeitoInicioDaPartida) == "function" and not aliado.efeitoAtivo then
             aliado.efeitoInicioDaPartida(aliado, aliado, nil, logicaPartida.jogador1, logicaPartida)
@@ -151,7 +151,7 @@ function logicaPartida.efeitos()
 end
 
 function logicaPartida.atualizarEstadoAtivo()
-    -- (Ocultado apenas na exibição para poupar espaço visual. Mantenha a sua função original aqui igualzinha)
+
     local todosInativos1 = true
     for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if aliado.estaVivo and aliado.estaAtivo then todosInativos1 = false break end
@@ -209,11 +209,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    -- ==========================================
-    -- RESOLUÇÃO DOS EFEITOS DE FIM DE TURNO
-    -- ==========================================
 
-    -- 1. Efeitos de Fim de Turno dos Heróis
     if type(heroi.efeitoFinalDoTurno) == "function" then
         heroi.efeitoFinalDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
         if callbackAtualizacao then callbackAtualizacao() end
@@ -288,8 +284,29 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     end
 
     -- Checagem de Vida
-    if heroi.vidaAtual <= 0 then heroi.estaVivo = false end
-    if inimigo.vidaAtual <= 0 then inimigo.estaVivo = false end
+        for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
+            if aliado.vidaAtual <= 0 and aliado.estaVivo then        
+                aliado.estaVivo = false
+                    if aliado.itemEquipado then
+                        for i = #aliado.itemEquipado, 1, -1 do
+                            local itemDescarte = table.remove(aliado.itemEquipado, i)
+                            table.insert(logicaPartida.jogador1.descarte, itemDescarte)
+                        end
+                    end
+            end
+        end
+
+        for _, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+            if inimigo.vidaAtual <= 0 and inimigo.estaVivo then        
+                inimigo.estaVivo = false
+                    if inimigo.itemEquipado then
+                        for i = #inimigo.itemEquipado, 1, -1 do
+                            local itemDescarte = table.remove(inimigo.itemEquipado, i)
+                            table.insert(logicaPartida.jogador2.descarte, itemDescarte)
+                        end
+                    end
+            end
+        end
 
     heroi.estaAtivo = false
     inimigo.estaAtivo = false
