@@ -349,4 +349,53 @@ local herois = {}
         estaAtivo = true
     }
 
+-- liberações
+    herois.moyraLiberta = {
+        tipo = 1,
+        raca = {"Cristal"},
+        nome = "Moyra,\n\nSanta das Laminas",
+        espirito = 2,
+        ataque = 5,
+        defesa = 2,
+        vidaMaxima = 14,
+        vidaAtual = 14,
+        modificadorDeDano = 0,
+        itemEquipado = {},
+        descricao = "Inicio do turno:\nO Inimigo recebe -2 de Espirito\nAo jogar: Magia\nAtaque +2 \nFinal do turno:\nCause 5 de dano mágico",
+        efeitoDoTurno = false,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if inimigo.espirito >= 2 then
+                inimigo.espirito = inimigo.espirito - 2
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
+                end
+            elseif inimigo.espirito <= 2 then
+                inimigo.espirito = 0
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
+                end
+            end
+        end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if cartaJogada and cartaJogada.tipo == 2 and self.efeitoDoTurno == false then
+                self.ataque = self.ataque + 2
+                    if partida.emitirVFX then
+                        partida.emitirVFX("buff", dono == partida.jogador1 and "inimigo" or "aliado")
+                    end
+                self.efeitoDoTurno = true
+            end
+        end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)            
+            local dano = 5 - inimigo.espirito 
+
+            if dano > 0 then
+                inimigo.vidaAtual = inimigo.vidaAtual - dano
+            end
+            self.efeitoDoTurno = false
+            
+        end,
+        estaVivo = true,
+        estaAtivo = true
+    }
+
 return herois

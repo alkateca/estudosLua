@@ -134,6 +134,9 @@ magias.pontoFinal = {
         if dono.heroiDoturno.espirito <= 0 then
             return
         end
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", dono == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+        end
         self.dano =  dono.heroiDoturno.espirito * 2
         dono.heroiDoturno.ataque =  dono.heroiDoturno.ataque + self.dano
         self.efeitoDoTurno = true

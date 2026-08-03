@@ -67,12 +67,12 @@ function Menu.mousereleased(x, y, button)
         
         -- Clique no botão Achar Partida
         if x >= 620 and x <= 820 and y >= 475 and y <= 575 then
-            estadoAtual = "partida"
+            estadoAtualGlobal = "selecaoBaralho"
         end
         
         -- Clique no botão Tutorial
         if x >= 620 and x <= 820 and y >= 325 and y <= 425 then
-            estadoAtual = "tutorial"
+            estadoAtualGlobal = "tutorial"
         end
 
     end 

@@ -40,6 +40,14 @@ function IA.escolherCartas(logica)
     
     j2.cartasEscolhidas = {}
 
+    -- =======================================================
+    -- A IA "compra" sua relíquia e a remove da zona
+    -- =======================================================
+    if j2.reliquia ~= nil then
+        table.insert(j2.mao, j2.reliquia)
+        j2.reliquia = nil
+    end
+
     if #j2.mao == 0 or j2.heroiDoturno == nil then return end
 
     -- Avalia as condições da mesa

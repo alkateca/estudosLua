@@ -1,0 +1,29 @@
+[18:08:02] Carta Resolvida: Liberação: Moyra usada por Moyra,
+
+Santa das Laminas | Aliado [V:14 A:5 D:2 E:2] | Inimigo [V:12 A:9 D:4 E:0]
+[18:08:03] Carta Resolvida: Quimera usada por Moyra,
+
+Santa das Laminas | Aliado [V:14 A:6 D:3 E:3] | Inimigo [V:12 A:9 D:4 E:0]
+[18:08:05] Carta Resolvida: Bola de fogo usada por Traidor Goblin | Aliado [V:12 A:9 D:4 E:0] | Inimigo [V:13 A:6 D:3 E:3]
+[18:08:07] Carta Resolvida: Para-raios usada por Moyra,
+
+Santa das Laminas | Aliado [V:13 A:6 D:3 E:4] | Inimigo [V:12 A:9 D:4 E:0]
+[18:08:10] Carta Resolvida: Estatica usada por Moyra,
+
+Santa das Laminas | Aliado [V:13 A:8 D:3 E:4] | Inimigo [V:5 A:9 D:4 E:0]
+[18:08:12] Carta Resolvida: Para-raios usada por Traidor Goblin | Aliado [V:5 A:9 D:4 E:1] | Inimigo [V:13 A:8 D:3 E:4]
+[18:08:13] Carta Resolvida: Estatica usada por Traidor Goblin | Aliado [V:5 A:9 D:4 E:1] | Inimigo [V:13 A:8 D:3 E:4]
+[18:08:16] Efeito Inicio Turno Aliado: Moyra,
+
+Santa das Laminas | Aliado [V:13 A:8 D:3 E:4] | Inimigo [V:5 A:9 D:4 E:0]
+[18:08:16] Combate Fisico: Traidor Goblin causou 6 de dano. | Aliado [V:7 A:8 D:3 E:4] | Inimigo [V:5 A:9 D:4 E:0]
+[18:08:18] Combate Fisico: Moyra,
+
+Santa das Laminas causou 4 de dano. | Aliado [V:7 A:8 D:3 E:4] | Inimigo [V:1 A:9 D:4 E:0]
+[18:08:19] Efeito Final Turno Aliado: Moyra,
+
+Santa das Laminas | Aliado [V:7 A:8 D:3 E:4] | Inimigo [V:-4 A:9 D:4 E:0]
+[18:08:21] Efeito Item Aliado: Quimera | Aliado [V:11 A:8 D:3 E:4] | Inimigo [V:-4 A:9 D:4 E:0]
+[18:08:22] Magia Ativa Aliado: Para-raios | Aliado [V:11 A:8 D:3 E:3] | Inimigo [V:-4 A:9 D:4 E:0]
+[18:08:23] Magia Ativa Inimigo: Para-raios | Aliado [V:11 A:8 D:3 E:3] | Inimigo [V:-4 A:9 D:4 E:-1]
+[18:08:24] Morte: Inimigo Traidor Goblin foi derrotado.

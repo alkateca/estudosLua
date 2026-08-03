@@ -2,6 +2,7 @@ local Partida = {}
 
 local logicaPartida = require("logica.logicaPartida")
 
+local BotaoVoltar = require("telas.botaoVoltar")
 
 local carta1 = nil
 local carta2 = nil
@@ -11,11 +12,12 @@ local tempoHover
 local tempoNecessario
 local cartaInspecionada
 local descarteAberto
-local inventarioAberto = nil -- NOVO: Variável para controlar qual herói está com o inventário aberto
+local inventarioAberto = nil
 local vencedor
 local fonteIoskeley
 local IA = require("logica.ia")
 local faseDoTurno
+local reliquiaUsadaNesteTurno = false
 
 local efeitosVisuais = {}
 local animacoesCarregadas = {}
@@ -83,6 +85,7 @@ function Partida.load()
     descarteAberto = nil
     inventarioAberto = nil -- NOVO: Resetando inventário ao recarregar a partida
     faseDoTurno = "preparacao"
+    reliquiaUsadaNesteTurno = false
 
 
     local imgDanoMagico = love.graphics.newImage("assets/images/BlueExplosionA_spritesheet.png")
@@ -343,7 +346,6 @@ function Partida.mousereleased(x, y, button)
             return
         end
 
-        -- NOVO: Se o inventário está aberto, qualquer clique fecha ele e encerra o evento (ação modal)
         if inventarioAberto then
             inventarioAberto = nil
             return
@@ -353,16 +355,19 @@ function Partida.mousereleased(x, y, button)
             return
         end
 
-        -- NOVO: Verifica se o jogador clicou numa mochila no campo ativo
         if Partida.checarCliqueMochila(x, y) then
             return
         end
 
-        Partida.selecionarHeroiAliado(x, y)
-        Partida.selecionarHeroiInimigo(x, y)
+        if Partida.checarCliqueExtradeck(x, y) then
+            return
+        end
+
+        Partida.selecionarHeroi(x, y)
         Partida.selecionarCartaMaoAliado(x, y)
         Partida.deSelecionarCartaMaoAliada(x, y)
         Partida.botaoTurno(x,y)
+        BotaoVoltar.mousereleased(x, y, button)
     end
 end
 
@@ -392,15 +397,13 @@ function Partida.checarCliqueMochila(x, y)
     return false
 end
 
-function Partida.desenharHeroiAliado(carta1)
-
-        if carta1 == nil then
-            love.graphics.setColor(0.2, 0.2, 0.2)
-            love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.printf("Selecione seu herói", 1000, 660, 280, "center")
-            return
-        end
+function Partida.desenharHeroiEscolhido(carta1,carta2)
+    if carta1 == nil then
+        love.graphics.setColor(0.2, 0.2, 0.2)
+        love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf("Selecione seu herói", 1000, 660, 280, "center")
+    else 
     love.graphics.setColor(0,0,1)
     love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
     love.graphics.setColor(1,1,1)
@@ -422,21 +425,16 @@ function Partida.desenharHeroiAliado(carta1)
                 love.graphics.printf(item.nome, xPos, 610, 80, "center")
             end
         end
+        love.graphics.setFont(fonteIoskeley)
+    end
 
-        if carta1.estaVivo == false then
-            love.graphics.print("💀", 1125, 660)
-        end
-    love.graphics.setFont(fonteIoskeley)
-end
 
-function Partida.desenharHeroiInimigo(carta2)
-        if carta2 == nil then
-            love.graphics.setColor(0.2, 0.2, 0.2)
-            love.graphics.rectangle("fill", 1000, 40, 280, 380, 15, 15)
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.printf("Selecione o herói inimigo", 1000, 220, 280, "center")
-            return
-        end
+    if carta2 == nil then
+        love.graphics.setColor(0.2, 0.2, 0.2)
+        love.graphics.rectangle("fill", 1000, 40, 280, 380, 15, 15)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf("Selecione o herói inimigo", 1000, 220, 280, "center")
+    else
     love.graphics.setColor(1,0,0)
     love.graphics.rectangle("fill", 1000, 40, 280, 380, 15, 15)
     love.graphics.setColor(1,1,1)
@@ -458,15 +456,11 @@ function Partida.desenharHeroiInimigo(carta2)
                 love.graphics.printf(item.nome, xPos, 170, 80, "center")
             end
         end
-    
-        if carta2.estaVivo == false then
-            love.graphics.print("💀", 1125, 220)
-        end
     love.graphics.setFont(fonteIoskeley)
-    
+    end
 end
 
-function Partida.desenharAliados()
+function Partida.desenharHerois()
 
         local aliados = logicaPartida.jogador1.aliados
 
@@ -476,7 +470,6 @@ function Partida.desenharAliados()
 
                 if aliado.estaAtivo == false and aliado.estaVivo == true then
                     love.graphics.push() 
-
 
                     local centroX = xPos + (140 / 2)
                     local centroY = yPos + (190 / 2)
@@ -547,14 +540,10 @@ function Partida.desenharAliados()
                     love.graphics.setFont(fonteIoskeley)
                 end
         end
-        
-end
-
-function Partida.desenharInimigos()
 
     local inimigos = logicaPartida.jogador2.aliados
 
-   for i, inimigo in ipairs(inimigos) do
+    for i, inimigo in ipairs(inimigos) do
         local xPos = 20 + ((i - 1) * 150)
         local yPos = 130
 
@@ -627,29 +616,25 @@ function Partida.desenharInimigos()
                     love.graphics.print("💀", xPos + 55, yPos + 80)
                     love.graphics.setFont(fonteIoskeley)
                 end
-
     end
+        
 end
 
-function Partida.desenharMaoAliada()
+function Partida.desenharMao()
 
-    local cartasNaMao = logicaPartida.jogador1.mao
+    local cartasNaMaoAliada = logicaPartida.jogador1.mao
 
-    for i, carta in ipairs(cartasNaMao) do
+    for i, carta in ipairs(cartasNaMaoAliada) do
         local xPos = 540 + ((i - 1) * 90)
         love.graphics.setColor(0,0,1)
         love.graphics.rectangle("fill", xPos, 760, 80, 100, 8, 8)
         love.graphics.setColor(1,1,1)
         love.graphics.printf(carta.nome, xPos, 770, 80, "center")
     end
-    
-end
 
-function Partida.desenharMaoInimiga()
+    local cartasNaMaoInimiga = logicaPartida.jogador2.mao
 
-    local cartasNaMao = logicaPartida.jogador2.mao
-
-    for i, carta in ipairs(cartasNaMao) do
+    for i, carta in ipairs(cartasNaMaoInimiga) do
         local xPos = 540 + ((i - 1) * 90)
         love.graphics.setColor(1,0,0)
         love.graphics.rectangle("fill", xPos, 40, 80, 100, 8, 8)
@@ -687,7 +672,7 @@ function Partida.selecionarCartaMaoAliado(x, y)
 
 end
 
-function Partida.desenharCartasEscolhidasAliadas()
+function Partida.desenharCartasEscolhidas()
     local cartasParaDesenhar = {}
     
     local resolvendoBatalha = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
@@ -717,26 +702,25 @@ function Partida.desenharCartasEscolhidasAliadas()
         love.graphics.setColor(1, 1, 1)
         love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
     end
-end
 
-function Partida.desenharCartasEscolhidasInimigas()
-    local cartasParaDesenhar = {}
+
+    local cartasParaDesenharInimigas = {}
     
-    local resolvendoBatalha = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
+    local resolvendoBatalhaInimigiga = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
 
-    if not resolvendoBatalha then
+    if not resolvendoBatalhaInimigiga then
         for i, carta in ipairs(logicaPartida.jogador2.cartasEscolhidas) do
-            table.insert(cartasParaDesenhar, { carta = carta, resolvida = false })
+            table.insert(cartasParaDesenharInimigas, { carta = carta, resolvida = false })
         end
     else
         for i, jogada in ipairs(logicaPartida.filaDeResolucao) do
             if jogada.dono == logicaPartida.jogador2 then
-                table.insert(cartasParaDesenhar, jogada)
+                table.insert(cartasParaDesenharInimigas, jogada)
             end
         end
     end
 
-    for i, jogada in ipairs(cartasParaDesenhar) do
+    for i, jogada in ipairs(cartasParaDesenharInimigas) do
         local xPos = 880 - ((i - 1) * 90)
         local yPos = 320
         
@@ -767,7 +751,7 @@ function Partida.deSelecionarCartaMaoAliada(x, y)
 
 end
 
-function Partida.selecionarHeroiAliado(x, y)
+function Partida.selecionarHeroi(x, y)
     
     if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
         return 
@@ -783,17 +767,10 @@ function Partida.selecionarHeroiAliado(x, y)
         if x >= rectX and x <= (rectX + rectW) and y >= rectY and y <= (rectY + rectH) then
             if aliado.estaVivo and aliado.estaAtivo then
                 carta1 = aliado
-                Partida.desenharHeroiAliado(carta1)
+                Partida.desenharHeroiEscolhido(carta1,carta2)
             end
             break
         end
-    end
-end
-
-function Partida.selecionarHeroiInimigo(x, y)
-    
-    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then 
-        return 
     end
 
     local inimigos = logicaPartida.jogador2.aliados
@@ -807,7 +784,7 @@ function Partida.selecionarHeroiInimigo(x, y)
         if x >= rectX and x <= (rectX + rectW) and y >= rectY and y <= (rectY + rectH) then
             if inimigo.estaVivo and inimigo.estaAtivo then
                 carta2 = inimigo
-                Partida.desenharHeroiInimigo(carta2)
+                Partida.desenharHeroiEscolhido(carta1,carta2)
             end
             break
         end
@@ -941,7 +918,6 @@ function Partida.anunciarVitoria()
     end
 end
 
-
 function Partida.desenharInventarioAberto()
     if inventarioAberto then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
@@ -963,8 +939,29 @@ function Partida.desenharInventarioAberto()
     end
 end
 
-function Partida.abrirDescarteAliado()
-    if descarteAberto == "aliado" then
+function Partida.abrirDescartes()
+     if descarteAberto == "inimigo" then
+        love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+        love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
+        
+        local descarte = logicaPartida.jogador2.descarte
+        
+        for i, carta in ipairs(descarte) do
+            local coluna = (i - 1) % 10 
+            
+            local linha = math.floor((i - 1) / 10) 
+            
+            local xPos = 260 + (coluna * 90)
+            local yPos = 200 + (linha * 110)
+            
+            love.graphics.setColor(0, 0, 1)
+            love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
+        end
+    end
+
+        if descarteAberto == "aliado" then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
         love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
         
@@ -986,51 +983,84 @@ function Partida.abrirDescarteAliado()
     end
 end
 
-function Partida.abrirDescarteInimigo()
-     if descarteAberto == "inimigo" then
-        love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
-        love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
-        
-        local descarte = logicaPartida.jogador2.descarte
-        
-        for i, carta in ipairs(descarte) do
-            local coluna = (i - 1) % 10 
-            
-            local linha = math.floor((i - 1) / 10) 
-            
-            local xPos = 260 + (coluna * 90)
-            local yPos = 200 + (linha * 110)
-            
-            love.graphics.setColor(0, 0, 1)
-            love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
-        end
-    end
-end
-
-function Partida.desenharBaralhoAliado()
+function Partida.desenharBaralhos()
     
     local totalDeCartas = 20
-    local cartasRestantes = #logicaPartida.jogador1.baralho
+
+    local cartasRestantesAliado = #logicaPartida.jogador1.baralho
 
     love.graphics.setColor(0,0,1)
     love.graphics.rectangle("fill", 360, 810, 40, 50, 5, 5)
     love.graphics.setColor(1, 1, 1)
-    -- X = 340 para centralizar a caixa de texto de 80px no retângulo de 40px
-    love.graphics.printf(cartasRestantes.."/"..totalDeCartas, 340, 820, 80, "center")
+    love.graphics.printf(cartasRestantesAliado.."/"..totalDeCartas, 340, 820, 80, "center")
 
-end
-
-function Partida.desenharBaralhoInimigo()
-    
-    local totalDeCartas = 20
-    local cartasRestantes = #logicaPartida.jogador2.baralho
+    local cartasRestantesInimigo = #logicaPartida.jogador2.baralho
 
     love.graphics.setColor(1,0,0)
     love.graphics.rectangle("fill", 360, 40, 40, 50, 5, 5)
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(cartasRestantes.."/"..totalDeCartas, 340, 50, 80, "center")
+    love.graphics.printf(cartasRestantesInimigo.."/"..totalDeCartas, 340, 50, 80, "center")
+
+end
+
+function Partida.desenharReliquias()
+    
+    love.graphics.setFont(fonteIoskeley)
+    
+    -- Desenho das reliquias aliadas
+    local reliquiaAliada = logicaPartida.jogador1.reliquia
+    
+    if reliquiaAliada ~= nil then
+        love.graphics.setColor(0,0,1)
+        love.graphics.rectangle("fill", 260, 780, 80, 100, 5, 5)
+        love.graphics.setColor(1,1,1)
+        love.graphics.printf(reliquiaAliada.nome, 260, 780, 80, "center")
+    end
+
+
+
+    -- Desenho das reliquias inimigas
+    local reliquiaInimiga = logicaPartida.jogador2.reliquia
+    if reliquiaInimiga ~= nil then
+        love.graphics.setColor(1,0,0)
+        love.graphics.rectangle("fill", 260, 20, 80, 100, 5, 5)
+        love.graphics.setColor(1,1,1)
+        love.graphics.printf(reliquiaInimiga.nome, 260, 20, 80, "center")
+    end
+end
+
+function Partida.checarCliqueExtradeck(x, y)
+    if logicaPartida.turnoAtual ~= 1 or faseDoTurno ~= "resolucao" then 
+        return false 
+    end
+
+
+    if x >= 260 and x <= 340 and y >= 780 and y <= 880 then
+        local reliquiaCard = logicaPartida.jogador1.reliquia
+        
+        if reliquiaCard ~= nil then
+            table.insert(logicaPartida.jogador1.mao, reliquiaCard)
+            logicaPartida.jogador1.reliquia = nil 
+            
+            return true
+        end
+    end
+
+    return false
+end
+
+function Partida.desenharDescartes()
+        -- Desenho do Descarte Aliado
+    love.graphics.setColor(0,0,1)
+    love.graphics.rectangle("fill", 420, 810, 40, 50, 5, 5)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Descarte", 400, 820, 80, "center")
+
+    -- Desenho do Descarte Inimigo
+    love.graphics.setColor(1,0,0)
+    love.graphics.rectangle("fill", 420, 40, 40, 50, 5, 5)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Descarte", 400, 50, 80, "center")
 
 end
 
@@ -1078,43 +1108,26 @@ function Partida.draw()
         love.graphics.printf("Resolver\nturno", 1300, 430, 130, "center")
     end
 
+    BotaoVoltar.draw()
 
+    Partida.desenharBaralhos()
 
-    -- Desenho do Descarte Aliado
-    love.graphics.setColor(0,0,1)
-    love.graphics.rectangle("fill", 420, 810, 40, 50, 5, 5)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf("Descarte", 400, 820, 80, "center")
-
-    -- Desenho do Descarte Inimigo
-    love.graphics.setColor(1,0,0)
-    love.graphics.rectangle("fill", 420, 40, 40, 50, 5, 5)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf("Descarte", 400, 50, 80, "center")
+    Partida.desenharHeroiEscolhido(carta1,carta2)
     
+    Partida.desenharCartasEscolhidas()
+
+    Partida.desenharMao()
+
+    Partida.desenharHerois()
+
+    Partida.desenharReliquias()
+
+    Partida.abrirDescartes()
+
+    Partida.desenharDescartes()
     
-    Partida.desenharBaralhoAliado()
-    Partida.desenharBaralhoInimigo()
-
-    Partida.desenharHeroiAliado(carta1)
-    Partida.desenharHeroiInimigo(carta2)
-    
-    Partida.desenharCartasEscolhidasAliadas()
-    Partida.desenharCartasEscolhidasInimigas()
-
-    Partida.desenharMaoAliada()
-    Partida.desenharMaoInimiga()
-
-    Partida.desenharAliados()
-    Partida.desenharInimigos()
-
-    Partida.abrirDescarteAliado()
-    Partida.abrirDescarteInimigo()
-    
-    -- NOVO: Renderiza o inventário por cima dos descartes/campo
     Partida.desenharInventarioAberto()
 
-    -- A inspeção vem DEPOIS do inventário para garantir que a tooltip das cartas flutue por cima da janela do inventário
     Partida.desenharInspecaoDeCarta()
 
 if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
@@ -1194,9 +1207,6 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
     end
 
     Partida.anunciarVitoria()
-
-
-
 
     love.graphics.setColor(1, 1, 1)
 end

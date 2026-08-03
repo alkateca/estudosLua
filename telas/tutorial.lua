@@ -122,7 +122,7 @@ function Tutorial.mousereleased(x, y, button)
     if x >= passo.alvoX and x <= (passo.alvoX + passo.alvoW) and y >= passo.alvoY and y <= (passo.alvoY + passo.alvoH) then
         
         if passoAtual == #passos then
-            estadoAtual = "menu"
+            estadoAtualGlobal = "partida"
             return
         end
 
