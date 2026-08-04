@@ -8,8 +8,8 @@ local reliquia = require("cartas.reliquias")
 
 logicaPartida.turnoAtual = 1
 
-logicaPartida.jogador2 = {
-    reliquia = reliquia.liberacaoMoyra,
+logicaPartida.jogador1 = {
+    reliquia = reliquia.liberacaoEsquadrao,
     extraDeck = {},
     baralho = {
         item.brocheCristal, item.brocheCristal, item.brocheCristal,
@@ -30,7 +30,7 @@ logicaPartida.jogador2 = {
     heroiDoturno = nil
 }
 
-logicaPartida.jogador1 = {
+logicaPartida.jogador2 = {
     reliquia = reliquia.liberacaoMoyra,
     extraDeck = {},
     baralho = { 
@@ -186,6 +186,7 @@ function logicaPartida.selecionarPrimeiroAtivo()
     end
 end
 
+--logs
 logicaPartida.logIniciado = false
 
 function logicaPartida.registrarLog(mensagem)
@@ -413,6 +414,7 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
 end
+--logs
 
 --[[
 function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)

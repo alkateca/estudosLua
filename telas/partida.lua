@@ -15,9 +15,9 @@ local descarteAberto
 local inventarioAberto = nil
 local vencedor
 local fonteIoskeley
+local fonteIoskeleyPequena
 local IA = require("logica.ia")
 local faseDoTurno
-local reliquiaUsadaNesteTurno = false
 
 local efeitosVisuais = {}
 local animacoesCarregadas = {}
@@ -73,7 +73,8 @@ end
 
 function Partida.load()
     fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
-    fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)
+    fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)    
+    fonteIoskeleyPequena = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 12)
     
     local fonteEmojiInline = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 16)
     
@@ -83,9 +84,8 @@ function Partida.load()
     tempoNecessario = 0.8
     cartaInspecionada = nil
     descarteAberto = nil
-    inventarioAberto = nil -- NOVO: Resetando inventário ao recarregar a partida
+    inventarioAberto = nil
     faseDoTurno = "preparacao"
-    reliquiaUsadaNesteTurno = false
 
 
     local imgDanoMagico = love.graphics.newImage("assets/images/BlueExplosionA_spritesheet.png")
@@ -260,16 +260,28 @@ local function dispararEventoVisual(tipoAnimacao, quemSofreu)
 end
 
 function Partida.desenharInspecaoDeCarta()
-
-    if cartaInspecionada and tempoHover >= tempoNecessario then
+if cartaInspecionada and tempoHover >= tempoNecessario then
         local mouseX, mouseY = love.mouse.getPosition()
         
         local larguraTooltip = 280
-        local alturaTooltip = 200
+        local textoDescricao = cartaInspecionada.descricao or "Sem efeito."
+        
+        local fonte = love.graphics.getFont()
+        
+        local larguraOcupada, linhas = fonte:getWrap(textoDescricao, larguraTooltip - 20)
+        
+        local alturaTexto = #linhas * fonte:getHeight() * fonte:getLineHeight()
+        
+        local alturaTooltip = 60 + alturaTexto + 20
         
         local drawX = mouseX - 100
         local drawY = mouseY - 130
         
+        local alturaTela = love.graphics.getHeight()
+        if drawY + alturaTooltip > alturaTela then
+            drawY = alturaTela - alturaTooltip - 10
+        end
+
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
         love.graphics.rectangle("fill", drawX, drawY, larguraTooltip, alturaTooltip, 10, 10)
         
@@ -280,7 +292,7 @@ function Partida.desenharInspecaoDeCarta()
         love.graphics.printf(cartaInspecionada.nome, drawX + 10, drawY + 10, larguraTooltip - 20, "center")
         
         love.graphics.setColor(1, 1, 1)
-        love.graphics.printf(cartaInspecionada.descricao or "Sem efeito.", drawX + 10, drawY + 60, larguraTooltip - 20, "center")
+        love.graphics.printf(textoDescricao, drawX + 10, drawY + 60, larguraTooltip - 20, "center")
     end
 end
 
@@ -412,6 +424,7 @@ function Partida.desenharHeroiEscolhido(carta1,carta2)
     love.graphics.printf(carta1.ataque, 1000, 760, 270, "right")
     love.graphics.printf(carta1.defesa, 1000, 800, 270, "right")
     love.graphics.printf(carta1.vidaAtual, 1000, 840, 270, "right")
+    love.graphics.setFont(fonteIoskeleyPequena)
     love.graphics.printf(carta1.descricao, 1040, 720, 200, "center")
     love.graphics.setFont(fonteEmoji)
         
@@ -443,6 +456,7 @@ function Partida.desenharHeroiEscolhido(carta1,carta2)
     love.graphics.printf(carta2.ataque, 1000, 320, 270, "right")
     love.graphics.printf(carta2.defesa, 1000, 360, 270, "right")
     love.graphics.printf(carta2.vidaAtual, 1000, 400, 270, "right")
+    love.graphics.setFont(fonteIoskeleyPequena)
     love.graphics.printf(carta2.descricao, 1040, 280, 200, "center")
     love.graphics.setFont(fonteEmoji)
         

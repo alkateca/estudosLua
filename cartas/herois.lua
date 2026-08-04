@@ -60,34 +60,49 @@ local herois = {}
         vidaAtual = 12,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Ao jogar\nMagia: Espirito +2\nItem: Ataque +2\nAção: Defesa +2\nFinal do turno: Cura 2\n",
+        descricao = "Uma vez por Turno, ao Jogar\nMagia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do turno: Cura 2\n",
+        
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
         
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
-            local valorBuff = 2
+            self.buffEsp = false
+            self.buffAtaq = false
+            self.buffDef = false
+
+            local valorBuff = 1
             
             for i, aliado in ipairs(dono.aliados) do
                 if aliado.nome == "Rei Goblin" and aliado.estaVivo then
-                    valorBuff = 3
+                    valorBuff = 2
                     break
                 end
             end
 
-            if cartaJogada.tipo == 2 then                    
+            if cartaJogada.tipo == 2 and self.buffEsp == false then                    
                 self.espirito = self.espirito + valorBuff
-            elseif cartaJogada.tipo == 3 then
+                self.buffEsp = true
+            elseif cartaJogada.tipo == 3 and self.buffAtaq == false then
                 self.ataque = self.ataque + valorBuff
-            elseif cartaJogada.tipo == 4 then
+                self.buffAtaq = true
+            elseif cartaJogada.tipo == 4 and self.buffDef == false then
                 self.defesa = self.defesa + valorBuff
+                self.buffDef = true
             end
         end,
 
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+            self.buffEsp = false
+            self.buffAtaq = false
+            self.buffDef = false
             
-            local valorBuff = 1
+            local valorBuff = 2
             for i, aliado in ipairs(dono.aliados) do
                 if aliado.nome == "Rei Goblin" and aliado.estaVivo then
-                    valorBuff = 2
+                    valorBuff = 3
                     break
                 end
             end
@@ -394,6 +409,94 @@ local herois = {}
             self.efeitoDoTurno = false
             
         end,
+        estaVivo = true,
+        estaAtivo = true
+    }
+
+    herois.esquadraoGoblinLiberto = {
+        tipo = 1,
+        raca = "Goblin",
+        nome = "Heróis Lendários\n dos Goblin",
+        espirito = 3,
+        ataque = 5,
+        defesa = 3,
+        vidaMaxima = 13,
+        vidaAtual = 13,
+        modificadorDeDano = 0,
+        itemEquipado = {},
+        descricao = "Ao jogar: Magia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do Turno: Cure seus Aliados em 3\nEm área Um terço do seu Espirito\nUm terço do seu Ataque",
+        
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+            local valorBuff = 1
+            
+            for i, aliado in ipairs(dono.aliados) do
+                if aliado.nome == "Rei Goblin" and aliado.estaVivo then
+                    valorBuff = 2
+                    break
+                end
+            end
+
+            if cartaJogada.tipo == 2 then                    
+                self.espirito = self.espirito + valorBuff
+            elseif cartaJogada.tipo == 3 then
+                self.ataque = self.ataque + valorBuff
+            elseif cartaJogada.tipo == 4 then
+                self.defesa = self.defesa + valorBuff
+            end
+        end,
+
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+            local valorBuff = 3
+            for i, al in ipairs(dono.aliados) do
+                if al.nome == "Rei Goblin" and al.estaVivo then
+                    valorBuff = 4
+                    break
+                end
+            end
+
+            for i, aliado in ipairs(dono.aliados) do
+                if aliado.estaVivo then
+                    aliado.vidaAtual = aliado.vidaAtual + valorBuff
+                    if aliado.vidaAtual > aliado.vidaMaxima then
+                        aliado.vidaAtual = aliado.vidaMaxima
+                    end
+                end
+            end
+
+            if partida.emitirVFX then
+                partida.emitirVFX("cura", dono == partida.jogador1 and "aliado" or "inimigo")
+            end
+            
+        local oponente = dono == partida.jogador1 and partida.jogador2 or partida.jogador1
+
+            local tercoEspirito = math.floor(self.espirito / 3)
+            local tercoAtaque = math.floor(self.ataque / 3)
+
+            for i, inimigoAlvo in ipairs(oponente.aliados) do
+                if inimigoAlvo.estaVivo then
+                    
+                    local danoMagico = tercoEspirito - inimigoAlvo.espirito
+                    if danoMagico > 0 then
+                        inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoMagico
+                        if partida.emitirVFX then
+                            partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
+                        end
+                    end
+
+                    local danoFisico = tercoAtaque - inimigoAlvo.defesa
+                    if danoFisico > 0 then
+                        inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoFisico
+                        if partida.emitirVFX then
+                            partida.emitirVFX("danoFisico", dono == partida.jogador1 and "inimigo" or "aliado")
+                        end
+                    end
+                    
+                end
+            end
+        end,
+        
         estaVivo = true,
         estaAtivo = true
     }
