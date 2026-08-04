@@ -74,8 +74,8 @@ local herois = {}
 
             local valorBuff = 1
             
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.nome == "Rei Goblin" and aliado.estaVivo then
+            for i, al in ipairs(dono.aliados) do
+                if al.nome == "Rei Goblin" and al.estaVivo then
                     valorBuff = 2
                     break
                 end
@@ -100,8 +100,8 @@ local herois = {}
             self.buffDef = false
             
             local valorBuff = 2
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.nome == "Rei Goblin" and aliado.estaVivo then
+            for i, al in ipairs(dono.aliados) do
+                if al.nome == "Rei Goblin" and al.estaVivo then
                     valorBuff = 3
                     break
                 end
@@ -109,15 +109,14 @@ local herois = {}
 
             self.vidaAtual = self.vidaAtual + valorBuff
 
-
             if self.vidaAtual > self.vidaMaxima then
                 self.vidaAtual = self.vidaMaxima
             end
+            
             if partida.emitirVFX then
-                partida.emitirVFX("cura", self == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+                partida.emitirVFX("cura", self)
             end
             
-
         end,
         
         estaVivo = true,
@@ -162,10 +161,10 @@ local herois = {}
             local oReiGoblin = false
             local goblins = -1
 
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.raca == "Goblin" then
+            for i, al in ipairs(dono.aliados) do
+                if al.raca == "Goblin" then
                     goblins = goblins + 1
-                    if aliado.nome == "Rei Goblin" then
+                    if al.nome == "Rei Goblin" then
                         oReiGoblin = true
                     end
                 end
@@ -214,20 +213,20 @@ local herois = {}
         itemEquipado = {},
         descricao = "Inicio do Combate:\nPara cada aliado morto:\nEspirito +1 e Ataque +1\nRecupera 2 de vida",
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.raca == "Zumbi" or aliado.estaVivo == false then
+            for i, al in ipairs(dono.aliados) do
+                if al.raca == "Zumbi" or al.estaVivo == false then
                     self.ataque = self.ataque + 1
                     self.defesa = self.defesa + 1
                     if partida.emitirVFX then
-                        partida.emitirVFX("buff", self == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+                        partida.emitirVFX("buff", self)
                     end
                     if self.vidaAtual < self.vidaMaxima then
                         self.vidaAtual = self.vidaAtual + 2
-                        if partida.emitirVFX then
-                            partida.emitirVFX("cura", self == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
-                        end
                         if self.vidaAtual > self.vidaMaxima then
                             self.vidaAtual = self.vidaMaxima
+                        end
+                        if partida.emitirVFX then
+                            partida.emitirVFX("cura", self)
                         end
                     end
                 end
@@ -269,19 +268,22 @@ local herois = {}
         itemEquipado = {},
         descricao = "Aura:\n Seus Aliados recebem\nEspirito +1\nAtaque +1\nDefesa +1\nFinal do Turno:\nCause 5 de Dano Mágico",
         efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) 
-            for i, aliado in ipairs(dono.aliados) do
-                aliado.espirito = aliado.espirito + 1
-                aliado.ataque = aliado.ataque + 1
-                aliado.defesa = aliado.defesa + 1               
+            for i, al in ipairs(dono.aliados) do
+                al.espirito = al.espirito + 1
+                al.ataque = al.ataque + 1
+                al.defesa = al.defesa + 1               
             end
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            local dano = 5
-            if dano > inimigo.espirito then
+            local dano = 5 - inimigo.espirito
+            
+            if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
             end
+            
+            -- VFX toca sempre, independente se o dano passou do escudo/espirito
             if partida.emitirVFX then
-                partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
+                partida.emitirVFX("danoMagico", inimigo)
             end
         end,
         estaVivo = true,
@@ -302,26 +304,28 @@ local herois = {}
         descricao = "Inicio do turno:\nCause 3 de dano mágico\nAo jogar: Magia\nAtaque +3 até o final do turno",
         efeitoDoTurno = false,
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            local dano = 3
-            if dano > inimigo.espirito then
+            local dano = 3 - inimigo.espirito
+            
+            if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
-                if partida.emitirVFX then
-                    partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
-                end
+            end
+            
+            if partida.emitirVFX then
+                partida.emitirVFX("danoMagico", inimigo)
             end
         end,
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if cartaJogada and cartaJogada.tipo == 2 and self.efeitoDoTurno == false then
                 self.ataque = self.ataque + 3
-                    if partida.emitirVFX then
-                        partida.emitirVFX("buff", dono == partida.jogador1 and "inimigo" or "aliado")
-                    end
+                if partida.emitirVFX then
+                    partida.emitirVFX("buff", self)
+                end
                 self.efeitoDoTurno = true
             end
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)            
             if self.efeitoDoTurno == true then
-                self.ataque = self.ataque + -3
+                self.ataque = self.ataque - 3
                 self.efeitoDoTurno = false     
             end
         end,
@@ -346,15 +350,15 @@ local herois = {}
             local itemModulo = require("cartas.itens")
             if itemModulo and itemModulo.laminaDeCristal then
                 
-                for i, aliado in ipairs(dono.aliados) do
-                    if aliado.itemEquipado then
+                for i, al in ipairs(dono.aliados) do
+                    if al.itemEquipado then
 
                         local copiaItem = {}
                         for k, v in pairs(itemModulo.laminaDeCristal) do
                             copiaItem[k] = v
                         end
-                        table.insert(aliado.itemEquipado, copiaItem)
-                        aliado.ataque = aliado.ataque + 1
+                        table.insert(al.itemEquipado, copiaItem)
+                        al.ataque = al.ataque + 1
                     end
                 end
             end
@@ -381,22 +385,21 @@ local herois = {}
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if inimigo.espirito >= 2 then
                 inimigo.espirito = inimigo.espirito - 2
-                if partida.emitirVFX then
-                    partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
-                end
-            elseif inimigo.espirito <= 2 then
+            elseif inimigo.espirito < 2 then
                 inimigo.espirito = 0
-                if partida.emitirVFX then
-                    partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
-                end
+            end
+            
+            -- O Efeito visual do dano no espírito toca de qualquer forma
+            if partida.emitirVFX then
+                partida.emitirVFX("danoMagico", inimigo)
             end
         end,
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if cartaJogada and cartaJogada.tipo == 2 and self.efeitoDoTurno == false then
                 self.ataque = self.ataque + 2
-                    if partida.emitirVFX then
-                        partida.emitirVFX("buff", dono == partida.jogador1 and "inimigo" or "aliado")
-                    end
+                if partida.emitirVFX then
+                    partida.emitirVFX("buff", self)
+                end
                 self.efeitoDoTurno = true
             end
         end,
@@ -406,6 +409,12 @@ local herois = {}
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
             end
+            
+            -- O VFX do dano bate mesmo que seja zerado pelo espirito
+            if partida.emitirVFX then
+                partida.emitirVFX("danoMagico", inimigo)
+            end
+            
             self.efeitoDoTurno = false
             
         end,
@@ -430,8 +439,8 @@ local herois = {}
             
             local valorBuff = 1
             
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.nome == "Rei Goblin" and aliado.estaVivo then
+            for i, al in ipairs(dono.aliados) do
+                if al.nome == "Rei Goblin" and al.estaVivo then
                     valorBuff = 2
                     break
                 end
@@ -456,19 +465,18 @@ local herois = {}
                 end
             end
 
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.estaVivo then
-                    aliado.vidaAtual = aliado.vidaAtual + valorBuff
-                    if aliado.vidaAtual > aliado.vidaMaxima then
-                        aliado.vidaAtual = aliado.vidaMaxima
+            for i, al in ipairs(dono.aliados) do
+                if al.estaVivo then
+                    al.vidaAtual = al.vidaAtual + valorBuff
+                    if al.vidaAtual > al.vidaMaxima then
+                        al.vidaAtual = al.vidaMaxima
+                    end
+                    if partida.emitirVFX then
+                        partida.emitirVFX("cura", al)
                     end
                 end
             end
 
-            if partida.emitirVFX then
-                partida.emitirVFX("cura", dono == partida.jogador1 and "aliado" or "inimigo")
-            end
-            
         local oponente = dono == partida.jogador1 and partida.jogador2 or partida.jogador1
 
             local tercoEspirito = math.floor(self.espirito / 3)
@@ -480,19 +488,20 @@ local herois = {}
                     local danoMagico = tercoEspirito - inimigoAlvo.espirito
                     if danoMagico > 0 then
                         inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoMagico
-                        if partida.emitirVFX then
-                            partida.emitirVFX("danoMagico", dono == partida.jogador1 and "inimigo" or "aliado")
-                        end
                     end
-
+                    -- Gatilho solto do IF
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoMagico", inimigoAlvo)
+                    end
+                        
                     local danoFisico = tercoAtaque - inimigoAlvo.defesa
                     if danoFisico > 0 then
                         inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoFisico
-                        if partida.emitirVFX then
-                            partida.emitirVFX("danoFisico", dono == partida.jogador1 and "inimigo" or "aliado")
-                        end
                     end
-                    
+                    -- Gatilho solto do IF
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoFisico", inimigoAlvo)
+                    end
                 end
             end
         end,

@@ -242,19 +242,65 @@ end
 
 local function dispararEventoVisual(tipoAnimacao, quemSofreu)
     local centroX, centroY
+    local alvoEncontrado = false
 
-    if quemSofreu == "inimigo" then
-        centroX = 1000 + (280 / 2)
-        centroY = 40 + (380 / 2)
-    elseif quemSofreu == "aliado" then
-        centroX = 1000 + (280 / 2)
-        centroY = 480 + (380 / 2)
+    -- 1. Se o alvo for uma tabela (a própria carta do herói)
+    if type(quemSofreu) == "table" then
+        
+        -- CHECAGEM NOVA: O alvo é o herói ativo que está na Zona de Combate?
+        if quemSofreu == logicaPartida.jogador1.heroiDoturno then
+            -- Coordenadas da carta grande Aliada
+            centroX = 1000 + (280 / 2)
+            centroY = 480 + (380 / 2)
+            alvoEncontrado = true
+            
+        elseif quemSofreu == logicaPartida.jogador2.heroiDoturno then
+            -- Coordenadas da carta grande Inimiga
+            centroX = 1000 + (280 / 2)
+            centroY = 40 + (380 / 2)
+            alvoEncontrado = true
+            
+        else
+            -- Se NÃO for o herói em combate, então ele está no banco. Procura a miniatura dele:
+            -- Banco do Jogador 1 (y = 580)
+            for i, heroi in ipairs(logicaPartida.jogador1.aliados) do
+                if heroi == quemSofreu then
+                    centroX = 20 + ((i - 1) * 150) + 70
+                    centroY = 580 + 95                  
+                    alvoEncontrado = true
+                    break
+                end
+            end
+
+            -- Banco do Jogador 2 (y = 130)
+            if not alvoEncontrado then
+                for i, heroi in ipairs(logicaPartida.jogador2.aliados) do
+                    if heroi == quemSofreu then
+                        centroX = 20 + ((i - 1) * 150) + 70
+                        centroY = 130 + 95
+                        alvoEncontrado = true
+                        break
+                    end
+                end
+            end
+        end
+
+    -- 2. Mantém compatibilidade com o formato de texto ("aliado" ou "inimigo")
+    elseif type(quemSofreu) == "string" then
+        if quemSofreu == "inimigo" then
+            centroX = 1000 + (280 / 2)
+            centroY = 40 + (380 / 2)
+            alvoEncontrado = true
+        elseif quemSofreu == "aliado" then
+            centroX = 1000 + (280 / 2)
+            centroY = 480 + (380 / 2)
+            alvoEncontrado = true
+        end
     end
 
-    if centroX and centroY then
-        -- 1. Toca a animação
+    -- 3. Toca a animação se conseguiu achar uma coordenada válida
+    if alvoEncontrado and centroX and centroY then
         Partida.tocarAnimacao(tipoAnimacao, centroX, centroY)
-        -- 2. Pausa a resolução das regras para o jogador ver a animação acontecer
         esperar(1.0) 
     end
 end
@@ -475,163 +521,159 @@ function Partida.desenharHeroiEscolhido(carta1,carta2)
 end
 
 function Partida.desenharHerois()
+    local aliados = logicaPartida.jogador1.aliados
 
-        local aliados = logicaPartida.jogador1.aliados
-
-        for i, aliado in ipairs(aliados) do
+    for i, aliado in ipairs(aliados) do
+        -- Só desenha no banco se NÃO for o herói aliado que está em combate
+        if not (faseDoTurno == "resolucao" and aliado == logicaPartida.jogador1.heroiDoturno) then
             local xPos = 20 + ((i - 1) * 150)
             local yPos = 580
 
-                if aliado.estaAtivo == false and aliado.estaVivo == true then
-                    love.graphics.push() 
-
-                    local centroX = xPos + (140 / 2)
-                    local centroY = yPos + (190 / 2)
-
-                    love.graphics.translate(centroX, centroY)
-                    love.graphics.rotate(math.rad(20)) 
-                    love.graphics.translate(-centroX, -centroY)
-                    love.graphics.setColor(0,0,1)
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
-                    love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
-                    love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
-                    love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
-                    love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
-                        if #aliado.itemEquipado > 0 then
-                            local xPos = 40 + ((i - 1) * 150)
-                            local yPos = 730
-                            love.graphics.setColor(0,0,0.7)
-                            love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                            love.graphics.setColor(1,1,1)
-                            love.graphics.setFont(fonteEmoji, 14)
-                            love.graphics.print("🎒", xPos, yPos + 10)
-                            love.graphics.setColor(1,1,1)
-                        end
-                    love.graphics.setFont(fonteEmoji)
-                    love.graphics.print("💤", xPos + 55, yPos + 80)
-                    love.graphics.setFont(fonteIoskeley)
-
-                    love.graphics.pop()
+            if aliado.estaAtivo == false and aliado.estaVivo == true then
+                love.graphics.push()
+                local centroX = xPos + (140 / 2)
+                local centroY = yPos + (190 / 2)
+                love.graphics.translate(centroX, centroY)
+                love.graphics.rotate(math.rad(20))
+                love.graphics.translate(-centroX, -centroY)
+                love.graphics.setColor(0,0,1)
+                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
+                love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
+                love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
+                love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
+                love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
+                if #aliado.itemEquipado > 0 then
+                    local xPos = 40 + ((i - 1) * 150)
+                    local yPos = 730
+                    love.graphics.setColor(0,0,0.7)
+                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                    love.graphics.setColor(1,1,1)
+                    love.graphics.setFont(fonteEmoji, 14)
+                    love.graphics.print("🎒", xPos, yPos + 10)
+                    love.graphics.setColor(1,1,1)
                 end
+                love.graphics.setFont(fonteEmoji)
+                love.graphics.print("💤", xPos + 55, yPos + 80)
+                love.graphics.setFont(fonteIoskeley)
+                love.graphics.pop()
+            end
 
-                if aliado.estaAtivo == true then
-                    love.graphics.setColor(0,0,1)
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
-                    love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
-                    love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
-                    love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
-                    love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
-                        if #aliado.itemEquipado > 0 then
-                                local xPos = 40 + ((i - 1) * 150)
-                                local yPos = 730
-                                love.graphics.setColor(0,0,0.7)
-                                love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                                love.graphics.setColor(1,1,1)
-                                love.graphics.setFont(fonteEmoji, 14)
-                                love.graphics.print("🎒", xPos, yPos + 10)
-                                love.graphics.setColor(1,1,1)
-                                love.graphics.setFont(fonteIoskeley)
-                        end
-                    end
-
-
-
-                if aliado.estaVivo == false then
-                    love.graphics.setColor(0,0,1)
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
-                    love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
-                    love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
-                    love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
-                    love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
-                    love.graphics.setFont(fonteEmoji)
-                    love.graphics.print("💀", xPos + 55, yPos + 80)
+            if aliado.estaAtivo == true then
+                love.graphics.setColor(0,0,1)
+                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
+                love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
+                love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
+                love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
+                love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
+                if #aliado.itemEquipado > 0 then
+                    local xPos = 40 + ((i - 1) * 150)
+                    local yPos = 730
+                    love.graphics.setColor(0,0,0.7)
+                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                    love.graphics.setColor(1,1,1)
+                    love.graphics.setFont(fonteEmoji, 14)
+                    love.graphics.print("🎒", xPos, yPos + 10)
+                    love.graphics.setColor(1,1,1)
                     love.graphics.setFont(fonteIoskeley)
                 end
+            end
+
+            if aliado.estaVivo == false then
+                love.graphics.setColor(0,0,1)
+                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
+                love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
+                love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
+                love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
+                love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
+                love.graphics.setFont(fonteEmoji)
+                love.graphics.print("💀", xPos + 55, yPos + 80)
+                love.graphics.setFont(fonteIoskeley)
+            end
         end
+    end
 
     local inimigos = logicaPartida.jogador2.aliados
 
     for i, inimigo in ipairs(inimigos) do
-        local xPos = 20 + ((i - 1) * 150)
-        local yPos = 130
+        -- Só desenha no banco se NÃO for o herói inimigo que está em combate
+        if not (faseDoTurno == "resolucao" and inimigo == logicaPartida.jogador2.heroiDoturno) then
+            local xPos = 20 + ((i - 1) * 150)
+            local yPos = 130
 
-                if inimigo.estaAtivo == false and inimigo.estaVivo == true then
-                    love.graphics.push() 
-
-
-                    local centroX = xPos + (140 / 2)
-                    local centroY = yPos + (190 / 2)
-
-                    love.graphics.translate(centroX, centroY)
-                    love.graphics.rotate(math.rad(20)) 
-                    love.graphics.translate(-centroX, -centroY)
-                    love.graphics.setColor(1,0,0)
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
-                    love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
-                        if #inimigo.itemEquipado > 0 then
-                            local xPos = 40 + ((i - 1) * 150)
-                            local yPos = 280
-                            love.graphics.setColor(0.7,0,0)
-                            love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                            love.graphics.setColor(1,1,1)
-                            love.graphics.setFont(fonteEmoji, 14)
-                            love.graphics.print("🎒", xPos, yPos + 10)
-                            love.graphics.setColor(1,1,1)
-                        end
-                    love.graphics.setFont(fonteEmoji)
-                    love.graphics.print("💤", xPos + 55, yPos + 80)
-                    love.graphics.setFont(fonteIoskeley)
-
-                    love.graphics.pop()
+            if inimigo.estaAtivo == false and inimigo.estaVivo == true then
+                love.graphics.push()
+                local centroX = xPos + (140 / 2)
+                local centroY = yPos + (190 / 2)
+                love.graphics.translate(centroX, centroY)
+                love.graphics.rotate(math.rad(20))
+                love.graphics.translate(-centroX, -centroY)
+                love.graphics.setColor(1,0,0)
+                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
+                love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
+                love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
+                love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
+                love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                if #inimigo.itemEquipado > 0 then
+                    local xPos = 40 + ((i - 1) * 150)
+                    local yPos = 280
+                    love.graphics.setColor(0.7,0,0)
+                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                    love.graphics.setColor(1,1,1)
+                    love.graphics.setFont(fonteEmoji, 14)
+                    love.graphics.print("🎒", xPos, yPos + 10)
+                    love.graphics.setColor(1,1,1)
                 end
-                if inimigo.estaAtivo == true then
-                    love.graphics.setColor(1,0,0)
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
-                    love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
-                        if #inimigo.itemEquipado > 0 then
-                                local xPos = 40 + ((i - 1) * 150)
-                                local yPos = 280
-                                love.graphics.setColor(0.7,0,0)
-                                love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                                love.graphics.setColor(1,1,1)
-                                love.graphics.setFont(fonteEmoji, 14)
-                                love.graphics.print("🎒", xPos, yPos + 10)
-                                love.graphics.setColor(1,1,1)
-                                love.graphics.setFont(fonteIoskeley)
-                        end
-                end
+                love.graphics.setFont(fonteEmoji)
+                love.graphics.print("💤", xPos + 55, yPos + 80)
+                love.graphics.setFont(fonteIoskeley)
+                love.graphics.pop()
+            end
 
-                if inimigo.estaVivo == false then
-                    love.graphics.setColor(1,0,0)
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
-                    love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
-                    love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
-                    love.graphics.setFont(fonteEmoji)
-                    love.graphics.print("💀", xPos + 55, yPos + 80)
+            if inimigo.estaAtivo == true then
+                love.graphics.setColor(1,0,0)
+                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
+                love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
+                love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
+                love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
+                love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                if #inimigo.itemEquipado > 0 then
+                    local xPos = 40 + ((i - 1) * 150)
+                    local yPos = 280
+                    love.graphics.setColor(0.7,0,0)
+                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
+                    love.graphics.setColor(1,1,1)
+                    love.graphics.setFont(fonteEmoji, 14)
+                    love.graphics.print("🎒", xPos, yPos + 10)
+                    love.graphics.setColor(1,1,1)
                     love.graphics.setFont(fonteIoskeley)
                 end
+            end
+
+            if inimigo.estaVivo == false then
+                love.graphics.setColor(1,0,0)
+                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
+                love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
+                love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
+                love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
+                love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                love.graphics.setFont(fonteEmoji)
+                love.graphics.print("💀", xPos + 55, yPos + 80)
+                love.graphics.setFont(fonteIoskeley)
+            end
+        end
     end
-        
 end
 
 function Partida.desenharMao()

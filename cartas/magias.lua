@@ -7,14 +7,16 @@ magias.bolaDeFogo = {
     descricao = "Cause 4 mais seu espirito de dano mágico ao inimigo",
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-        local danoFinal = self.dano - (inimigo.espirito - aliado.espirito)
+        -- Cálculo correto: (Dano Base + Seu Espírito) - Defesa Mágica (Espírito Inimigo)
+        local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
         end
 
+        -- O VFX agora recebe a tabela do alvo, e toca fora do if de dano>0
         if partida.emitirVFX then
-            partida.emitirVFX("danoMagico", inimigo == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+            partida.emitirVFX("danoMagico", inimigo)
         end
     end
 }
@@ -26,7 +28,7 @@ magias.estatica = {
     descricao = "Cause 3 mais seu espirito de dano mágico ao inimigo\nCrie uma Estatica em seu baralho",
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-        local danoFinal = self.dano - (inimigo.espirito - aliado.espirito)
+        local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
@@ -40,7 +42,7 @@ magias.estatica = {
         table.insert(dono.baralho, copiaEstatica)
 
         if partida.emitirVFX then
-            partida.emitirVFX("danoMagico", inimigo == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+            partida.emitirVFX("danoMagico", inimigo)
         end
     end
 }
@@ -52,10 +54,11 @@ magias.paraRaios = {
     descricao = "Espirito +1 até o Final do Turno\nCrie e Jogue uma Estatica",
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.espirito = aliado.espirito + 1
+        
         if partida.emitirVFX then
-            partida.emitirVFX("buff", dono == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+            partida.emitirVFX("buff", aliado)
         end
-        -- código para criar cartas na mesa
+        
         table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
             carta = magias.estatica,
             aliado = aliado,
@@ -113,13 +116,15 @@ magias.massacreCristalino = {
 
         local danoMagicoTotal = totalCristais * 2
 
-        if danoMagicoTotal > inimigo.espirito then
-            local danoFinal = danoMagicoTotal - inimigo.espirito
+        -- Simplificando a matemática do dano para manter o padrão
+        local danoFinal = danoMagicoTotal - inimigo.espirito
+        
+        if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
         end
 
         if partida.emitirVFX then
-            partida.emitirVFX("danoMagico", inimigo == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+            partida.emitirVFX("danoMagico", inimigo)
         end
     end
 }
@@ -134,17 +139,21 @@ magias.pontoFinal = {
         if dono.heroiDoturno.espirito <= 0 then
             return
         end
+        
         if partida.emitirVFX then
-            partida.emitirVFX("buff", dono == partida.jogador2.heroiDoturno and "inimigo" or "aliado")
+            partida.emitirVFX("buff", dono.heroiDoturno)
         end
-        self.dano =  dono.heroiDoturno.espirito * 2
-        dono.heroiDoturno.ataque =  dono.heroiDoturno.ataque + self.dano
+        
+        self.dano = dono.heroiDoturno.espirito * 2
+        dono.heroiDoturno.ataque = dono.heroiDoturno.ataque + self.dano
         self.efeitoDoTurno = true
     end,
     efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        self.efeitoDoTurno = false
-        dono.heroiDoturno.ataque = dono.heroiDoturno.ataque - self.dano
-        self.dano = 0
+        if self.efeitoDoTurno then
+            self.efeitoDoTurno = false
+            dono.heroiDoturno.ataque = dono.heroiDoturno.ataque - self.dano
+            self.dano = 0
+        end
     end
 }
 
