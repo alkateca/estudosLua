@@ -13,20 +13,19 @@ logicaPartida.jogador1 = {
     extraDeck = {},
     baralho = {
        
-        acao.mirarNaCabeca, acao.convocacao
-        --[[, item.brocheCristal,
+        acao.mirarNaCabeca, acao.convocacao, item.brocheCristal,
         item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         magia.bolaDeFogo, magia.bolaDeFogo, magia.bolaDeFogo,
         magia.paraRaios, magia.paraRaios, magia.paraRaios,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
-        item.quimera, magia.pontoFinal]]
+        item.quimera, magia.pontoFinal
     },
     nome = "",
     mao = {},
     descarte = {},
     aliados = {        
-        heroi.reiGoblin, heroi.esquadraoGoblin, heroi.traidorGoblin
+        heroi.heroiAlka, heroi.esquadraoGoblin, heroi.heroinaLeone
     },
     cartasEscolhidas = {},
     heroiDoturno = nil

@@ -368,6 +368,109 @@ local herois = {}
         estaAtivo = true
     }
 
+-- grupo dos heróis
+
+    herois.heroiAlka = {
+        tipo = 1,
+        raca = nil,
+        nome = "Alka, Lutador do Grupo dos Heróis",
+        espirito = 1,
+        ataque = 7,
+        defesa = 3,
+        vidaMaxima = 14,
+        vidaAtual = 14,
+        modificadorDeDano = 0,
+        itemEquipado = {},
+        ataqueDuplo = false,
+        descricao = "Final do Turno:\nSe durante o Turno seu Ataque foi igual ou superior a 10:\nRealize um Ataque extra",
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+            if cartaJogada then
+                if self.ataque >= 10 then
+                    self.ataqueDuplo = true
+                end
+            end
+
+        end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if self.ataqueDuplo == true then
+                    local danoFisico = 10 - inimigo.defesa
+                    if danoFisico > 0 then
+                        inimigo.vidaAtual = inimigo.vidaAtual - danoFisico
+                    end
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoFisico", inimigo)
+                    end
+            end
+        end,
+
+        estaVivo = true,
+        estaAtivo = true
+    }
+
+    herois.heroinaLeone = {
+        tipo = 1,
+        raca = nil,
+        nome = "Leone, Clériga do Grupo dos Heróis",
+        espirito = 1,
+        ataque = 3,
+        defesa = 3,
+        vidaMaxima = 15,
+        vidaAtual = 15,
+        modificadorDeDano = 0,
+        itemEquipado = {},
+        dano = 0,
+        descricao = "Início do Turno:\nCure seus Aliados em 2\nFinal do Turno:\nCause Dano Direto ao seu Inimigo equivalente a soma Cura do Turno",
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+            for i, aliado in ipairs(dono.aliados) do
+                if aliado.estaVivo then
+
+                    local curaAliados = aliado.vidaMaxima - aliado.vidaAtual
+                    local curaReal = math.min(2, curaAliados)
+                    self.dano = self.dano + curaReal
+                    
+                    aliado.vidaAtual = aliado.vidaAtual + 2
+                   
+                    if aliado.vidaAtual > aliado.vidaMaxima then
+                        aliado.vidaAtual = aliado.vidaMaxima
+                    end
+                    if partida.emitirVFX then
+                        partida.emitirVFX("cura", aliado)
+                    end
+                end
+            end
+
+        end,
+
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+            if cartaJogada.valorCura then
+                self.dano = self.dano + cartaJogada.valorCura
+            end
+
+        end,
+
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+            
+
+            if self.dano > 0 then
+                inimigo.vidaAtual = inimigo.vidaAtual - self.dano
+            end
+
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoDireto", inimigo)
+                end
+
+             self.dano = 0
+        end,
+
+        estaVivo = true,
+        estaAtivo = true
+    }
+    
+
 -- liberações
     herois.moyraLiberta = {
         tipo = 1,
