@@ -93,5 +93,57 @@ acoes.determinacaoCristalina = {
     descricao = "Ataque +1 até o final do turno\nJogue uma Carta do seu descarte"
 }
 
+acoes.convocacao = {
+    tipo = 4,
+    nome = "Convocação",
+    efeitoAtivo = false,
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+        partida.estadoAlvo = {
+            ativo = true,
+            tipo = "aliado",
+            mensagem = "Escolha um Herói Aliado",
+            dono = dono,
+            
+            callback = function(cartaEscolhida, index)
+                if cartaEscolhida then
+                    cartaEscolhida.estaAtivo = not cartaEscolhida.estaAtivo
+                end
+            end
+        }
+        
+        coroutine.yield()
+
+    end,
+    descricao = "Escolha um Heroi Aliado:\nAltere seu Estado Ativo"
+}
+
+acoes.mirarNaCabeca = {
+    tipo = 4,
+    nome = "Mirar na cabeça",
+    efeitoAtivo = false,
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+        partida.estadoAlvo = {
+            ativo = true,
+            tipo = "inimigo",
+            mensagem = "Escolha um Herói Inimigo",
+            dono = dono,
+            
+            callback = function(cartaEscolhida, index)
+                if cartaEscolhida then
+                    cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual - 3
+                        if partida.emitirVFX then
+                            partida.emitirVFX("danoDireto", cartaEscolhida)
+                        end
+                end
+            end
+        }
+
+        coroutine.yield()
+
+    end,
+    descricao = "Escolha um Heroi Inimigo:\nCause 3 de dano Direto"
+}
 
 return acoes

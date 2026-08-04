@@ -157,4 +157,5 @@ magias.pontoFinal = {
     end
 }
 
+
 return magias

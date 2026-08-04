@@ -92,6 +92,7 @@ function Partida.load()
     local imgDanoFisico = love.graphics.newImage("assets/images/DustExplosion_spritesheet.png")
     local imgCurarPersonagem = love.graphics.newImage("assets/images/HealingEffect_spritesheet.png")
     local imgBuffPersonage = love.graphics.newImage("assets/images/1712.png")
+    local imgDanoDireto =  love.graphics.newImage("assets/images/SimpleExplosionC_spritesheet.png")
 
     animacoesCarregadas["buff"] = {
         imagem = imgBuffPersonage,
@@ -114,11 +115,18 @@ function Partida.load()
         escala = 6
     }
 
+    animacoesCarregadas["danoDireto"] = {
+        imagem = imgDanoDireto,
+        quads = criarQuads(imgDanoFisico, 59, 63),
+        duracaoFrame = 0.06,
+        escala = 4
+    }
+
     animacoesCarregadas["cura"] = {
         imagem = imgCurarPersonagem,
         quads = criarQuadsGrid(imgCurarPersonagem, 5, 3), 
         duracaoFrame = 0.06,
-        escala = 4
+        escala = 3
     }
 
 end
@@ -1198,54 +1206,135 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
         
         -- 3. Renderiza apenas o alvo que o jogador precisa escolher
         if logicaPartida.estadoAlvo.tipo == "mao" then
+            
+            -- 1. ZONA DE FOCO: Fundo cinza translúcido com contorno
+            -- math.max garante que a zona tenha um tamanho mínimo caso a mão esteja vazia
+            local larguraZona = math.max((#logicaPartida.jogador1.mao * 90) + 10, 100) 
+            love.graphics.setColor(1, 0.8, 0, 0.3) -- Fundo cinza escuro translúcido
+            love.graphics.rectangle("fill", 530, 750, larguraZona, 120, 10, 10)
+            
+            
+            love.graphics.rectangle("line", 530, 750, larguraZona, 120, 10, 10)
+            love.graphics.setLineWidth(1) -- Reseta a grossura da linha para o padrão
+            
+            -- 2. Renderiza as cartas da MÃO
             for i, carta in ipairs(logicaPartida.jogador1.mao) do
                 local xPos = 540 + ((i - 1) * 90)
                 local yPos = 760
                 
-                love.graphics.setColor(0.2, 0.8, 0.2) -- Cor verde para destacar
+                love.graphics.setColor(0.5, 0.5, 0.5) -- Fundo cinza da carta
                 love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-                love.graphics.setColor(1, 1, 1)
+                
+                love.graphics.setColor(1, 1, 1) -- Cor do contorno da carta (Branco)
+                love.graphics.rectangle("line", xPos, yPos, 80, 100, 8, 8)
+                
                 love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
             end
             
         elseif logicaPartida.estadoAlvo.tipo == "descarte" then
+            
+            local larguraZona = math.max((#logicaPartida.jogador1.descarte * 90) + 10, 100)
+            love.graphics.setColor(1, 0.8, 0, 0.3)
+            love.graphics.rectangle("fill", 530, 750, larguraZona, 120, 10, 10)           
+
+            love.graphics.rectangle("line", 530, 750, larguraZona, 120, 10, 10)
+            love.graphics.setLineWidth(1)
+            
             for i, carta in ipairs(logicaPartida.jogador1.descarte) do
                 local xPos = 540 + ((i - 1) * 90)
                 local yPos = 760
                 
-                love.graphics.setColor(0.5, 0.5, 0.5) -- Cinza para o descarte
+                love.graphics.setColor(0.5, 0.5, 0.5)
                 love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.rectangle("line", xPos, yPos, 80, 100, 8, 8)
+                
                 love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
             end
-            
         elseif logicaPartida.estadoAlvo.tipo == "aliado" then
+            
+
+            local larguraZona = (#logicaPartida.jogador1.aliados * 150) + 10
+            love.graphics.setColor(1, 0.8, 0, 0.3)
+            love.graphics.rectangle("fill", 10, 570, larguraZona, 210, 15, 15)
+
             for i, heroiAlvo in ipairs(logicaPartida.jogador1.aliados) do
                 if heroiAlvo.estaVivo then
                     local xPos = 20 + ((i - 1) * 150)
                     local yPos = 580
                     
-                    love.graphics.setColor(0, 0.5, 1) -- Azul para aliados
-                    love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                    love.graphics.setColor(0, 0, 1) 
+                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                    
                     love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 80, "center")
+                    love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 140 ,"center")
+                    love.graphics.printf(heroiAlvo.espirito, xPos, 110 + yPos, 130, "right")
+                    love.graphics.printf(heroiAlvo.ataque, xPos, 130 + yPos, 130, "right")
+                    love.graphics.printf(heroiAlvo.defesa, xPos, 150 + yPos, 130, "right")
+                    love.graphics.printf(heroiAlvo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                    
+                    if #heroiAlvo.itemEquipado > 0 then
+                        local itemXPos = 40 + ((i - 1) * 150)
+                        local itemYPos = 730
+                        love.graphics.setColor(0, 0, 0.7)
+                        love.graphics.rectangle("fill", itemXPos, itemYPos + 5, 40, 50, 8, 8)
+                        love.graphics.setColor(1, 1, 1)
+                        love.graphics.setFont(fonteEmoji, 14)
+                        love.graphics.print("🎒", itemXPos, itemYPos + 10)
+                        love.graphics.setFont(fonteIoskeley)
+                    end
+                    
+                    if not heroiAlvo.estaAtivo then
+                        love.graphics.setFont(fonteEmoji)
+                        love.graphics.print("💤", xPos + 55, yPos + 80)
+                        love.graphics.setFont(fonteIoskeley)
+                    end
                 end
             end
             
         elseif logicaPartida.estadoAlvo.tipo == "inimigo" then
+            
+            local larguraZona = (#logicaPartida.jogador2.aliados * 150) + 10
+            love.graphics.setColor(1, 0.8, 0, 0.3) 
+            love.graphics.rectangle("fill", 10, 120, larguraZona, 210, 15, 15)
+
             for i, heroiAlvo in ipairs(logicaPartida.jogador2.aliados) do
                 if heroiAlvo.estaVivo then
                     local xPos = 20 + ((i - 1) * 150)
                     local yPos = 130
                     
-                    love.graphics.setColor(1, 0, 0) -- Vermelho para inimigos
-                    love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                    love.graphics.setColor(1, 0, 0) 
+                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                    
                     love.graphics.setColor(1, 1, 1)
-                    love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 80, "center")
+                    love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 140 ,"center")
+                    love.graphics.printf(heroiAlvo.espirito, xPos, 110 + yPos, 130, "right")
+                    love.graphics.printf(heroiAlvo.ataque, xPos, 130 + yPos, 130, "right")
+                    love.graphics.printf(heroiAlvo.defesa, xPos, 150 + yPos, 130, "right")
+                    love.graphics.printf(heroiAlvo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                    
+                    if #heroiAlvo.itemEquipado > 0 then
+                        local itemXPos = 40 + ((i - 1) * 150)
+                        local itemYPos = 280
+                        love.graphics.setColor(0.7, 0, 0)
+                        love.graphics.rectangle("fill", itemXPos, itemYPos + 5, 40, 50, 8, 8)
+                        love.graphics.setColor(1, 1, 1)
+                        love.graphics.setFont(fonteEmoji, 14)
+                        love.graphics.print("🎒", itemXPos, itemYPos + 10)
+                        love.graphics.setFont(fonteIoskeley)
+                    end
+                    
+                    -- Verifica se está inativo (dormindo)
+                    if not heroiAlvo.estaAtivo then
+                        love.graphics.setFont(fonteEmoji)
+                        love.graphics.print("💤", xPos + 55, yPos + 80)
+                        love.graphics.setFont(fonteIoskeley)
+                    end
                 end
             end
         end
-    end
+end
 
     love.graphics.setColor(1, 1, 1)
     

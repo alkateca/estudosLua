@@ -12,13 +12,15 @@ logicaPartida.jogador1 = {
     reliquia = reliquia.liberacaoEsquadrao,
     extraDeck = {},
     baralho = {
-        item.brocheCristal, item.brocheCristal, item.brocheCristal,
+       
+        acao.mirarNaCabeca, acao.convocacao
+        --[[, item.brocheCristal,
         item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         magia.bolaDeFogo, magia.bolaDeFogo, magia.bolaDeFogo,
         magia.paraRaios, magia.paraRaios, magia.paraRaios,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
-        item.quimera, magia.pontoFinal
+        item.quimera, magia.pontoFinal]]
     },
     nome = "",
     mao = {},
@@ -34,7 +36,7 @@ logicaPartida.jogador2 = {
     reliquia = reliquia.liberacaoMoyra,
     extraDeck = {},
     baralho = { 
-        item.brocheCristal, item.brocheCristal, magia.pontoFinal,
+         acao.mirarNaCabeca, acao.convocacao, magia.pontoFinal,
         item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         magia.estatica, magia.estatica, magia.estatica,
