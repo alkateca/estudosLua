@@ -3,6 +3,7 @@ local itens = {}
 itens.quimera = {
     tipo = 3,
     nome = "Quimera",
+    unica = true,
     raca = {"Cristal"},
     efeitoFinalDeTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
             if partida.emitirVFX then

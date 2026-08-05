@@ -1,108 +1,12 @@
-[16:34:55] Carta Resolvida: Liberação: Esquadrão usada por Heróis Lendários
- dos Goblin | Aliado [V:13 A:5 D:3 E:3] | Inimigo [V:13 A:7 D:2 E:3]
-[16:35:00] Carta Resolvida: Convocação usada por Heróis Lendários
- dos Goblin | Aliado [V:13 A:5 D:4 E:3] | Inimigo [V:13 A:7 D:2 E:3]
-[16:35:01] Carta Resolvida: Para-raios usada por Isenora,
-Santa das Laminas | Aliado [V:13 A:7 D:2 E:4] | Inimigo [V:13 A:5 D:5 E:3]
-[16:35:03] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:13 A:7 D:2 E:4] | Inimigo [V:9 A:5 D:5 E:3]
-[16:35:07] Carta Resolvida: Ração de emergencia usada por Heróis Lendários
- dos Goblin | Aliado [V:9 A:5 D:5 E:3] | Inimigo [V:13 A:7 D:2 E:4]
-[16:35:10] Carta Resolvida: Ração de emergencia usada por Heróis Lendários
- dos Goblin | Aliado [V:9 A:5 D:6 E:3] | Inimigo [V:13 A:7 D:2 E:4]
-[16:35:11] Carta Resolvida: Ração de emergencia usada por Heróis Lendários
- dos Goblin | Aliado [V:9 A:5 D:7 E:3] | Inimigo [V:13 A:7 D:2 E:4]
-[16:35:27] Carta Resolvida: Mirar na cabeça usada por Heróis Lendários
- dos Goblin | Aliado [V:9 A:5 D:8 E:3] | Inimigo [V:13 A:7 D:2 E:4]
-[16:35:28] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:13 A:7 D:2 E:4] | Inimigo [V:5 A:5 D:9 E:3]
-[16:35:29] Combate Fisico: Heróis Lendários
- dos Goblin causou 3 de dano. | Aliado [V:5 A:5 D:9 E:3] | Inimigo [V:10 A:7 D:2 E:4]
-[16:35:40] Efeito Final Turno Aliado: Heróis Lendários
- dos Goblin | Aliado [V:8 A:5 D:9 E:3] | Inimigo [V:10 A:7 D:2 E:4]
-[16:35:42] Efeito Final Turno Inimigo: Isenora,
-Santa das Laminas | Aliado [V:6 A:5 D:9 E:3] | Inimigo [V:10 A:7 D:2 E:4]
-[16:35:43] Magia Ativa Inimigo: Para-raios | Aliado [V:6 A:5 D:9 E:3] | Inimigo [V:10 A:7 D:2 E:3]
-[16:35:52] Carta Resolvida: Quimera usada por Alka, Lutador do Grupo dos Heróis | Aliado [V:14 A:8 D:4 E:2] | Inimigo [V:13 A:6 D:1 E:2]
-[16:35:54] Carta Resolvida: Para-raios usada por Moyra,
-Aprendiz da Santa | Aliado [V:13 A:6 D:1 E:3] | Inimigo [V:14 A:8 D:4 E:2]
-[16:35:57] Carta Resolvida: Estatica usada por Moyra,
-Aprendiz da Santa | Aliado [V:13 A:9 D:1 E:3] | Inimigo [V:10 A:8 D:4 E:2]
-[16:35:59] Carta Resolvida: Determinação
-Cristalina usada por Alka, Lutador do Grupo dos Heróis | Aliado [V:10 A:9 D:4 E:2] | Inimigo [V:13 A:9 D:1 E:3]
-[16:36:06] Carta Resolvida: Ração de emergencia usada por Alka, Lutador do Grupo dos Heróis | Aliado [V:10 A:9 D:4 E:2] | Inimigo [V:13 A:9 D:1 E:3]
-[16:36:07] Carta Resolvida: Broche de Cristal usada por Alka, Lutador do Grupo dos Heróis | Aliado [V:10 A:9 D:5 E:3] | Inimigo [V:13 A:9 D:1 E:3]
-[16:36:07] Carta Resolvida: Determinação
-Cristalina usada por Moyra,
-Aprendiz da Santa | Aliado [V:13 A:10 D:1 E:3] | Inimigo [V:10 A:9 D:5 E:3]
-[16:36:09] Carta Resolvida: Estatica usada por Moyra,
-Aprendiz da Santa | Aliado [V:13 A:10 D:1 E:3] | Inimigo [V:7 A:9 D:5 E:3]
-[16:36:11] Efeito Inicio Turno Inimigo: Moyra,
-Aprendiz da Santa | Aliado [V:7 A:9 D:5 E:3] | Inimigo [V:13 A:10 D:1 E:3]
-[16:36:11] Combate Fisico: Moyra,
-Aprendiz da Santa causou 5 de dano. | Aliado [V:2 A:9 D:5 E:3] | Inimigo [V:13 A:10 D:1 E:3]
-[16:36:13] Combate Fisico: Alka, Lutador do Grupo dos Heróis causou 8 de dano. | Aliado [V:2 A:9 D:5 E:3] | Inimigo [V:5 A:10 D:1 E:3]
-[16:36:15] Efeito Final Turno Aliado: Alka, Lutador do Grupo dos Heróis | Aliado [V:2 A:9 D:5 E:3] | Inimigo [V:5 A:10 D:1 E:3]
-[16:36:16] Efeito Final Turno Inimigo: Moyra,
-Aprendiz da Santa | Aliado [V:2 A:9 D:5 E:3] | Inimigo [V:5 A:7 D:1 E:3]
-[16:36:18] Efeito Item Aliado: Quimera | Aliado [V:5 A:9 D:5 E:3] | Inimigo [V:5 A:7 D:1 E:3]
-[16:36:18] Magia Ativa Aliado: Determinação
-Cristalina | Aliado [V:5 A:8 D:5 E:3] | Inimigo [V:5 A:7 D:1 E:3]
-[16:36:19] Magia Ativa Inimigo: Determinação
-Cristalina | Aliado [V:5 A:8 D:5 E:3] | Inimigo [V:5 A:6 D:1 E:3]
-[16:36:20] Magia Ativa Inimigo: Para-raios | Aliado [V:5 A:8 D:5 E:3] | Inimigo [V:5 A:6 D:1 E:2]
-[16:36:31] Carta Resolvida: Determinação
-Cristalina usada por Leone, Clériga do Grupo dos Heróis | Aliado [V:15 A:4 D:3 E:1] | Inimigo [V:9 A:6 D:1 E:2]
-[16:36:44] Carta Resolvida: Mirar na cabeça usada por Leone, Clériga do Grupo dos Heróis | Aliado [V:15 A:4 D:3 E:1] | Inimigo [V:9 A:6 D:1 E:2]
-[16:36:45] Carta Resolvida: Ponto Final usada por Naelis, Grande Artesã de Cristais | Aliado [V:9 A:10 D:1 E:2] | Inimigo [V:15 A:4 D:3 E:1]
-[16:36:47] Carta Resolvida: Para-raios usada por Leone, Clériga do Grupo dos Heróis | Aliado [V:15 A:4 D:3 E:2] | Inimigo [V:9 A:10 D:1 E:2]
-[16:36:49] Carta Resolvida: Estatica usada por Leone, Clériga do Grupo dos Heróis | Aliado [V:15 A:4 D:3 E:2] | Inimigo [V:6 A:10 D:1 E:2]
-[16:36:51] Carta Resolvida: Quimera usada por Naelis, Grande Artesã de Cristais | Aliado [V:6 A:11 D:2 E:3] | Inimigo [V:15 A:4 D:3 E:2]
-[16:36:55] Efeito Inicio Turno Aliado: Leone, Clériga do Grupo dos Heróis | Aliado [V:15 A:4 D:3 E:2] | Inimigo [V:6 A:11 D:2 E:3]
-[16:36:55] Combate Fisico: Naelis, Grande Artesã de Cristais causou 8 de dano. | Aliado [V:7 A:4 D:3 E:2] | Inimigo [V:6 A:11 D:2 E:3]
-[16:36:57] Combate Fisico: Leone, Clériga do Grupo dos Heróis causou 2 de dano. | Aliado [V:7 A:4 D:3 E:2] | Inimigo [V:4 A:11 D:2 E:3]
-[16:37:00] Efeito Final Turno Aliado: Leone, Clériga do Grupo dos Heróis | Aliado [V:7 A:4 D:3 E:2] | Inimigo [V:0 A:11 D:2 E:3]
-[16:37:01] Efeito Item Inimigo: Quimera | Aliado [V:7 A:4 D:3 E:2] | Inimigo [V:3 A:11 D:2 E:3]
-[16:37:02] Magia Ativa Aliado: Para-raios | Aliado [V:7 A:4 D:3 E:1] | Inimigo [V:3 A:11 D:2 E:3]
-[16:37:03] Magia Ativa Aliado: Determinação
-Cristalina | Aliado [V:7 A:3 D:3 E:1] | Inimigo [V:3 A:11 D:2 E:3]
-[16:37:04] Magia Ativa Inimigo: Ponto Final | Aliado [V:7 A:3 D:3 E:1] | Inimigo [V:3 A:7 D:2 E:3]
-[16:37:13] Carta Resolvida: Dragão de Cristal usada por Alka, Lutador do Grupo dos Heróis | Aliado [V:7 A:8 D:5 E:3] | Inimigo [V:10 A:7 D:2 E:3]
-[16:37:15] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:10 A:7 D:2 E:3] | Inimigo [V:4 A:8 D:5 E:3]
-[16:37:17] Carta Resolvida: Ponto Final usada por Alka, Lutador do Grupo dos Heróis | Aliado [V:4 A:14 D:5 E:3] | Inimigo [V:10 A:7 D:2 E:3]
-[16:37:18] Carta Resolvida: Dragão de Cristal usada por Isenora,
-Santa das Laminas | Aliado [V:10 A:7 D:2 E:3] | Inimigo [V:4 A:14 D:5 E:3]
-[16:37:19] Combate Fisico: Isenora,
-Santa das Laminas causou 2 de dano. | Aliado [V:2 A:14 D:5 E:3] | Inimigo [V:10 A:7 D:2 E:3]
-[16:37:21] Combate Fisico: Alka, Lutador do Grupo dos Heróis causou 12 de dano. | Aliado [V:2 A:14 D:5 E:3] | Inimigo [V:-2 A:7 D:2 E:3]
-[16:37:24] Efeito Final Turno Aliado: Alka, Lutador do Grupo dos Heróis | Aliado [V:2 A:14 D:5 E:3] | Inimigo [V:-10 A:7 D:2 E:3]
-[16:37:26] Efeito Final Turno Inimigo: Isenora,
-Santa das Laminas | Aliado [V:0 A:14 D:5 E:3] | Inimigo [V:-10 A:7 D:2 E:3]
-[16:37:27] Efeito Item Aliado: Quimera | Aliado [V:3 A:14 D:5 E:3] | Inimigo [V:-10 A:7 D:2 E:3]
-[16:37:29] Efeito Item Aliado: Dragão de Cristal | Aliado [V:3 A:14 D:5 E:3] | Inimigo [V:-13 A:7 D:2 E:3]
-[16:37:31] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:0 A:14 D:5 E:3] | Inimigo [V:-13 A:7 D:2 E:3]
-[16:37:32] Magia Ativa Aliado: Ponto Final | Aliado [V:0 A:8 D:5 E:3] | Inimigo [V:-13 A:7 D:2 E:3]
-[16:37:33] Morte: Aliado Alka, Lutador do Grupo dos Heróis foi derrotado.
-[16:37:33] Morte: Inimigo Isenora,
-Santa das Laminas foi derrotado.
-[16:37:43] Carta Resolvida: Para-raios usada por Heróis Lendários
- dos Goblin | Aliado [V:8 A:5 D:9 E:4] | Inimigo [V:3 A:7 D:2 E:3]
-[16:37:45] Carta Resolvida: Estatica usada por Heróis Lendários
- dos Goblin | Aliado [V:8 A:5 D:9 E:5] | Inimigo [V:-2 A:7 D:2 E:3]
-[16:38:00] Carta Resolvida: Convocação usada por Naelis, Grande Artesã de Cristais | Aliado [V:-2 A:7 D:2 E:3] | Inimigo [V:8 A:5 D:9 E:6]
-[16:38:01] Carta Resolvida: Para-raios usada por Heróis Lendários
- dos Goblin | Aliado [V:8 A:5 D:9 E:7] | Inimigo [V:-2 A:7 D:2 E:3]
-[16:38:02] Carta Resolvida: Estatica usada por Heróis Lendários
- dos Goblin | Aliado [V:8 A:5 D:9 E:8] | Inimigo [V:-10 A:7 D:2 E:3]
-[16:38:03] Carta Resolvida: Ração de emergencia usada por Naelis, Grande Artesã de Cristais | Aliado [V:-10 A:7 D:2 E:3] | Inimigo [V:8 A:5 D:9 E:9]
-[16:38:04] Carta Resolvida: Determinação
-Cristalina usada por Naelis, Grande Artesã de Cristais | Aliado [V:-10 A:8 D:2 E:3] | Inimigo [V:8 A:5 D:9 E:9]
-[16:38:06] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:-10 A:8 D:2 E:3] | Inimigo [V:8 A:5 D:9 E:9]
-[16:38:07] Combate Fisico: Heróis Lendários
- dos Goblin causou 3 de dano. | Aliado [V:8 A:5 D:9 E:9] | Inimigo [V:-13 A:8 D:2 E:3]
-[16:38:15] Efeito Final Turno Aliado: Heróis Lendários
- dos Goblin | Aliado [V:11 A:5 D:9 E:9] | Inimigo [V:-13 A:8 D:2 E:3]
-[16:38:17] Efeito Item Inimigo: Quimera | Aliado [V:11 A:5 D:9 E:9] | Inimigo [V:-10 A:8 D:2 E:3]
-[16:38:18] Magia Ativa Aliado: Para-raios | Aliado [V:11 A:5 D:9 E:8] | Inimigo [V:-10 A:8 D:2 E:3]
-[16:38:18] Magia Ativa Aliado: Para-raios | Aliado [V:11 A:5 D:9 E:7] | Inimigo [V:-10 A:8 D:2 E:3]
+[22:40:13] Carta Resolvida: Broche de Cristal usada por Esquadrão
+Goblin | Aliado [V:12 A:4 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
+[22:40:15] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:2] | Inimigo [V:10 A:5 D:3 E:3]
+[22:40:16] Carta Resolvida: Dragão de Cristal usada por Esquadrão
+Goblin | Aliado [V:10 A:5 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
+[22:40:17] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:2] | Inimigo [V:8 A:6 D:3 E:3]
+[22:40:19] Combate Fisico: Naelis, Grande Artesã de Cristais causou 3 de dano. | Aliado [V:5 A:6 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
+[22:40:22] Combate Fisico: Esquadrão
+Goblin causou 5 de dano. | Aliado [V:5 A:6 D:3 E:3] | Inimigo [V:7 A:6 D:1 E:2]
+[22:40:24] Efeito Final Turno Aliado: Esquadrão
+Goblin | Aliado [V:7 A:6 D:3 E:3] | Inimigo [V:7 A:6 D:1 E:2]
+[22:40:26] Efeito Item Aliado: Dragão de Cristal | Aliado [V:7 A:6 D:3 E:3] | Inimigo [V:3 A:6 D:1 E:2]

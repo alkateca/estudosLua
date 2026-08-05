@@ -5,6 +5,7 @@ local heroi = require("cartas.herois")
 reliquias.liberacaoMoyra = {
     tipo = 4,
     nome = "Liberação: Moyra",
+    unica = true,
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)      
         
         if aliado.nome == "Moyra,\nAprendiz da Santa" then
@@ -77,6 +78,7 @@ reliquias.liberacaoMoyra = {
 reliquias.liberacaoEsquadrao = {
     tipo = 4,
     nome = "Liberação: Esquadrão",
+    unica = true,
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)      
         if dono == partida.jogador2 then
             if #dono.mao > 0 then

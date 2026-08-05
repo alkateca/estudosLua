@@ -9,24 +9,13 @@ local reliquia = require("cartas.reliquias")
 logicaPartida.turnoAtual = 1
 
 logicaPartida.jogador1 = {
-    reliquia = reliquia.liberacaoEsquadrao,
+    reliquia = nil,
     extraDeck = {},
-    baralho = {
-       
-        acao.mirarNaCabeca, acao.convocacao, item.brocheCristal,
-        item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
-        magia.bolaDeFogo, magia.bolaDeFogo, magia.bolaDeFogo,
-        magia.paraRaios, magia.paraRaios, magia.paraRaios,
-        acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
-        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
-        item.quimera, magia.pontoFinal
-    },
+    baralho = {},
     nome = "",
     mao = {},
     descarte = {},
-    aliados = {        
-        heroi.heroiAlka, heroi.esquadraoGoblin, heroi.heroinaLeone
-    },
+    aliados = {},
     cartasEscolhidas = {},
     heroiDoturno = nil
 }
@@ -35,7 +24,7 @@ logicaPartida.jogador2 = {
     reliquia = reliquia.liberacaoMoyra,
     extraDeck = {},
     baralho = { 
-         acao.mirarNaCabeca, acao.convocacao, magia.pontoFinal,
+        magia.pontoFinal,
         item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
         acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
         magia.estatica, magia.estatica, magia.estatica,
@@ -630,7 +619,5 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
     logicaPartida.jogador2.cartasEscolhidas = {}
 end
 ]]
-
-logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
 
 return logicaPartida

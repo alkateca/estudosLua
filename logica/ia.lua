@@ -121,4 +121,52 @@ function IA.escolherCartas(logica)
     end
 end
 
+-- Função para a IA resolver qualquer estado pendente (como escolher alvos de Ação)
+function IA.resolverEstadoAlvo(partida, logica, corotinaDaCarta)
+    -- Se não houver estado alvo ativo, não faz nada
+    if not partida.estadoAlvo or not partida.estadoAlvo.ativo then return false end
+
+    local j1 = logica.jogador1 -- Humano
+    local j2 = logica.jogador2 -- IA
+
+    -- Se o dono da ação não for a IA, ela ignora
+    if partida.estadoAlvo.dono ~= j2 then return false end
+
+    local alvoEscolhido = nil
+
+    -- LÓGICA DE DECISÃO DA IA PARA ALVOS
+    if partida.estadoAlvo.tipo == "inimigo" then
+        -- Pega o inimigo (herói do J1) com menor vida
+        for _, inimigo in ipairs(j1.aliados) do
+            if inimigo.estaVivo and inimigo.estaAtivo then
+                if not alvoEscolhido or inimigo.vidaAtual < alvoEscolhido.vidaAtual then
+                    alvoEscolhido = inimigo
+                end
+            end
+        end
+    elseif partida.estadoAlvo.tipo == "aliado" then
+        -- Pega o próprio aliado (herói do J2) com maior vida
+        for _, aliado in ipairs(j2.aliados) do
+            if aliado.estaVivo and aliado.estaAtivo then
+                if not alvoEscolhido or aliado.vidaAtual > alvoEscolhido.vidaAtual then
+                    alvoEscolhido = aliado
+                end
+            end
+        end
+    end
+
+    -- 1. Executa o callback passando o alvo escolhido[cite: 1]
+    partida.estadoAlvo.callback(alvoEscolhido)
+    
+    -- 2. Limpa o estado alvo[cite: 1]
+    partida.estadoAlvo.ativo = false
+    
+    -- 3. Retoma a coroutine para finalizar a carta
+    if corotinaDaCarta and coroutine.status(corotinaDaCarta) == "suspended" then
+        coroutine.resume(corotinaDaCarta)
+    end
+
+    return true -- Retorna true indicando que a IA resolveu o problema
+end
+
 return IA

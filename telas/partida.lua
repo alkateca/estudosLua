@@ -1094,7 +1094,8 @@ function Partida.desenharReliquias()
 end
 
 function Partida.checarCliqueExtradeck(x, y)
-    if logicaPartida.turnoAtual ~= 1 or faseDoTurno ~= "resolucao" then 
+    
+    if logicaPartida.turnoAtual ~= 2 and faseDoTurno ~= "resolucao" then 
         return false 
     end
 

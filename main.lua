@@ -13,6 +13,7 @@ function love.load()
     SelecaoBaralho.load()
     MontarBaralho.load()
     estadoAtualGlobal = "menu"
+    
 end
 
 function love.update(dt)
@@ -56,5 +57,11 @@ function love.mousereleased(x, y, button, istouch, presses)
         SelecaoBaralho.mousereleased(x, y, button)
     elseif estadoAtualGlobal == "montarBaralho" then
         MontarBaralho.mousereleased(x, y, button)
+    end
+end
+
+function love.wheelmoved(x, y)
+    if estadoAtualGlobal == "montarBaralho" then
+        MontarBaralho.wheelmoved(x, y)
     end
 end

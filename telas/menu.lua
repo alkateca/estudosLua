@@ -60,6 +60,28 @@ function Menu.draw()
         love.graphics.printf("Achar Partida", 620, 510, 200, "center")
     end
 
+    -- Botão 3: Montar Baralho
+    if mouseX >= 620 and mouseX <= 820 and mouseY >= 625 and mouseY <= 725 then
+        
+        if love.mouse.isDown(1) then
+            love.graphics.setColor(0.8, 0, 0.8)
+            love.graphics.rectangle("fill", 620, 628, 200, 100, 10, 10)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf("Montar Baralho", 620, 663, 200, "center")
+        else
+            love.graphics.setColor(1, 0, 1)
+            love.graphics.rectangle("fill", 620, 625, 200, 100, 10, 10)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf("Montar Baralho", 620, 660, 200, "center")
+        end
+        
+    else
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.rectangle("fill", 620, 625, 200, 100, 10, 10)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf("Montar Baralho", 620, 660, 200, "center")
+    end
+
 end
 
 function Menu.mousereleased(x, y, button)
@@ -73,6 +95,11 @@ function Menu.mousereleased(x, y, button)
         -- Clique no botão Tutorial
         if x >= 620 and x <= 820 and y >= 325 and y <= 425 then
             estadoAtualGlobal = "tutorial"
+        end
+
+        -- Clique no botão Montar Baralho
+        if x >= 620 and x <= 820 and y >= 625 and y <= 725 then
+            estadoAtualGlobal = "montarBaralho"
         end
 
     end 
