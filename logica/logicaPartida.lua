@@ -212,6 +212,32 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         logicaPartida.registrarLog("Efeito Inicio Turno Inimigo: " .. inimigo.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
     end
     
+    if logicaPartida.filaDeResolucao and #logicaPartida.filaDeResolucao > 0 then
+        logicaPartida.indiceFila = 1
+        
+        while logicaPartida.indiceFila <= #logicaPartida.filaDeResolucao do
+            local jogada = logicaPartida.filaDeResolucao[logicaPartida.indiceFila]
+            local cartaDaVez = jogada.carta
+            
+            if type(cartaDaVez.efeito) == "function" then
+                cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida)
+                logicaPartida.registrarLog("Carta Gerada Resolvida: " .. cartaDaVez.nome .. " usada por " .. jogada.aliado.nome)
+            end
+            
+            -- Envia a magia gerada para o descarte após o uso (se não for item)
+            if cartaDaVez.tipo ~= 3 then
+                table.insert(jogada.dono.descarte, cartaDaVez)
+            end
+
+            jogada.resolvida = true
+            logicaPartida.indiceFila = logicaPartida.indiceFila + 1
+            if callbackAtualizacao then callbackAtualizacao() end
+        end
+        
+        -- Limpa a fila para não atrapalhar a fase de jogar cartas da mão
+        logicaPartida.filaDeResolucao = {}
+    end
+
     if inimigo.ataque > heroi.defesa then
         local dano = inimigo.ataque - heroi.defesa
         heroi.vidaAtual = heroi.vidaAtual - dano

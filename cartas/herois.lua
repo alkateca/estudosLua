@@ -1,5 +1,8 @@
 local herois = {}
 
+local acoes = require("cartas.acoes")
+
+
 -- dummies
 
     herois.dragaoArcoIris = {
@@ -195,15 +198,30 @@ local herois = {}
         vidaAtual = 12,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Inicio da Partida:\nEu estou morta",
+        descricao = "Zumbi\nFinal do Turno\nCure seus aliados em 2",
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+            for _, heroiAliado in ipairs(dono.aliados) do
+                heroiAliado.vidaAtual = heroiAliado.vidaAtual + 2
+                
+                if heroiAliado.vidaAtual > heroiAliado.vidaMaxima then
+                    heroiAliado.vidaAtual = heroiAliado.vidaMaxima
+                end
+                
+                if partida.emitirVFX then
+                    partida.emitirVFX("cura", heroiAliado)
+                end
+            end
+
+        end,
         estaVivo = true,
         estaAtivo = true       
     }
 
     herois.quimeraCarniceira = {
         tipo = 1,
-        raca = "",
         nome = "Quimera\nCarniceira",
+        raca = {"Zumbi"},
         espirito = 1,
         ataque = 7,
         defesa = 3,
@@ -211,15 +229,25 @@ local herois = {}
         vidaAtual = 14,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Inicio do Combate:\nPara cada aliado morto:\nEspirito +1 e Ataque +1\nRecupera 2 de vida",
+        descricao = "Zumbi\nInicio do Combate:\nPara cada aliado morto:\nEspirito e Ataque +1\nRecupera 2 de vida",
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            for i, al in ipairs(dono.aliados) do
-                if al.raca == "Zumbi" or al.estaVivo == false then
-                    self.ataque = self.ataque + 1
-                    self.defesa = self.defesa + 1
+            
+            local valorBonus = 0
+                
+                for _, raca in ipairs(aliado.raca) do
+                    if raca == "Zumbi" then 
+                        valorBonus = valorBonus + 1
+                    end
+                end
+
+                
+                    self.espirito = self.espirito + valorBonus
+                    self.ataque = self.ataque + valorBonus
+                    
                     if partida.emitirVFX then
                         partida.emitirVFX("buff", self)
                     end
+                    
                     if self.vidaAtual < self.vidaMaxima then
                         self.vidaAtual = self.vidaAtual + 2
                         if self.vidaAtual > self.vidaMaxima then
@@ -229,8 +257,7 @@ local herois = {}
                             partida.emitirVFX("cura", self)
                         end
                     end
-                end
-            end
+
 
         end,
         estaVivo = true,
@@ -239,7 +266,7 @@ local herois = {}
 
     herois.necromanteDasAreais = {
         tipo = 1,
-        raca = "Zumbi",
+        raca = {"Zumbi"},
         nome = "Necromante das\nAreias",
         espirito = 3,
         ataque = 3,
@@ -248,7 +275,18 @@ local herois = {}
         vidaAtual = 15,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Inicio da Partida:\nEu estou morta",
+        descricao = "Zumbi\nFinal do Turno:\nCrie e Jogue uma Ritos Fúnebres",
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+            table.insert(partida.filaDeResolucao, {
+                carta = acoes.ritosFunebres,
+                aliado = self,   
+                inimigo = inimigo,
+                dono = dono,
+                resolvida = false
+            })
+        
+        end,
         estaVivo = true,
         estaAtivo = true     
     }

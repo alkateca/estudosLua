@@ -351,8 +351,9 @@ if cartaInspecionada and tempoHover >= tempoNecessario then
 end
 
 function Partida.mousereleased(x, y, button)
-    if button == 1 then
+if button == 1 then
         if logicaPartida.estadoAlvo.ativo then        
+                
                 if logicaPartida.estadoAlvo.tipo == "mao" then
                     for i, carta in ipairs(logicaPartida.jogador1.mao) do
                         local xPos = 540 + ((i - 1) * 90)
@@ -367,6 +368,7 @@ function Partida.mousereleased(x, y, button)
                         end
                     end
                 end
+                
                 if logicaPartida.estadoAlvo.tipo == "descarte" then
                     for i, carta in ipairs(logicaPartida.jogador1.descarte) do
                         local xPos = 540 + ((i - 1) * 90)
@@ -381,11 +383,28 @@ function Partida.mousereleased(x, y, button)
                         end
                     end
                 end
+                
                 if logicaPartida.estadoAlvo.tipo == "aliado" then
+                    
+                    -- 1. Verifica clique no Herói Ativo Aliado (Arena)
+                    if logicaPartida.jogador1.heroiDoturno then
+                        -- Retângulo do Herói Ativo (1000, 480, 280, 380)
+                        if x >= 1000 and x <= 1280 and y >= 480 and y <= 860 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            logicaPartida.estadoAlvo.callback(logicaPartida.jogador1.heroiDoturno, "ativo")
+                            if coroutine.status(rotinaTurno) == "suspended" then
+                                coroutine.resume(rotinaTurno)
+                            end
+                            return
+                        end
+                    end
+
+                    -- 2. Verifica clique nos Aliados do Banco
                     for i, carta in ipairs(logicaPartida.jogador1.aliados) do
                         local xPos = 20 + ((i - 1) * 150)
                         local yPos = 580
-                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                        -- Corrigido de 80x100 para 140x190
+                        if x >= xPos and x <= xPos + 140 and y >= yPos and y <= yPos + 190 then
                             logicaPartida.estadoAlvo.ativo = false
                             logicaPartida.estadoAlvo.callback(carta, i)
                                 if coroutine.status(rotinaTurno) == "suspended" then
@@ -395,11 +414,28 @@ function Partida.mousereleased(x, y, button)
                         end
                     end
                 end
+                
                 if logicaPartida.estadoAlvo.tipo == "inimigo" then
+                    
+                    -- 1. Verifica clique no Herói Ativo Inimigo (Arena)
+                    if logicaPartida.jogador2.heroiDoturno then
+                        -- Retângulo do Herói Ativo Inimigo (1000, 40, 280, 380)
+                        if x >= 1000 and x <= 1280 and y >= 40 and y <= 420 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            logicaPartida.estadoAlvo.callback(logicaPartida.jogador2.heroiDoturno, "ativo")
+                            if coroutine.status(rotinaTurno) == "suspended" then
+                                coroutine.resume(rotinaTurno)
+                            end
+                            return
+                        end
+                    end
+
+                    -- 2. Verifica clique nos Inimigos do Banco
                     for i, carta in ipairs(logicaPartida.jogador2.aliados) do
                         local xPos = 20 + ((i - 1) * 150)
                         local yPos = 130
-                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                        -- Corrigido de 80x100 para 140x190
+                        if x >= xPos and x <= xPos + 140 and y >= yPos and y <= yPos + 190 then
                             logicaPartida.estadoAlvo.ativo = false
                             logicaPartida.estadoAlvo.callback(carta, i)
                                 if coroutine.status(rotinaTurno) == "suspended" then
@@ -409,6 +445,7 @@ function Partida.mousereleased(x, y, button)
                         end
                     end
                 end
+                
             return
         end
 
@@ -1208,25 +1245,21 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
         -- 3. Renderiza apenas o alvo que o jogador precisa escolher
         if logicaPartida.estadoAlvo.tipo == "mao" then
             
-            -- 1. ZONA DE FOCO: Fundo cinza translúcido com contorno
-            -- math.max garante que a zona tenha um tamanho mínimo caso a mão esteja vazia
             local larguraZona = math.max((#logicaPartida.jogador1.mao * 90) + 10, 100) 
-            love.graphics.setColor(1, 0.8, 0, 0.3) -- Fundo cinza escuro translúcido
+            love.graphics.setColor(1, 0.8, 0, 0.3)
             love.graphics.rectangle("fill", 530, 750, larguraZona, 120, 10, 10)
             
-            
             love.graphics.rectangle("line", 530, 750, larguraZona, 120, 10, 10)
-            love.graphics.setLineWidth(1) -- Reseta a grossura da linha para o padrão
+            love.graphics.setLineWidth(1)
             
-            -- 2. Renderiza as cartas da MÃO
             for i, carta in ipairs(logicaPartida.jogador1.mao) do
                 local xPos = 540 + ((i - 1) * 90)
                 local yPos = 760
                 
-                love.graphics.setColor(0.5, 0.5, 0.5) -- Fundo cinza da carta
+                love.graphics.setColor(0.5, 0.5, 0.5)
                 love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
                 
-                love.graphics.setColor(1, 1, 1) -- Cor do contorno da carta (Branco)
+                love.graphics.setColor(1, 1, 1)
                 love.graphics.rectangle("line", xPos, yPos, 80, 100, 8, 8)
                 
                 love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
@@ -1253,15 +1286,43 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                 
                 love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
             end
+
         elseif logicaPartida.estadoAlvo.tipo == "aliado" then
             
+            -- ==========================================
+            -- NOVO: Desenha o Herói Ativo Aliado
+            -- ==========================================
+            local ativoAliado = logicaPartida.jogador1.heroiDoturno
+            if ativoAliado then
+                -- Destaque amarelo
+                love.graphics.setColor(1, 0.8, 0, 0.3)
+                love.graphics.rectangle("fill", 990, 470, 300, 400, 15, 15)
+                
+                -- Carta do Herói Ativo
+                love.graphics.setColor(0, 0, 1)
+                love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(ativoAliado.nome, 1000, 490, 280, "center")
+                love.graphics.printf(ativoAliado.espirito, 1000, 720, 270, "right")
+                love.graphics.printf(ativoAliado.ataque, 1000, 760, 270, "right")
+                love.graphics.printf(ativoAliado.defesa, 1000, 800, 270, "right")
+                love.graphics.printf(ativoAliado.vidaAtual, 1000, 840, 270, "right")
+                
+                -- Retorna fonte para descrição
+                if fonteIoskeleyPequena then
+                    love.graphics.setFont(fonteIoskeleyPequena)
+                    love.graphics.printf(ativoAliado.descricao, 1040, 720, 200, "center")
+                    love.graphics.setFont(fonteIoskeley) -- Reseta fonte
+                end
+            end
+            -- ==========================================
 
+            -- Desenha o Banco de Reservas Aliado
             local larguraZona = (#logicaPartida.jogador1.aliados * 150) + 10
             love.graphics.setColor(1, 0.8, 0, 0.3)
             love.graphics.rectangle("fill", 10, 570, larguraZona, 210, 15, 15)
 
             for i, heroiAlvo in ipairs(logicaPartida.jogador1.aliados) do
-                if heroiAlvo.estaVivo then
                     local xPos = 20 + ((i - 1) * 150)
                     local yPos = 580
                     
@@ -1291,11 +1352,38 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                         love.graphics.print("💤", xPos + 55, yPos + 80)
                         love.graphics.setFont(fonteIoskeley)
                     end
-                end
             end
             
         elseif logicaPartida.estadoAlvo.tipo == "inimigo" then
             
+            -- ==========================================
+            -- NOVO: Desenha o Herói Ativo Inimigo
+            -- ==========================================
+            local ativoInimigo = logicaPartida.jogador2.heroiDoturno
+            if ativoInimigo then
+                -- Destaque amarelo
+                love.graphics.setColor(1, 0.8, 0, 0.3)
+                love.graphics.rectangle("fill", 990, 30, 300, 400, 15, 15)
+                
+                -- Carta do Herói Ativo Inimigo
+                love.graphics.setColor(1, 0, 0)
+                love.graphics.rectangle("fill", 1000, 40, 280, 380, 15, 15)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(ativoInimigo.nome, 1000, 50, 280, "center")
+                love.graphics.printf(ativoInimigo.espirito, 1000, 280, 270, "right")
+                love.graphics.printf(ativoInimigo.ataque, 1000, 320, 270, "right")
+                love.graphics.printf(ativoInimigo.defesa, 1000, 360, 270, "right")
+                love.graphics.printf(ativoInimigo.vidaAtual, 1000, 400, 270, "right")
+                
+                if fonteIoskeleyPequena then
+                    love.graphics.setFont(fonteIoskeleyPequena)
+                    love.graphics.printf(ativoInimigo.descricao, 1040, 280, 200, "center")
+                    love.graphics.setFont(fonteIoskeley)
+                end
+            end
+            -- ==========================================
+
+            -- Desenha o Banco de Reservas Inimigo
             local larguraZona = (#logicaPartida.jogador2.aliados * 150) + 10
             love.graphics.setColor(1, 0.8, 0, 0.3) 
             love.graphics.rectangle("fill", 10, 120, larguraZona, 210, 15, 15)
@@ -1326,7 +1414,6 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                         love.graphics.setFont(fonteIoskeley)
                     end
                     
-                    -- Verifica se está inativo (dormindo)
                     if not heroiAlvo.estaAtivo then
                         love.graphics.setFont(fonteEmoji)
                         love.graphics.print("💤", xPos + 55, yPos + 80)

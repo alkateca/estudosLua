@@ -1,12 +1,10 @@
-[22:40:13] Carta Resolvida: Broche de Cristal usada por Esquadrão
-Goblin | Aliado [V:12 A:4 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
-[22:40:15] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:2] | Inimigo [V:10 A:5 D:3 E:3]
-[22:40:16] Carta Resolvida: Dragão de Cristal usada por Esquadrão
-Goblin | Aliado [V:10 A:5 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
-[22:40:17] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:2] | Inimigo [V:8 A:6 D:3 E:3]
-[22:40:19] Combate Fisico: Naelis, Grande Artesã de Cristais causou 3 de dano. | Aliado [V:5 A:6 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
-[22:40:22] Combate Fisico: Esquadrão
-Goblin causou 5 de dano. | Aliado [V:5 A:6 D:3 E:3] | Inimigo [V:7 A:6 D:1 E:2]
-[22:40:24] Efeito Final Turno Aliado: Esquadrão
-Goblin | Aliado [V:7 A:6 D:3 E:3] | Inimigo [V:7 A:6 D:1 E:2]
-[22:40:26] Efeito Item Aliado: Dragão de Cristal | Aliado [V:7 A:6 D:3 E:3] | Inimigo [V:3 A:6 D:1 E:2]
+[17:52:26] Carta Resolvida: Para-raios usada por Necromante das
+Areias | Aliado [V:15 A:3 D:2 E:4] | Inimigo [V:13 A:7 D:2 E:3]
+[17:52:28] Carta Resolvida: Estatica usada por Necromante das
+Areias | Aliado [V:15 A:3 D:2 E:4] | Inimigo [V:9 A:7 D:2 E:3]
+[17:52:30] Carta Resolvida: Estatica usada por Isenora,
+Santa das Laminas | Aliado [V:9 A:7 D:2 E:3] | Inimigo [V:13 A:3 D:2 E:4]
+[17:52:32] Carta Resolvida: Ritos Fúnebres usada por Necromante das
+Areias | Aliado [V:15 A:3 D:2 E:4] | Inimigo [V:9 A:7 D:2 E:3]
+[17:52:33] Carta Resolvida: Para-raios usada por Isenora,
+Santa das Laminas | Aliado [V:9 A:7 D:2 E:4] | Inimigo [V:15 A:3 D:2 E:4]

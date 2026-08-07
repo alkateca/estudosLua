@@ -146,4 +146,41 @@ acoes.mirarNaCabeca = {
     descricao = "Escolha um Heroi Inimigo:\nCause 3 de dano Direto"
 }
 
+--necromantes
+acoes.ritosFunebres = {
+    tipo = 4,
+    nome = "Ritos Fúnebres",
+    efeitoAtivo = false,
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        
+        for _, raca in ipairs(aliado.raca) do
+            if raca == "Zumbi" then
+                partida.estadoAlvo = {
+                    ativo = true,
+                    tipo = "aliado",
+                    mensagem = "Escolha um Herói Aliado",
+                    dono = dono,
+                    
+                    callback = function(cartaEscolhida, index)
+                        if cartaEscolhida then
+                            cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual + 5
+                            if cartaEscolhida.vidaAtual > cartaEscolhida.vidaMaxima then
+                                cartaEscolhida.vidaAtual = cartaEscolhida.vidaMaxima
+                            end
+                            if cartaEscolhida.vidaAtual > 0 then
+                                cartaEscolhida.estaVivo = true
+                            end
+                        end
+                    end
+                }
+            end
+        end
+
+        coroutine.yield()
+
+    end,
+    descricao = "Zumbi:\nEscolha um Heroi Aliado:\nRecupere 5 de vida\nSe estiver Morto e sua vida ficar acima de 0:\nO reviva"
+}
+
+
 return acoes

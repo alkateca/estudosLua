@@ -117,7 +117,6 @@ magias.massacreCristalino = {
 
         local danoMagicoTotal = totalCristais * 2
 
-        -- Simplificando a matemática do dano para manter o padrão
         local danoFinal = danoMagicoTotal - inimigo.espirito
         
         if danoFinal > 0 then
@@ -159,5 +158,32 @@ magias.pontoFinal = {
     end
 }
 
+--necromantes
+magias.atomosferaPesada = {
+    nome = "Atmosfera Pesada",
+    tipo = 2,
+    dano = 0,
+    efeitoDoTurno = false,
+    descricao = "Zumbi\nOs Heróis Inimigos recebem -1 de Espirito",
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        for _, racaAtual in ipairs(aliado.raca) do
+                    
+            if racaAtual == "Zumbi" then
+                             
+                local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
+                                 
+                    for _, heroiInimigo in ipairs(donoInimigo.aliados) do
+                        heroiInimigo.espirito = heroiInimigo.espirito - 1
+                            
+                           
+                        if partida.emitirVFX then
+                            partida.emitirVFX("debuff", heroiInimigo)
+                        end
+                    end 
+            end
+                    
+        end
+    end,
+}
 
 return magias

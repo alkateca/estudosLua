@@ -79,4 +79,65 @@ itens.dragaoCristal = {
     descricao = "No final do turno:\nCause 6 de dano mágico ao inimigo"
 }
 
+--necromantes
+itens.homunculoCarniceiro = {
+    tipo = 3,
+    nome = "Homunculo Carniceiro",
+    raca = {"Zumbi"},
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        
+    end,
+    efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        for _, raca in ipairs(aliado.raca) do
+            if raca == "Zumbi" then
+                
+                inimigo.vidaAtual = inimigo.vidaAtual - 1
+
+                aliado.vidaAtual = aliado.vidaAtual + 1
+
+                    if aliado.vidaAtual > aliado.vidaMaxima then
+                        aliado.vidaAtual = aliado.vidaMaxima
+                    end
+                
+                if partida.emitirVFX then
+                    partida.emitirVFX("cura", aliado)
+                end
+
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoDireto", inimigo)
+                end
+            end
+        end
+    end,
+    descricao = "Zumbi:\nFinal do Turno:\nRecupere 1 de vida\nSeu Inimigo Recebe 1 de Dano Direto"
+}
+
+itens.quimeraNegra = {
+    tipo = 3,
+    nome = "Quimera Negra",
+    raca = {"Zumbi"},
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        
+        for _, raca in ipairs(aliado.raca) do
+            if raca == "Zumbi" then
+                inimigo.espirito = inimigo.espirito - 1
+                inimigo.ataque = inimigo.ataque - 1
+                inimigo.defesa = inimigo.defesa - 1
+                inimigo.vidaAtual = inimigo.vidaAtual - 1
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoDireto", inimigo)
+                end
+            end
+        end
+
+    end,
+    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        
+            self:efeito(aliado, inimigo, dono, partida, cartaJogada)
+    
+    end,
+    descricao = "Zumbi:\nAo Jogar e no Inicio do Turno:\nInimigo Espirito -1\nInimigo Ataque -1\nInimigo Defesa -1\nInimigo Vida -1\n"
+}
+
+
 return itens
