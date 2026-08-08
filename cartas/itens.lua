@@ -143,6 +143,10 @@ itens.quimeraNegra = {
                 inimigo.espirito = math.max(0, inimigo.espirito - 1)
                 inimigo.ataque = math.max(0, inimigo.ataque - 1)
                 inimigo.defesa = math.max(0, inimigo.defesa - 1)
+
+                if partida.emitirVFX then
+                    partida.emitirVFX("debuff", inimigo)
+                end
                 
                 -- PONTUAÇÃO: Dano na Vida. Condicional previne tirar de quem já tem 0 vida (se desejar limitar o piso)
                 if inimigo.vidaAtual > 0 then

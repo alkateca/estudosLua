@@ -195,5 +195,43 @@ acoes.ritosFunebres = {
     descricao = "Zumbi:\nEscolha um Heroi Aliado:\nRecupere 5 de vida\nSe estiver Morto e sua vida ficar acima de 0:\nO reviva"
 }
 
+acoes.exumacao = {
+    tipo = 4,
+    nome = "Exumação",
+    efeitoAtivo = false,
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+        aliado.espirito = math.max(0, aliado.espirito - 1)
+        aliado.ataque = math.max(0, aliado.ataque - 1)
+        aliado.defesa = math.max(0, aliado.defesa - 1)
+        
+        for _, raca in ipairs(aliado.raca) do
+            if raca == "Zumbi" then
+                partida.estadoAlvo = {
+                    ativo = true,
+                    tipo = "descarte",
+                    mensagem = "Escolha uma Carta de seu Descarte",
+                    dono = dono,
+                    
+                    callback = function(cartaEscolhida, index)
+                        table.remove(dono.descarte, index)
+                        table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
+                            carta = cartaEscolhida,
+                            aliado = aliado,
+                            inimigo = inimigo,
+                            dono = dono,
+                            resolvida = false
+                        })
+                    end
+                }
+            end
+        end
+
+        coroutine.yield()
+
+    end,
+    descricao = "Zumbi:\nReceba Espirito -1, Ataque -1 e Defesa -1\nJogue uma Carta do seu descarte"
+}
+
 
 return acoes

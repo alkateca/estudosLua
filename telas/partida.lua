@@ -93,12 +93,21 @@ function Partida.load()
     local imgCurarPersonagem = love.graphics.newImage("assets/images/HealingEffect_spritesheet.png")
     local imgBuffPersonage = love.graphics.newImage("assets/images/1712.png")
     local imgDanoDireto =  love.graphics.newImage("assets/images/SimpleExplosionC_spritesheet.png")
+    local imgDeBuffPersonagem =  love.graphics.newImage("assets/images/debuff.png")
+
+
+    animacoesCarregadas["debuff"] = {
+        imagem = imgDeBuffPersonagem,
+        quads = criarQuads(imgBuffPersonage, 64, 72),
+        duracaoFrame = 0.06,
+        escala = 3
+    }
 
     animacoesCarregadas["buff"] = {
         imagem = imgBuffPersonage,
         quads = criarQuads(imgBuffPersonage, 64, 72),
         duracaoFrame = 0.06,
-        escala = 6
+        escala = 3
     }
 
     animacoesCarregadas["danoMagico"] = {
@@ -112,7 +121,7 @@ function Partida.load()
         imagem = imgDanoFisico,
         quads = criarQuads(imgDanoFisico, 65, 63),
         duracaoFrame = 0.06,
-        escala = 6
+        escala = 8
     }
 
     animacoesCarregadas["danoDireto"] = {
@@ -126,7 +135,7 @@ function Partida.load()
         imagem = imgCurarPersonagem,
         quads = criarQuadsGrid(imgCurarPersonagem, 5, 3), 
         duracaoFrame = 0.06,
-        escala = 3
+        escala = 1
     }
 
 end
