@@ -10,8 +10,10 @@ magias.bolaDeFogo = {
         -- Cálculo correto: (Dano Base + Seu Espírito) - Defesa Mágica (Espírito Inimigo)
         local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
+        -- PONTUAÇÃO: Dano Mágico
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
         -- O VFX agora recebe a tabela do alvo, e toca fora do if de dano>0
@@ -30,8 +32,10 @@ magias.estatica = {
 
         local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
+        -- PONTUAÇÃO: Dano Mágico
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
         local copiaEstatica = {}
@@ -119,8 +123,10 @@ magias.massacreCristalino = {
 
         local danoFinal = danoMagicoTotal - inimigo.espirito
         
+        -- PONTUAÇÃO: Dano Mágico
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
         if partida.emitirVFX then
@@ -173,9 +179,10 @@ magias.atomosferaPesada = {
                 local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
                                  
                     for _, heroiInimigo in ipairs(donoInimigo.aliados) do
-                        heroiInimigo.espirito = heroiInimigo.espirito - 1
+                        
+                            -- Corrigido 'inimigo.espirito' para 'heroiInimigo.espirito'
+                            heroiInimigo.espirito = math.max(0, heroiInimigo.espirito - 1)
                             
-                           
                         if partida.emitirVFX then
                             partida.emitirVFX("debuff", heroiInimigo)
                         end

@@ -17,7 +17,8 @@ logicaPartida.jogador1 = {
     descarte = {},
     aliados = {},
     cartasEscolhidas = {},
-    heroiDoturno = nil
+    heroiDoturno = nil,
+    pontuacao = 0
 }
 
 logicaPartida.jogador2 = {
@@ -39,7 +40,8 @@ logicaPartida.jogador2 = {
         heroi.santaDasLaminas, heroi.aprendizDasLaminas, heroi.artesaDasLaminas
     },
     cartasEscolhidas = {},
-    heroiDoturno = nil
+    heroiDoturno = nil,
+    pontuacao = 0
 }
 
 math.randomseed(os.time())
@@ -202,15 +204,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     local heroi = logicaPartida.jogador1.heroiDoturno
     local inimigo = logicaPartida.jogador2.heroiDoturno
     
-    if type(heroi.efeitoInicioDoTurno) == "function" then
-        heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
-        logicaPartida.registrarLog("Efeito Inicio Turno Aliado: " .. heroi.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
-    end
 
-    if type(inimigo.efeitoInicioDoTurno) == "function" then
-        inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
-        logicaPartida.registrarLog("Efeito Inicio Turno Inimigo: " .. inimigo.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
-    end
     
     if logicaPartida.filaDeResolucao and #logicaPartida.filaDeResolucao > 0 then
         logicaPartida.indiceFila = 1
@@ -351,6 +345,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         end
     end
 
+    
     heroi.estaAtivo = false
     inimigo.estaAtivo = false
     logicaPartida.atualizarEstadoAtivo()
@@ -361,21 +356,54 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
     
     local escolhidasJ1 = logicaPartida.jogador1.cartasEscolhidas
     local escolhidasJ2 = logicaPartida.jogador2.cartasEscolhidas
-    
+
     logicaPartida.filaDeResolucao = {}
+
+    local heroi = logicaPartida.jogador1.heroiDoturno
+    local inimigo = logicaPartida.jogador2.heroiDoturno
     
+    if type(heroi.efeitoInicioDoTurno) == "function" then
+        heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida)
+        logicaPartida.registrarLog("Efeito Inicio Turno Aliado: " .. heroi.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
+    end
+
+    if type(inimigo.efeitoInicioDoTurno) == "function" then
+        inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida)
+        logicaPartida.registrarLog("Efeito Inicio Turno Inimigo: " .. inimigo.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
+    end
+    
+    -- O operador % (módulo) descobre se o turno é par ou ímpar
+        local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
+
     for i = 1, 2 do
-        if escolhidasJ1[i] then
-            table.insert(logicaPartida.filaDeResolucao, { 
-                carta = escolhidasJ1[i], aliado = logicaPartida.jogador1.heroiDoturno, 
-                inimigo = logicaPartida.jogador2.heroiDoturno, dono = logicaPartida.jogador1, resolvida = false
-            })
-        end
-        if escolhidasJ2[i] then
-            table.insert(logicaPartida.filaDeResolucao, { 
-                carta = escolhidasJ2[i], aliado = logicaPartida.jogador2.heroiDoturno, 
-                inimigo = logicaPartida.jogador1.heroiDoturno, dono = logicaPartida.jogador2, resolvida = false
-            })
+        if jogador1TemIniciativa then
+            -- ÍMPAR: Jogador 1 vai primeiro
+            if escolhidasJ1[i] then
+                table.insert(logicaPartida.filaDeResolucao, { 
+                    carta = escolhidasJ1[i], aliado = logicaPartida.jogador1.heroiDoturno, 
+                    inimigo = logicaPartida.jogador2.heroiDoturno, dono = logicaPartida.jogador1, resolvida = false
+                })
+            end
+            if escolhidasJ2[i] then
+                table.insert(logicaPartida.filaDeResolucao, { 
+                    carta = escolhidasJ2[i], aliado = logicaPartida.jogador2.heroiDoturno, 
+                    inimigo = logicaPartida.jogador1.heroiDoturno, dono = logicaPartida.jogador2, resolvida = false
+                })
+            end
+        else
+            -- PAR: Jogador 2 (Máquina) vai primeiro
+            if escolhidasJ2[i] then
+                table.insert(logicaPartida.filaDeResolucao, { 
+                    carta = escolhidasJ2[i], aliado = logicaPartida.jogador2.heroiDoturno, 
+                    inimigo = logicaPartida.jogador1.heroiDoturno, dono = logicaPartida.jogador2, resolvida = false
+                })
+            end
+            if escolhidasJ1[i] then
+                table.insert(logicaPartida.filaDeResolucao, { 
+                    carta = escolhidasJ1[i], aliado = logicaPartida.jogador1.heroiDoturno, 
+                    inimigo = logicaPartida.jogador2.heroiDoturno, dono = logicaPartida.jogador1, resolvida = false
+                })
+            end
         end
     end
 

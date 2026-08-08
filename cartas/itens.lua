@@ -9,9 +9,13 @@ itens.quimera = {
             if partida.emitirVFX then
                 partida.emitirVFX("cura", dono == partida.jogador2 and "inimigo" or "aliado")            
             end
-        aliado.vidaAtual = aliado.vidaAtual + aliado.espirito
-        if aliado.vidaAtual > aliado.vidaMaxima then
-            aliado.vidaAtual = aliado.vidaMaxima
+        
+        -- PONTUAÇÃO: Cura real baseada no espírito
+        local vidaFaltando = aliado.vidaMaxima - aliado.vidaAtual
+        if vidaFaltando > 0 then
+            local curaReal = math.min(aliado.espirito, vidaFaltando)
+            aliado.vidaAtual = aliado.vidaAtual + curaReal
+            dono.pontuacao = (dono.pontuacao or 0) + curaReal
         end
     end,
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
@@ -67,8 +71,10 @@ itens.dragaoCristal = {
         
         local danoFinal = self.dano - inimigo.espirito
 
+        -- PONTUAÇÃO: Dano Mágico no final do turno
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
         if partida.emitirVFX then
@@ -91,19 +97,20 @@ itens.homunculoCarniceiro = {
         for _, raca in ipairs(aliado.raca) do
             if raca == "Zumbi" then
                 
+                -- PONTUAÇÃO: Dano direto no inimigo
                 inimigo.vidaAtual = inimigo.vidaAtual - 1
+                dono.pontuacao = (dono.pontuacao or 0) + 1
 
-                aliado.vidaAtual = aliado.vidaAtual + 1
-
-                    if aliado.vidaAtual > aliado.vidaMaxima then
-                        aliado.vidaAtual = aliado.vidaMaxima
-                    end
+                -- PONTUAÇÃO: Cura real do aliado
+                local vidaFaltando = aliado.vidaMaxima - aliado.vidaAtual
+                if vidaFaltando > 0 then
+                    local curaReal = math.min(1, vidaFaltando)
+                    aliado.vidaAtual = aliado.vidaAtual + curaReal
+                    dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                end
                 
                 if partida.emitirVFX then
                     partida.emitirVFX("cura", aliado)
-                end
-
-                if partida.emitirVFX then
                     partida.emitirVFX("danoDireto", inimigo)
                 end
             end
@@ -120,10 +127,16 @@ itens.quimeraNegra = {
         
         for _, raca in ipairs(aliado.raca) do
             if raca == "Zumbi" then
-                inimigo.espirito = inimigo.espirito - 1
-                inimigo.ataque = inimigo.ataque - 1
-                inimigo.defesa = inimigo.defesa - 1
-                inimigo.vidaAtual = inimigo.vidaAtual - 1
+                inimigo.espirito = math.max(0, inimigo.espirito - 1)
+                inimigo.ataque = math.max(0, inimigo.ataque - 1)
+                inimigo.defesa = math.max(0, inimigo.defesa - 1)
+                
+                -- PONTUAÇÃO: Dano na Vida. Condicional previne tirar de quem já tem 0 vida (se desejar limitar o piso)
+                if inimigo.vidaAtual > 0 then
+                    inimigo.vidaAtual = inimigo.vidaAtual - 1
+                    dono.pontuacao = (dono.pontuacao or 0) + 1
+                end
+                
                 if partida.emitirVFX then
                     partida.emitirVFX("danoDireto", inimigo)
                 end

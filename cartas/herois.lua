@@ -110,16 +110,17 @@ local acoes = require("cartas.acoes")
                 end
             end
 
-            self.vidaAtual = self.vidaAtual + valorBuff
-
-            if self.vidaAtual > self.vidaMaxima then
-                self.vidaAtual = self.vidaMaxima
+            -- PONTUAÇÃO: Calcula apenas a cura real
+            local vidaFaltando = self.vidaMaxima - self.vidaAtual
+            if vidaFaltando > 0 then
+                local curaReal = math.min(valorBuff, vidaFaltando)
+                self.vidaAtual = self.vidaAtual + curaReal
+                dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                
+                if partida.emitirVFX then
+                    partida.emitirVFX("cura", self)
+                end
             end
-            
-            if partida.emitirVFX then
-                partida.emitirVFX("cura", self)
-            end
-            
         end,
         
         estaVivo = true,
@@ -202,14 +203,16 @@ local acoes = require("cartas.acoes")
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             for _, heroiAliado in ipairs(dono.aliados) do
-                heroiAliado.vidaAtual = heroiAliado.vidaAtual + 2
-                
-                if heroiAliado.vidaAtual > heroiAliado.vidaMaxima then
-                    heroiAliado.vidaAtual = heroiAliado.vidaMaxima
-                end
-                
-                if partida.emitirVFX then
-                    partida.emitirVFX("cura", heroiAliado)
+                -- PONTUAÇÃO: Calcula a cura real em área
+                local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
+                if vidaFaltando > 0 then
+                    local curaReal = math.min(2, vidaFaltando)
+                    heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
+                    dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                    
+                    if partida.emitirVFX then
+                        partida.emitirVFX("cura", heroiAliado)
+                    end
                 end
             end
 
@@ -222,24 +225,27 @@ local acoes = require("cartas.acoes")
         tipo = 1,
         nome = "Quimera\nCarniceira",
         raca = {"Zumbi"},
-        espirito = 1,
-        ataque = 7,
-        defesa = 3,
+        espirito = 0,
+        ataque = 5,
+        defesa = 2,
         vidaMaxima = 14,
         vidaAtual = 14,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Zumbi\nInicio do Combate:\nPara cada aliado morto:\nEspirito e Ataque +1\nRecupera 2 de vida",
+        descricao = "Zumbi\nInicio do Combate:\nPara cada aliado Zumbi:\nEspirito e Ataque +1\nRecupera 2 de vida",
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
-            local valorBonus = 0
+            local valorBonus = -1
                 
-                for _, raca in ipairs(aliado.raca) do
-                    if raca == "Zumbi" then 
-                        valorBonus = valorBonus + 1
-                    end
-                end
+                for _, heroiAliado in ipairs(dono.aliados) do
 
+                    for _, raca in ipairs(heroiAliado.raca) do
+                        if raca == "Zumbi" then
+                            valorBonus = valorBonus + 1
+                        end
+                    end
+
+                end
                 
                     self.espirito = self.espirito + valorBonus
                     self.ataque = self.ataque + valorBonus
@@ -248,17 +254,17 @@ local acoes = require("cartas.acoes")
                         partida.emitirVFX("buff", self)
                     end
                     
-                    if self.vidaAtual < self.vidaMaxima then
-                        self.vidaAtual = self.vidaAtual + 2
-                        if self.vidaAtual > self.vidaMaxima then
-                            self.vidaAtual = self.vidaMaxima
-                        end
+                    -- PONTUAÇÃO: Cura real
+                    local vidaFaltando = self.vidaMaxima - self.vidaAtual
+                        if vidaFaltando > 0 then
+                        local curaReal = math.min(2, vidaFaltando)
+                        self.vidaAtual = self.vidaAtual + curaReal
+                        dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                        
                         if partida.emitirVFX then
                             partida.emitirVFX("cura", self)
                         end
                     end
-
-
         end,
         estaVivo = true,
         estaAtivo = true       
@@ -275,7 +281,7 @@ local acoes = require("cartas.acoes")
         vidaAtual = 15,
         modificadorDeDano = 0,
         itemEquipado = {},
-        descricao = "Zumbi\nFinal do Turno:\nCrie e Jogue uma Ritos Fúnebres",
+        descricao = "Zumbi\nInício do Turno:\nCrie e Jogue uma Ritos Fúnebres",
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
             table.insert(partida.filaDeResolucao, {
@@ -315,11 +321,12 @@ local acoes = require("cartas.acoes")
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             local dano = 5 - inimigo.espirito
             
+            -- PONTUAÇÃO: Dano Mágico
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
+                dono.pontuacao = (dono.pontuacao or 0) + dano
             end
             
-            -- VFX toca sempre, independente se o dano passou do escudo/espirito
             if partida.emitirVFX then
                 partida.emitirVFX("danoMagico", inimigo)
             end
@@ -344,8 +351,10 @@ local acoes = require("cartas.acoes")
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             local dano = 3 - inimigo.espirito
             
+            -- PONTUAÇÃO: Dano Mágico
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
+                dono.pontuacao = (dono.pontuacao or 0) + dano
             end
             
             if partida.emitirVFX then
@@ -433,8 +442,11 @@ local acoes = require("cartas.acoes")
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if self.ataqueDuplo == true then
                     local danoFisico = 10 - inimigo.defesa
+                    
+                    -- PONTUAÇÃO: Dano do Ataque Extra
                     if danoFisico > 0 then
                         inimigo.vidaAtual = inimigo.vidaAtual - danoFisico
+                        dono.pontuacao = (dono.pontuacao or 0) + danoFisico
                     end
                     if partida.emitirVFX then
                         partida.emitirVFX("danoFisico", inimigo)
@@ -461,20 +473,20 @@ local acoes = require("cartas.acoes")
         descricao = "Início do Turno:\nCure seus Aliados em 2\nFinal do Turno:\nCause Dano Direto ao seu Inimigo equivalente a soma Cura do Turno",
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-            for i, aliado in ipairs(dono.aliados) do
-                if aliado.estaVivo then
-
-                    local curaAliados = aliado.vidaMaxima - aliado.vidaAtual
-                    local curaReal = math.min(2, curaAliados)
-                    self.dano = self.dano + curaReal
-                    
-                    aliado.vidaAtual = aliado.vidaAtual + 2
-                   
-                    if aliado.vidaAtual > aliado.vidaMaxima then
-                        aliado.vidaAtual = aliado.vidaMaxima
-                    end
-                    if partida.emitirVFX then
-                        partida.emitirVFX("cura", aliado)
+            for i, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.estaVivo then
+                    -- PONTUAÇÃO: Cura real
+                    local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
+                    if vidaFaltando > 0 then
+                        local curaReal = math.min(2, vidaFaltando)
+                        self.dano = self.dano + curaReal
+                        
+                        heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
+                        dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                        
+                        if partida.emitirVFX then
+                            partida.emitirVFX("cura", heroiAliado)
+                        end
                     end
                 end
             end
@@ -491,17 +503,17 @@ local acoes = require("cartas.acoes")
 
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-            
-
+            -- PONTUAÇÃO: Dano Direto (Armazenado pela cura)
             if self.dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - self.dano
-            end
-
+                dono.pontuacao = (dono.pontuacao or 0) + self.dano
+                
                 if partida.emitirVFX then
                     partida.emitirVFX("danoDireto", inimigo)
                 end
+            end
 
-             self.dano = 0
+            self.dano = 0
         end,
 
         estaVivo = true,
@@ -513,7 +525,7 @@ local acoes = require("cartas.acoes")
     herois.moyraLiberta = {
         tipo = 1,
         raca = {"Cristal"},
-        nome = "Moyra,\n\nSanta das Laminas",
+        nome = "Moyra,\nSanta das Laminas",
         espirito = 2,
         ataque = 5,
         defesa = 2,
@@ -530,7 +542,6 @@ local acoes = require("cartas.acoes")
                 inimigo.espirito = 0
             end
             
-            -- O Efeito visual do dano no espírito toca de qualquer forma
             if partida.emitirVFX then
                 partida.emitirVFX("danoMagico", inimigo)
             end
@@ -547,11 +558,12 @@ local acoes = require("cartas.acoes")
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)            
             local dano = 5 - inimigo.espirito 
 
+            -- PONTUAÇÃO: Dano Mágico
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
+                dono.pontuacao = (dono.pontuacao or 0) + dano
             end
             
-            -- O VFX do dano bate mesmo que seja zerado pelo espirito
             if partida.emitirVFX then
                 partida.emitirVFX("danoMagico", inimigo)
             end
@@ -606,19 +618,23 @@ local acoes = require("cartas.acoes")
                 end
             end
 
+            -- PONTUAÇÃO: Cura real em área
             for i, al in ipairs(dono.aliados) do
                 if al.estaVivo then
-                    al.vidaAtual = al.vidaAtual + valorBuff
-                    if al.vidaAtual > al.vidaMaxima then
-                        al.vidaAtual = al.vidaMaxima
-                    end
-                    if partida.emitirVFX then
-                        partida.emitirVFX("cura", al)
+                    local vidaFaltando = al.vidaMaxima - al.vidaAtual
+                    if vidaFaltando > 0 then
+                        local curaReal = math.min(valorBuff, vidaFaltando)
+                        al.vidaAtual = al.vidaAtual + curaReal
+                        dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                        
+                        if partida.emitirVFX then
+                            partida.emitirVFX("cura", al)
+                        end
                     end
                 end
             end
 
-        local oponente = dono == partida.jogador1 and partida.jogador2 or partida.jogador1
+            local oponente = dono == partida.jogador1 and partida.jogador2 or partida.jogador1
 
             local tercoEspirito = math.floor(self.espirito / 3)
             local tercoAtaque = math.floor(self.ataque / 3)
@@ -626,20 +642,22 @@ local acoes = require("cartas.acoes")
             for i, inimigoAlvo in ipairs(oponente.aliados) do
                 if inimigoAlvo.estaVivo then
                     
+                    -- PONTUAÇÃO: Dano Mágico em área
                     local danoMagico = tercoEspirito - inimigoAlvo.espirito
                     if danoMagico > 0 then
                         inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoMagico
+                        dono.pontuacao = (dono.pontuacao or 0) + danoMagico
                     end
-                    -- Gatilho solto do IF
                     if partida.emitirVFX then
                         partida.emitirVFX("danoMagico", inimigoAlvo)
                     end
                         
+                    -- PONTUAÇÃO: Dano Físico em área
                     local danoFisico = tercoAtaque - inimigoAlvo.defesa
                     if danoFisico > 0 then
                         inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoFisico
+                        dono.pontuacao = (dono.pontuacao or 0) + danoFisico
                     end
-                    -- Gatilho solto do IF
                     if partida.emitirVFX then
                         partida.emitirVFX("danoFisico", inimigoAlvo)
                     end

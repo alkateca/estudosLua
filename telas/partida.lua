@@ -1003,19 +1003,26 @@ function Partida.checarFinalDeJogo()
 end
 
 function Partida.anunciarVitoria()
-
-    if vencedor == "vermelho" then
-        love.graphics.setColor(1,1,1)
-        love.graphics.rectangle("fill", 420, 250, 600, 400)
-        love.graphics.setColor(0,0,0)
-        love.graphics.printf("Time vermelho venceu", 420 , 430, 600,"center")
+    if not vencedor then 
+        return 
     end
 
-    if vencedor == "azul" then
-        love.graphics.setColor(1,1,1)
-        love.graphics.rectangle("fill", 420, 250, 600, 400)
-        love.graphics.setColor(0,0,0)
-        love.graphics.printf("Time azul venceu", 420 , 430, 600,"center")    
+    local ptsAzul = logicaPartida.jogador1.pontuacao or 0
+    local ptsVermelho = logicaPartida.jogador2.pontuacao or 0
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.rectangle("fill", 420, 250, 600, 400)
+    love.graphics.setColor(0, 0, 0)
+
+    -- Variável para não repetir o texto de pontuação nos if/else
+    local textoPontuacao = "\n\nPontos Azul: " .. ptsAzul .. "\nPontos Vermelho: " .. ptsVermelho
+
+    if vencedor == "vermelho" then
+        love.graphics.printf("Time vermelho venceu!" .. textoPontuacao, 420, 410, 600, "center")
+    elseif vencedor == "azul" then
+        love.graphics.printf("Time azul venceu!" .. textoPontuacao, 420, 410, 600, "center")    
+    elseif vencedor == "empate" then
+        love.graphics.printf("Empate Absoluto!" .. textoPontuacao, 420, 410, 600, "center")    
     end
 end
 

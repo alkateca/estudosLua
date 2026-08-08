@@ -132,10 +132,15 @@ acoes.mirarNaCabeca = {
             
             callback = function(cartaEscolhida, index)
                 if cartaEscolhida then
+                    -- Aplica o dano
                     cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual - 3
-                        if partida.emitirVFX then
-                            partida.emitirVFX("danoDireto", cartaEscolhida)
-                        end
+                    
+                    -- PONTUAÇÃO: Soma 3 pontos de dano direto
+                    dono.pontuacao = (dono.pontuacao or 0) + 3
+
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoDireto", cartaEscolhida)
+                    end
                 end
             end
         }
@@ -163,10 +168,18 @@ acoes.ritosFunebres = {
                     
                     callback = function(cartaEscolhida, index)
                         if cartaEscolhida then
-                            cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual + 5
-                            if cartaEscolhida.vidaAtual > cartaEscolhida.vidaMaxima then
-                                cartaEscolhida.vidaAtual = cartaEscolhida.vidaMaxima
+                            if partida.emitirVFX then
+                                partida.emitirVFX("cura", cartaEscolhida)
                             end
+                            
+                            -- PONTUAÇÃO: Calcula a cura real (mesmo se a vida estiver negativa devido à morte)
+                            local vidaFaltando = cartaEscolhida.vidaMaxima - cartaEscolhida.vidaAtual
+                            if vidaFaltando > 0 then
+                                local curaReal = math.min(5, vidaFaltando)
+                                cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual + curaReal
+                                dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                            end
+                            
                             if cartaEscolhida.vidaAtual > 0 then
                                 cartaEscolhida.estaVivo = true
                             end
