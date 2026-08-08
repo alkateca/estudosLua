@@ -445,7 +445,34 @@ if button == 1 then
                         end
                     end
                 end
-                
+
+                if logicaPartida.estadoAlvo.tipo == "item" then
+                    
+                    local listaItens = logicaPartida.estadoAlvo.listaItens or {}
+                    
+                    for i, itemAtual in ipairs(listaItens) do
+                        -- Coordenadas exatas do inventário
+                        local xPos = 460 + ((i - 1) * 90)
+                        local yPos = 320
+                        
+                        -- Verifica o clique dentro do retângulo da carta
+                        if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
+                            logicaPartida.estadoAlvo.ativo = false
+                            
+                            -- CORREÇÃO: Força a variável do inventário normal a fechar
+                            -- para não ficar travada na tela após o fim da magia
+                            inventarioAberto = nil 
+                            
+                            logicaPartida.estadoAlvo.callback(itemAtual, i)
+                            
+                            if coroutine.status(rotinaTurno) == "suspended" then
+                                coroutine.resume(rotinaTurno)
+                            end
+                            return 
+                        end
+                    end
+                end
+
             return
         end
 
@@ -1428,9 +1455,32 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                     end
                 end
             end
+        
+        elseif logicaPartida.estadoAlvo.tipo == "item" then
+            
+            local listaItens = logicaPartida.estadoAlvo.listaItens or {}
+            
+            -- Fundo igual ao do inventário aberto
+            love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+            love.graphics.rectangle("fill", 400, 250, 600, 250, 20, 20)
+            
+            -- Título da ação no topo do inventário
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.printf(logicaPartida.estadoAlvo.mensagem, 400, 270, 600, "center")
+            
+            -- Desenhando os itens da mesma forma que a função original
+            for i, itemAtual in ipairs(listaItens) do
+                local xPos = 460 + ((i - 1) * 90)
+                local yPos = 320
+                
+                love.graphics.setColor(0.3, 0.3, 0.3)
+                love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.printf(itemAtual.nome, xPos, yPos + 10, 80, "center")
+            end
         end
-end
-
+    end
     love.graphics.setColor(1, 1, 1)
     
     for i, ef in ipairs(efeitosVisuais) do

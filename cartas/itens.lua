@@ -6,9 +6,10 @@ itens.quimera = {
     unica = true,
     raca = {"Cristal"},
     efeitoFinalDeTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
-            if partida.emitirVFX then
-                partida.emitirVFX("cura", dono == partida.jogador2 and "inimigo" or "aliado")            
-            end
+
+        if partida.emitirVFX then
+            partida.emitirVFX("cura", dono == partida.jogador2 and "inimigo" or "aliado")            
+        end
         
         -- PONTUAÇÃO: Cura real baseada no espírito
         local vidaFaltando = aliado.vidaMaxima - aliado.vidaAtual
@@ -29,6 +30,11 @@ itens.quimera = {
 
 
     end,
+    efeitoDesequipar = function (self, aliado)
+        aliado.espirito = aliado.espirito - 1
+        aliado.ataque = aliado.ataque - 1
+        aliado.defesa = aliado.defesa - 1
+    end,
     descricao = "+1 de Espirito\n+1 de Defesa\n+1 de Ataque\nNo final do turno:\nRecupere vida igual seu espirito"
 }
 
@@ -43,6 +49,10 @@ itens.brocheCristal = {
             partida.emitirVFX("buff", dono == partida.jogador2 and "inimigo" or "aliado")
         end
     end,
+    efeitoDesequipar = function (self, aliado)
+        aliado.espirito = aliado.espirito - 1
+        aliado.defesa = aliado.defesa - 1
+    end,
     descricao = "+1 de Defesa\n+1 de Espirito"
 }
 
@@ -55,6 +65,9 @@ itens.laminaDeCristal = {
         if partida.emitirVFX then
             partida.emitirVFX("buff", dono == partida.jogador2 and "inimigo" or "aliado")
         end
+    end,
+    efeitoDesequipar = function (self, aliado)
+        aliado.ataque = aliado.ataque - 1
     end,
     descricao = "+1 de Espirito\n+1 de Ataque"            
 }

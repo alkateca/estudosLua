@@ -178,6 +178,39 @@ function logicaPartida.selecionarPrimeiroAtivo()
     end
 end
 
+function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
+    if not heroiAlvo.itemEquipado or #heroiAlvo.itemEquipado == 0 then
+        return false -- O herói não tem itens
+    end
+
+    -- Remove o item da tabela do herói
+    local itemRemovido = table.remove(heroiAlvo.itemEquipado, indiceDoItem)
+    
+    if itemRemovido then
+        -- Se o item tiver a regra de reverter os status, ele executa agora
+        if type(itemRemovido.efeitoDesequipar) == "function" then
+            itemRemovido.efeitoDesequipar(itemRemovido, heroiAlvo)
+        end
+        
+        -- Envia o item quebrado/desequipado para o descarte do dono
+        if donoDoHeroi and donoDoHeroi.descarte then
+            table.insert(donoDoHeroi.descarte, itemRemovido)
+        end
+        
+        logicaPartida.registrarLog("Item Destruído/Desequipado: " .. itemRemovido.nome .. " removido de " .. heroiAlvo.nome)
+        
+        -- Opcional: Tocar um VFX de quebra de item
+        if logicaPartida.emitirVFX then
+            local alvoVFX = donoDoHeroi == logicaPartida.jogador1 and "aliado" or "inimigo"
+            logicaPartida.emitirVFX("debuff", alvoVFX)
+        end
+        
+        return true
+    end
+    
+    return false
+end
+
 --logs
 logicaPartida.logIniciado = false
 

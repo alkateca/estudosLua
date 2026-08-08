@@ -137,5 +137,44 @@ reliquias.liberacaoEsquadrao = {
     descricao = "Se jogada Por:\nEsquadrão Goblin\nO Substitua por\nHeróis Lendários dos Goblin\nJogue uma carta de sua mão"
 }
 
+reliquias.liberacaoQuimera = {
+    tipo = 4,
+    nome = "Liberação: Quimera Carniceira",
+    unica = true,
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)      
+        
+        local heroiEscolhido = nil
+
+        partida.estadoAlvo = {
+            ativo = true,
+            tipo = "aliado",
+            mensagem = "Escolha um Herói Aliado",
+            dono = dono,
+            callback = function(cartaEscolhida, indexAlvo)
+                heroiEscolhido = cartaEscolhida
+            end
+        }
+        
+        coroutine.yield()
+
+        if heroiEscolhido and aliado.nome == "Quimera\nCarniceira" then
+            
+            heroiEscolhido.ataque = (heroiEscolhido.ataque or 0) + (aliado.ataque or 0)
+            heroiEscolhido.defesa = (heroiEscolhido.defesa or 0) + (aliado.defesa or 0)
+            heroiEscolhido.espirito = (heroiEscolhido.espirito or 0) + (aliado.espirito or 0)
+            heroiEscolhido.vidaAtual = aliado.vidaAtual
+            heroiEscolhido.vidaMaxima = aliado.vidaMaxima
+            
+
+            heroiEscolhido.nome = "Corrupção\nQuimérica"
+            
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", heroiEscolhido)
+            end
+            
+        end
+    end,
+    descricao = "Se jogada Por:\nQuimera Carniceira\nEscolha um Aliado: Transforme em Corrupção Quimerica"
+}
 
 return reliquias

@@ -193,4 +193,79 @@ magias.atomosferaPesada = {
     end,
 }
 
+
+--toolbox
+magias.vendavalArcano = {
+    nome = "Vendaval Arcano",
+    tipo = 2,
+    dano = 0,
+    descricao = "Descarte um Item Aleatório de cada Herói Inimigo.",
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        -- Identifica quem é o dono dos inimigos
+        local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
+
+        local itensDestruidos = 0
+
+        -- Percorre todos os heróis da equipe inimiga
+        for _, heroiInimigo in ipairs(donoInimigo.aliados) do
+            if heroiInimigo.estaVivo and heroiInimigo.itemEquipado and #heroiInimigo.itemEquipado > 0 then
+                
+                -- Sorteia um índice entre 1 e o número total de itens que o herói tem
+                local indiceAleatorio = math.random(1, #heroiInimigo.itemEquipado)
+                
+                -- Usa a função central para desequipar
+                partida.desequiparItem(heroiInimigo, donoInimigo, indiceAleatorio)
+                itensDestruidos = itensDestruidos + 1
+            end
+        end
+
+        -- Opcional: Feedback visual geral caso tenha quebrado algo
+        if itensDestruidos > 0 and partida.emitirVFX then
+            -- Toca um efeito no inimigo ativo como representação
+            partida.emitirVFX("debuff", inimigo)
+        else
+            partida.registrarLog("Nenhum item inimigo foi encontrado para ser destruído pelo Vendaval Arcano.")
+        end
+    end
+}
+
+magias.quebra = {
+    nome = "Quebra!",
+    tipo = 2,
+    dano = 0,
+    efeitoAtivo = false,
+    descricao = "Escolha um Item Equipado no Herói Inimigo e o Descarte.",
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        
+        -- Checa se o inimigo ativo realmente tem itens antes de pausar a tela
+        if inimigo.itemEquipado and #inimigo.itemEquipado > 0 then
+            
+            partida.estadoAlvo = {
+                ativo = true,
+                tipo = "item",
+                mensagem = "Escolha um Item do " .. inimigo.nome,
+                dono = dono,
+                listaItens = inimigo.itemEquipado, -- Passa a lista específica deste inimigo
+                
+                callback = function(itemEscolhido, index)
+                    if itemEscolhido then
+                        local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
+                        
+                        -- Desequipa o item baseado no índice que o jogador clicou
+                        partida.desequiparItem(inimigo, donoInimigo, index)
+                    end
+                end
+            }
+
+            -- Pausa a resolução das cartas até o jogador escolher
+            coroutine.yield()
+            
+        else
+            -- Se não tiver itens, avisa no log e segue o jogo sem abrir a tela de escolha
+            partida.registrarLog(inimigo.nome .. " não possui itens para serem destruídos.")
+        end
+
+    end
+}
+
 return magias
