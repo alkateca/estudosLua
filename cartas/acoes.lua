@@ -132,11 +132,9 @@ acoes.mirarNaCabeca = {
             
             callback = function(cartaEscolhida, index)
                 if cartaEscolhida then
-                    -- Aplica o dano
                     cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual - 3
                     
-                    -- PONTUAÇÃO: Soma 3 pontos de dano direto
-                    dono.pontuacao = (dono.pontuacao or 0) + 3
+                    dono.pontuacao = dono.pontuacao + 3
 
                     if partida.emitirVFX then
                         partida.emitirVFX("danoDireto", cartaEscolhida)

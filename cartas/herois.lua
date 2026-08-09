@@ -2,7 +2,6 @@ local herois = {}
 
 local acoes = require("cartas.acoes")
 
-
 -- dummies
 
     herois.dragaoArcoIris = {
@@ -208,7 +207,7 @@ local acoes = require("cartas.acoes")
                 if vidaFaltando > 0 then
                     local curaReal = math.min(2, vidaFaltando)
                     heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
-                    dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                    dono.pontuacao = dono.pontuacao + curaReal
                     
                     if partida.emitirVFX then
                         partida.emitirVFX("cura", heroiAliado)
@@ -259,7 +258,7 @@ local acoes = require("cartas.acoes")
                         if vidaFaltando > 0 then
                         local curaReal = math.min(2, vidaFaltando)
                         self.vidaAtual = self.vidaAtual + curaReal
-                        dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                        dono.pontuacao = dono.pontuacao + curaReal
                         
                         if partida.emitirVFX then
                             partida.emitirVFX("cura", self)
@@ -324,7 +323,7 @@ local acoes = require("cartas.acoes")
             -- PONTUAÇÃO: Dano Mágico
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
-                dono.pontuacao = (dono.pontuacao or 0) + dano
+                dono.pontuacao = dono.pontuacao + dano
             end
             
             if partida.emitirVFX then
@@ -354,7 +353,7 @@ local acoes = require("cartas.acoes")
             -- PONTUAÇÃO: Dano Mágico
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
-                dono.pontuacao = (dono.pontuacao or 0) + dano
+                dono.pontuacao = dono.pontuacao + dano
             end
             
             if partida.emitirVFX then
@@ -561,7 +560,7 @@ local acoes = require("cartas.acoes")
             -- PONTUAÇÃO: Dano Mágico
             if dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - dano
-                dono.pontuacao = (dono.pontuacao or 0) + dano
+                dono.pontuacao = dono.pontuacao + dano
             end
             
             if partida.emitirVFX then
@@ -625,7 +624,7 @@ local acoes = require("cartas.acoes")
                     if vidaFaltando > 0 then
                         local curaReal = math.min(valorBuff, vidaFaltando)
                         al.vidaAtual = al.vidaAtual + curaReal
-                        dono.pontuacao = (dono.pontuacao or 0) + curaReal
+                        dono.pontuacao = dono.pontuacao + curaReal
                         
                         if partida.emitirVFX then
                             partida.emitirVFX("cura", al)

@@ -1,160 +1,126 @@
-[11:49:51] Efeito Inicio Turno Aliado: Quimera
-Carniceira | Aliado [V:14 A:7 D:2 E:2] | Inimigo [V:12 A:6 D:1 E:2]
-[11:49:53] Carta Resolvida: Liberação: Quimera Carniceira usada por Quimera
-Carniceira | Aliado [V:14 A:7 D:2 E:2] | Inimigo [V:12 A:6 D:1 E:2]
-[11:49:54] Carta Resolvida: Para-raios usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:3] | Inimigo [V:14 A:7 D:2 E:2]
-[11:49:56] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:3] | Inimigo [V:10 A:7 D:2 E:2]
-[11:49:59] Carta Resolvida: Quimera Negra usada por Quimera
-Carniceira | Aliado [V:10 A:7 D:2 E:2] | Inimigo [V:11 A:5 D:0 E:2]
-[11:50:00] Carta Resolvida: Dragão de Cristal usada por Naelis, Grande Artesã de Cristais | Aliado [V:11 A:5 D:0 E:2] | Inimigo [V:10 A:7 D:2 E:2]
-[11:50:01] Combate Fisico: Naelis, Grande Artesã de Cristais causou 3 de dano. | Aliado [V:7 A:7 D:2 E:2] | Inimigo [V:11 A:5 D:0 E:2]
-[11:50:03] Combate Fisico: Quimera
-Carniceira causou 7 de dano. | Aliado [V:7 A:7 D:2 E:2] | Inimigo [V:4 A:5 D:0 E:2]
-[11:50:06] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:3 A:7 D:2 E:2] | Inimigo [V:4 A:5 D:0 E:2]
-[11:50:07] Magia Ativa Inimigo: Para-raios | Aliado [V:3 A:7 D:2 E:2] | Inimigo [V:4 A:5 D:0 E:1]
-[11:50:13] Carta Resolvida: Dragão de Cristal usada por Isenora,
-Santa das Laminas | Aliado [V:13 A:7 D:2 E:3] | Inimigo [V:12 A:3 D:2 E:3]
-[11:50:13] Carta Resolvida: Homunculo Carniceiro usada por Rainha Goblin | Aliado [V:12 A:3 D:2 E:3] | Inimigo [V:13 A:7 D:2 E:3]
-[11:50:14] Carta Resolvida: Determinação
-Cristalina usada por Isenora,
-Santa das Laminas | Aliado [V:13 A:8 D:2 E:3] | Inimigo [V:12 A:3 D:2 E:3]
-[11:50:16] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:13 A:8 D:2 E:3] | Inimigo [V:9 A:3 D:2 E:3]
-[11:50:19] Carta Resolvida: Quimera Negra usada por Rainha Goblin | Aliado [V:9 A:3 D:2 E:3] | Inimigo [V:12 A:7 D:1 E:2]
-[11:50:20] Combate Fisico: Isenora,
-Santa das Laminas causou 5 de dano. | Aliado [V:4 A:3 D:2 E:3] | Inimigo [V:12 A:7 D:1 E:2]
-[11:50:22] Combate Fisico: Rainha Goblin causou 2 de dano. | Aliado [V:4 A:3 D:2 E:3] | Inimigo [V:10 A:7 D:1 E:2]
-[11:50:26] Efeito Final Turno Aliado: Rainha Goblin | Aliado [V:6 A:3 D:2 E:3] | Inimigo [V:10 A:7 D:1 E:2]
-[11:50:28] Efeito Final Turno Inimigo: Isenora,
-Santa das Laminas | Aliado [V:4 A:3 D:2 E:3] | Inimigo [V:10 A:7 D:1 E:2]
-[11:50:30] Efeito Item Aliado: Homunculo Carniceiro | Aliado [V:5 A:3 D:2 E:3] | Inimigo [V:9 A:7 D:1 E:2]
-[11:50:32] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:2 A:3 D:2 E:3] | Inimigo [V:9 A:7 D:1 E:2]
-[11:50:33] Magia Ativa Inimigo: Determinação
-Cristalina | Aliado [V:2 A:3 D:2 E:3] | Inimigo [V:9 A:6 D:1 E:2]
-[11:50:42] Efeito Inicio Turno Aliado: Corrupção
-Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:6 D:1 E:2]
-[11:50:43] Efeito Inicio Turno Inimigo: Moyra,
-Aprendiz da Santa | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:6 D:1 E:2]
-[11:50:46] Carta Resolvida: Ritos Fúnebres usada por Corrupção
-Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:6 D:1 E:2]
-[11:50:49] Carta Resolvida: Atmosfera Pesada usada por Corrupção
-Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:6 D:1 E:1]
-[11:50:51] Carta Resolvida: Estatica usada por Moyra,
-Aprendiz da Santa | Aliado [V:13 A:6 D:1 E:1] | Inimigo [V:14 A:10 D:4 E:5]
-[11:50:56] Carta Resolvida: Ração de emergencia usada por Corrupção
-Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:9 D:1 E:1]
-[11:51:00] Carta Resolvida: Ração de emergencia usada por Corrupção
-Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:9 D:1 E:1]
-[11:51:06] Carta Resolvida: Ritos Fúnebres usada por Corrupção
-Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:13 A:9 D:1 E:1]
-[11:51:07] Carta Resolvida: Massacre Cristalino usada por Moyra,
-Aprendiz da Santa | Aliado [V:13 A:9 D:1 E:1] | Inimigo [V:3 A:10 D:4 E:5]
-[11:51:08] Combate Fisico: Moyra,
-Aprendiz da Santa causou 5 de dano. | Aliado [V:-2 A:10 D:4 E:5] | Inimigo [V:13 A:9 D:1 E:1]
-[11:51:10] Combate Fisico: Corrupção
-Quimérica causou 9 de dano. | Aliado [V:-2 A:10 D:4 E:5] | Inimigo [V:4 A:9 D:1 E:1]
-[11:51:12] Efeito Final Turno Inimigo: Moyra,
-Aprendiz da Santa | Aliado [V:-2 A:10 D:4 E:5] | Inimigo [V:4 A:6 D:1 E:1]
-[11:51:12] Morte: Aliado Corrupção
-Quimérica foi derrotado.
-[11:51:19] Carta Resolvida: Determinação
-Cristalina usada por Isenora,
-Santa das Laminas | Aliado [V:9 A:7 D:1 E:1] | Inimigo [V:7 A:3 D:2 E:3]
-[11:51:21] Carta Resolvida: Para-raios usada por Isenora,
-Santa das Laminas | Aliado [V:9 A:7 D:1 E:2] | Inimigo [V:7 A:3 D:2 E:3]
-[11:51:22] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:9 A:7 D:1 E:2] | Inimigo [V:5 A:3 D:2 E:3]
-[11:51:24] Carta Resolvida: Ritos Fúnebres usada por Rainha Goblin | Aliado [V:5 A:3 D:2 E:3] | Inimigo [V:9 A:7 D:1 E:2]
-[11:51:24] Carta Resolvida: Ração de emergencia usada por Isenora,
-Santa das Laminas | Aliado [V:9 A:7 D:1 E:2] | Inimigo [V:5 A:3 D:2 E:3]
-[11:51:25] Carta Resolvida: Determinação
-Cristalina usada por Isenora,
-Santa das Laminas | Aliado [V:9 A:8 D:1 E:2] | Inimigo [V:5 A:3 D:2 E:3]
-[11:51:27] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:9 A:8 D:1 E:2] | Inimigo [V:3 A:3 D:2 E:3]
-[11:51:28] Carta Resolvida: Homunculo Carniceiro usada por Rainha Goblin | Aliado [V:3 A:3 D:2 E:3] | Inimigo [V:9 A:8 D:1 E:2]
-[11:51:29] Combate Fisico: Isenora,
-Santa das Laminas causou 6 de dano. | Aliado [V:-3 A:3 D:2 E:3] | Inimigo [V:9 A:8 D:1 E:2]
-[11:51:31] Combate Fisico: Rainha Goblin causou 2 de dano. | Aliado [V:-3 A:3 D:2 E:3] | Inimigo [V:7 A:8 D:1 E:2]
-[11:51:36] Efeito Final Turno Aliado: Rainha Goblin | Aliado [V:-1 A:3 D:2 E:3] | Inimigo [V:7 A:8 D:1 E:2]
-[11:51:37] Efeito Final Turno Inimigo: Isenora,
-Santa das Laminas | Aliado [V:-3 A:3 D:2 E:3] | Inimigo [V:7 A:8 D:1 E:2]
-[11:51:40] Efeito Item Aliado: Homunculo Carniceiro | Aliado [V:-2 A:3 D:2 E:3] | Inimigo [V:6 A:8 D:1 E:2]
-[11:51:43] Efeito Item Aliado: Homunculo Carniceiro | Aliado [V:-1 A:3 D:2 E:3] | Inimigo [V:5 A:8 D:1 E:2]
-[11:51:45] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:-4 A:3 D:2 E:3] | Inimigo [V:5 A:8 D:1 E:2]
-[11:51:46] Magia Ativa Inimigo: Determinação
-Cristalina | Aliado [V:-4 A:3 D:2 E:3] | Inimigo [V:5 A:7 D:1 E:2]
-[11:51:46] Magia Ativa Inimigo: Para-raios | Aliado [V:-4 A:3 D:2 E:3] | Inimigo [V:5 A:7 D:1 E:1]
-[11:51:47] Magia Ativa Inimigo: Determinação
-Cristalina | Aliado [V:-4 A:3 D:2 E:3] | Inimigo [V:5 A:6 D:1 E:1]
-[11:51:48] Morte: Aliado Rainha Goblin foi derrotado.
-[11:51:56] Efeito Inicio Turno Aliado: Quimera
-Carniceira | Aliado [V:14 A:9 D:2 E:4] | Inimigo [V:4 A:5 D:0 E:0]
-[11:51:59] Carta Resolvida: Exumação usada por Quimera
-Carniceira | Aliado [V:14 A:8 D:1 E:3] | Inimigo [V:4 A:5 D:0 E:0]
-[11:52:00] Carta Resolvida: Liberação: Quimera Carniceira usada por Quimera
-Carniceira | Aliado [V:14 A:8 D:1 E:3] | Inimigo [V:4 A:5 D:0 E:0]
-[11:52:01] Carta Resolvida: Ponto Final usada por Naelis, Grande Artesã de Cristais | Aliado [V:4 A:5 D:0 E:0] | Inimigo [V:14 A:8 D:1 E:3]
-[11:52:03] Carta Resolvida: Exumação usada por Quimera
-Carniceira | Aliado [V:14 A:7 D:0 E:2] | Inimigo [V:4 A:5 D:0 E:0]
-[11:52:04] Carta Resolvida: Ritos Fúnebres usada por Quimera
-Carniceira | Aliado [V:14 A:7 D:0 E:2] | Inimigo [V:4 A:5 D:0 E:0]
-[11:52:05] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:4 A:5 D:0 E:0] | Inimigo [V:13 A:7 D:0 E:2]
-[11:52:06] Combate Fisico: Naelis, Grande Artesã de Cristais causou 5 de dano. | Aliado [V:8 A:7 D:0 E:2] | Inimigo [V:4 A:5 D:0 E:0]
-[11:52:08] Combate Fisico: Quimera
-Carniceira causou 7 de dano. | Aliado [V:8 A:7 D:0 E:2] | Inimigo [V:-3 A:5 D:0 E:0]
-[11:52:11] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:4 A:7 D:0 E:2] | Inimigo [V:-3 A:5 D:0 E:0]
-[11:52:12] Magia Ativa Inimigo: Ponto Final | Aliado [V:4 A:7 D:0 E:2] | Inimigo [V:-3 A:5 D:0 E:0]
-[11:52:13] Morte: Inimigo Naelis, Grande Artesã de Cristais foi derrotado.
-[11:52:33] Efeito Inicio Turno Aliado: Quimera
-Carniceira | Aliado [V:6 A:9 D:0 E:4] | Inimigo [V:4 A:6 D:1 E:1]
-[11:52:34] Efeito Inicio Turno Inimigo: Moyra,
-Aprendiz da Santa | Aliado [V:6 A:9 D:0 E:4] | Inimigo [V:4 A:6 D:1 E:1]
-[11:52:35] Carta Resolvida: Para-raios usada por Moyra,
-Aprendiz da Santa | Aliado [V:4 A:6 D:1 E:2] | Inimigo [V:6 A:9 D:0 E:4]
-[11:52:38] Carta Resolvida: Estatica usada por Moyra,
-Aprendiz da Santa | Aliado [V:4 A:9 D:1 E:2] | Inimigo [V:5 A:9 D:0 E:4]
-[11:52:41] Carta Resolvida: Quimera Negra usada por Quimera
-Carniceira | Aliado [V:5 A:9 D:0 E:4] | Inimigo [V:3 A:8 D:0 E:1]
-[11:52:42] Carta Resolvida: Estatica usada por Moyra,
-Aprendiz da Santa | Aliado [V:3 A:8 D:0 E:1] | Inimigo [V:5 A:9 D:0 E:4]
-[11:52:46] Carta Resolvida: Atmosfera Pesada usada por Quimera
-Carniceira | Aliado [V:5 A:9 D:0 E:4] | Inimigo [V:3 A:8 D:0 E:0]
-[11:52:47] Combate Fisico: Moyra,
-Aprendiz da Santa causou 8 de dano. | Aliado [V:-3 A:9 D:0 E:4] | Inimigo [V:3 A:8 D:0 E:0]
-[11:52:49] Combate Fisico: Quimera
-Carniceira causou 9 de dano. | Aliado [V:-3 A:9 D:0 E:4] | Inimigo [V:-6 A:8 D:0 E:0]
-[11:52:51] Efeito Final Turno Inimigo: Moyra,
-Aprendiz da Santa | Aliado [V:-3 A:9 D:0 E:4] | Inimigo [V:-6 A:5 D:0 E:0]
-[11:52:52] Magia Ativa Inimigo: Para-raios | Aliado [V:-3 A:9 D:0 E:4] | Inimigo [V:-6 A:5 D:0 E:-1]
-[11:52:53] Morte: Aliado Quimera
+[11:59:31] Efeito Inicio Turno Aliado: Quimera
+Carniceira | Aliado [V:14 A:7 D:2 E:2] | Inimigo [V:13 A:6 D:1 E:2]
+[11:59:32] Efeito Inicio Turno Inimigo: Moyra,
+Aprendiz da Santa | Aliado [V:13 A:7 D:2 E:2] | Inimigo [V:13 A:6 D:1 E:2]
+[11:59:34] Carta Resolvida: Liberação: Quimera Carniceira usada por Quimera
+Carniceira | Aliado [V:13 A:7 D:2 E:2] | Inimigo [V:13 A:6 D:1 E:2]
+[11:59:36] Carta Resolvida: Estatica usada por Moyra,
+Aprendiz da Santa | Aliado [V:13 A:6 D:1 E:2] | Inimigo [V:10 A:7 D:2 E:2]
+[11:59:40] Carta Resolvida: Quimera Negra usada por Quimera
+Carniceira | Aliado [V:10 A:7 D:2 E:2] | Inimigo [V:12 A:8 D:0 E:1]
+[11:59:42] Carta Resolvida: Massacre Cristalino usada por Moyra,
+Aprendiz da Santa | Aliado [V:12 A:8 D:0 E:1] | Inimigo [V:0 A:7 D:2 E:2]
+[11:59:43] Combate Fisico: Moyra,
+Aprendiz da Santa causou 6 de dano. | Aliado [V:-6 A:7 D:2 E:2] | Inimigo [V:12 A:8 D:0 E:1]
+[11:59:45] Combate Fisico: Quimera
+Carniceira causou 7 de dano. | Aliado [V:-6 A:7 D:2 E:2] | Inimigo [V:5 A:8 D:0 E:1]
+[11:59:47] Efeito Final Turno Inimigo: Moyra,
+Aprendiz da Santa | Aliado [V:-6 A:7 D:2 E:2] | Inimigo [V:5 A:5 D:0 E:1]
+[11:59:47] Morte: Aliado Quimera
 Carniceira foi derrotado.
-[11:52:53] Morte: Inimigo Moyra,
+[12:00:00] Carta Resolvida: Estatica usada por Isenora,
+Santa das Laminas | Aliado [V:13 A:7 D:2 E:3] | Inimigo [V:9 A:3 D:2 E:3]
+[12:00:02] Carta Resolvida: Mirar na cabeça usada por Rainha Goblin | Aliado [V:9 A:3 D:2 E:3] | Inimigo [V:13 A:7 D:2 E:3]
+[12:00:03] Carta Resolvida: Estatica usada por Isenora,
+Santa das Laminas | Aliado [V:13 A:7 D:2 E:3] | Inimigo [V:6 A:3 D:2 E:3]
+[12:00:04] Carta Resolvida: Mirar na cabeça usada por Rainha Goblin | Aliado [V:6 A:3 D:2 E:3] | Inimigo [V:13 A:7 D:2 E:3]
+[12:00:05] Combate Fisico: Isenora,
+Santa das Laminas causou 5 de dano. | Aliado [V:1 A:3 D:2 E:3] | Inimigo [V:13 A:7 D:2 E:3]
+[12:00:07] Combate Fisico: Rainha Goblin causou 1 de dano. | Aliado [V:1 A:3 D:2 E:3] | Inimigo [V:12 A:7 D:2 E:3]
+[12:00:10] Efeito Final Turno Aliado: Rainha Goblin | Aliado [V:3 A:3 D:2 E:3] | Inimigo [V:12 A:7 D:2 E:3]
+[12:00:12] Efeito Final Turno Inimigo: Isenora,
+Santa das Laminas | Aliado [V:1 A:3 D:2 E:3] | Inimigo [V:12 A:7 D:2 E:3]
+[12:00:13] Morte: Inimigo Moyra,
 Aprendiz da Santa foi derrotado.
-[11:53:03] Efeito Inicio Turno Aliado: Corrupção
-Quimérica | Aliado [V:5 A:10 D:4 E:5] | Inimigo [V:5 A:6 D:1 E:0]
-[11:53:04] Carta Resolvida: Ritos Fúnebres usada por Corrupção
-Quimérica | Aliado [V:5 A:10 D:4 E:5] | Inimigo [V:5 A:6 D:1 E:0]
-[11:53:06] Carta Resolvida: Exumação usada por Corrupção
-Quimérica | Aliado [V:5 A:9 D:3 E:4] | Inimigo [V:5 A:6 D:1 E:0]
-[11:53:07] Carta Resolvida: Ritos Fúnebres usada por Corrupção
-Quimérica | Aliado [V:5 A:9 D:3 E:4] | Inimigo [V:5 A:6 D:1 E:0]
-[11:53:08] Carta Resolvida: Para-raios usada por Isenora,
-Santa das Laminas | Aliado [V:5 A:6 D:1 E:1] | Inimigo [V:5 A:9 D:3 E:4]
-[11:53:10] Carta Resolvida: Estatica usada por Isenora,
-Santa das Laminas | Aliado [V:5 A:6 D:1 E:1] | Inimigo [V:5 A:9 D:3 E:4]
-[11:53:15] Carta Resolvida: Ritos Fúnebres usada por Corrupção
-Quimérica | Aliado [V:10 A:9 D:3 E:4] | Inimigo [V:5 A:6 D:1 E:1]
-[11:53:16] Carta Resolvida: Quimera usada por Isenora,
-Santa das Laminas | Aliado [V:5 A:7 D:2 E:2] | Inimigo [V:10 A:9 D:3 E:4]
-[11:53:18] Combate Fisico: Isenora,
-Santa das Laminas causou 4 de dano. | Aliado [V:6 A:9 D:3 E:4] | Inimigo [V:5 A:7 D:2 E:2]
-[11:53:20] Combate Fisico: Corrupção
-Quimérica causou 7 de dano. | Aliado [V:6 A:9 D:3 E:4] | Inimigo [V:-2 A:7 D:2 E:2]
-[11:53:22] Efeito Final Turno Inimigo: Isenora,
-Santa das Laminas | Aliado [V:5 A:9 D:3 E:4] | Inimigo [V:-2 A:7 D:2 E:2]
-[11:53:24] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:3 A:9 D:3 E:4] | Inimigo [V:-2 A:7 D:2 E:2]
-[11:53:26] Efeito Item Inimigo: Quimera | Aliado [V:3 A:9 D:3 E:4] | Inimigo [V:0 A:7 D:2 E:2]
-[11:53:27] Magia Ativa Inimigo: Para-raios | Aliado [V:3 A:9 D:3 E:4] | Inimigo [V:0 A:7 D:2 E:1]
-[11:53:28] Morte: Inimigo Isenora,
+[12:00:25] Efeito Inicio Turno Aliado: Corrupção
+Quimérica | Aliado [V:15 A:10 D:4 E:5] | Inimigo [V:12 A:6 D:1 E:2]
+[12:00:25] Carta Resolvida: Ritos Fúnebres usada por Corrupção
+Quimérica | Aliado [V:15 A:10 D:4 E:5] | Inimigo [V:12 A:6 D:1 E:2]
+[12:00:25] Carta Resolvida: Homunculo Carniceiro usada por Corrupção
+Quimérica | Aliado [V:15 A:10 D:4 E:5] | Inimigo [V:12 A:6 D:1 E:2]
+[12:00:26] Carta Resolvida: Dragão de Cristal usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:2] | Inimigo [V:15 A:10 D:4 E:5]
+[12:00:27] Carta Resolvida: Determinação
+Cristalina usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:7 D:1 E:2] | Inimigo [V:15 A:10 D:4 E:5]
+[12:00:29] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:7 D:1 E:2] | Inimigo [V:15 A:10 D:4 E:5]
+[12:00:30] Combate Fisico: Naelis, Grande Artesã de Cristais causou 3 de dano. | Aliado [V:12 A:10 D:4 E:5] | Inimigo [V:12 A:7 D:1 E:2]
+[12:00:32] Combate Fisico: Corrupção
+Quimérica causou 9 de dano. | Aliado [V:12 A:10 D:4 E:5] | Inimigo [V:3 A:7 D:1 E:2]
+[12:00:36] Efeito Item Aliado: Homunculo Carniceiro | Aliado [V:13 A:10 D:4 E:5] | Inimigo [V:2 A:7 D:1 E:2]
+[12:00:38] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:12 A:10 D:4 E:5] | Inimigo [V:2 A:7 D:1 E:2]
+[12:00:38] Magia Ativa Inimigo: Determinação
+Cristalina | Aliado [V:12 A:10 D:4 E:5] | Inimigo [V:2 A:6 D:1 E:2]
+[12:00:47] Carta Resolvida: Dragão de Cristal usada por Isenora,
+Santa das Laminas | Aliado [V:12 A:7 D:2 E:3] | Inimigo [V:1 A:3 D:2 E:3]
+[12:00:50] Carta Resolvida: Atmosfera Pesada usada por Rainha Goblin | Aliado [V:1 A:3 D:2 E:3] | Inimigo [V:12 A:7 D:2 E:2]
+[12:00:51] Carta Resolvida: Liberação: Moyra usada por Isenora,
+Santa das Laminas | Aliado [V:12 A:7 D:2 E:2] | Inimigo [V:1 A:3 D:2 E:3]
+[12:00:52] Carta Resolvida: Determinação
+Cristalina usada por Isenora,
+Santa das Laminas | Aliado [V:12 A:8 D:2 E:2] | Inimigo [V:1 A:3 D:2 E:3]
+[12:00:54] Carta Resolvida: Massacre Cristalino usada por Isenora,
+Santa das Laminas | Aliado [V:12 A:8 D:2 E:2] | Inimigo [V:-12 A:3 D:2 E:3]
+[12:01:05] Carta Resolvida: Ritos Fúnebres usada por Rainha Goblin | Aliado [V:-7 A:3 D:2 E:3] | Inimigo [V:12 A:8 D:2 E:2]
+[12:01:05] Combate Fisico: Isenora,
+Santa das Laminas causou 6 de dano. | Aliado [V:-13 A:3 D:2 E:3] | Inimigo [V:12 A:8 D:2 E:2]
+[12:01:07] Combate Fisico: Rainha Goblin causou 1 de dano. | Aliado [V:-13 A:3 D:2 E:3] | Inimigo [V:11 A:8 D:2 E:2]
+[12:01:12] Efeito Final Turno Aliado: Rainha Goblin | Aliado [V:-11 A:3 D:2 E:3] | Inimigo [V:11 A:8 D:2 E:2]
+[12:01:14] Efeito Final Turno Inimigo: Isenora,
+Santa das Laminas | Aliado [V:-13 A:3 D:2 E:3] | Inimigo [V:11 A:8 D:2 E:2]
+[12:01:16] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:-16 A:3 D:2 E:3] | Inimigo [V:11 A:8 D:2 E:2]
+[12:01:16] Magia Ativa Inimigo: Determinação
+Cristalina | Aliado [V:-16 A:3 D:2 E:3] | Inimigo [V:11 A:7 D:2 E:2]
+[12:01:17] Morte: Aliado Rainha Goblin foi derrotado.
+[12:01:29] Efeito Inicio Turno Aliado: Quimera
+Carniceira | Aliado [V:5 A:9 D:2 E:4] | Inimigo [V:2 A:6 D:1 E:1]
+[12:01:31] Carta Resolvida: Exumação usada por Quimera
+Carniceira | Aliado [V:5 A:8 D:1 E:3] | Inimigo [V:2 A:6 D:1 E:1]
+[12:01:33] Carta Resolvida: Liberação: Quimera Carniceira usada por Quimera
+Carniceira | Aliado [V:5 A:8 D:1 E:3] | Inimigo [V:2 A:6 D:1 E:1]
+[12:01:34] Carta Resolvida: Para-raios usada por Naelis, Grande Artesã de Cristais | Aliado [V:2 A:6 D:1 E:2] | Inimigo [V:5 A:8 D:1 E:3]
+[12:01:36] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:2 A:6 D:1 E:2] | Inimigo [V:3 A:8 D:1 E:3]
+[12:01:40] Carta Resolvida: Atmosfera Pesada usada por Quimera
+Carniceira | Aliado [V:3 A:8 D:1 E:3] | Inimigo [V:2 A:6 D:1 E:1]
+[12:01:41] Carta Resolvida: Dragão de Cristal usada por Naelis, Grande Artesã de Cristais | Aliado [V:2 A:6 D:1 E:1] | Inimigo [V:3 A:8 D:1 E:3]
+[12:01:42] Combate Fisico: Naelis, Grande Artesã de Cristais causou 5 de dano. | Aliado [V:-2 A:8 D:1 E:3] | Inimigo [V:2 A:6 D:1 E:1]
+[12:01:44] Combate Fisico: Quimera
+Carniceira causou 7 de dano. | Aliado [V:-2 A:8 D:1 E:3] | Inimigo [V:-5 A:6 D:1 E:1]
+[12:01:47] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:-5 A:8 D:1 E:3] | Inimigo [V:-5 A:6 D:1 E:1]
+[12:01:48] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:-8 A:8 D:1 E:3] | Inimigo [V:-5 A:6 D:1 E:1]
+[12:01:49] Magia Ativa Inimigo: Para-raios | Aliado [V:-8 A:8 D:1 E:3] | Inimigo [V:-5 A:6 D:1 E:0]
+[12:01:50] Morte: Aliado Quimera
+Carniceira foi derrotado.
+[12:01:50] Morte: Inimigo Naelis, Grande Artesã de Cristais foi derrotado.
+[12:01:57] Efeito Inicio Turno Aliado: Corrupção
+Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:11 A:7 D:2 E:1]
+[12:01:58] Carta Resolvida: Ritos Fúnebres usada por Corrupção
+Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:11 A:7 D:2 E:1]
+[12:01:59] Carta Resolvida: Para-raios usada por Isenora,
+Santa das Laminas | Aliado [V:11 A:7 D:2 E:2] | Inimigo [V:14 A:10 D:4 E:5]
+[12:02:01] Carta Resolvida: Estatica usada por Isenora,
+Santa das Laminas | Aliado [V:11 A:7 D:2 E:2] | Inimigo [V:14 A:10 D:4 E:5]
+[12:02:02] Carta Resolvida: Ritos Fúnebres usada por Corrupção
+Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:11 A:7 D:2 E:2]
+[12:02:02] Carta Resolvida: Ração de emergencia usada por Isenora,
+Santa das Laminas | Aliado [V:11 A:7 D:2 E:2] | Inimigo [V:14 A:10 D:4 E:5]
+[12:02:03] Carta Resolvida: Ração de emergencia usada por Isenora,
+Santa das Laminas | Aliado [V:11 A:7 D:2 E:2] | Inimigo [V:14 A:10 D:4 E:5]
+[12:02:04] Carta Resolvida: Determinação
+Cristalina usada por Isenora,
+Santa das Laminas | Aliado [V:11 A:8 D:2 E:2] | Inimigo [V:14 A:10 D:4 E:5]
+[12:02:06] Carta Resolvida: Estatica usada por Isenora,
+Santa das Laminas | Aliado [V:11 A:8 D:2 E:2] | Inimigo [V:14 A:10 D:4 E:5]
+[12:02:09] Carta Resolvida: Quimera Negra usada por Corrupção
+Quimérica | Aliado [V:14 A:10 D:4 E:5] | Inimigo [V:10 A:7 D:1 E:1]
+[12:02:10] Combate Fisico: Isenora,
+Santa das Laminas causou 3 de dano. | Aliado [V:11 A:10 D:4 E:5] | Inimigo [V:10 A:7 D:1 E:1]
+[12:02:12] Combate Fisico: Corrupção
+Quimérica causou 9 de dano. | Aliado [V:11 A:10 D:4 E:5] | Inimigo [V:1 A:7 D:1 E:1]
+[12:02:15] Efeito Final Turno Inimigo: Isenora,
+Santa das Laminas | Aliado [V:11 A:10 D:4 E:5] | Inimigo [V:1 A:7 D:1 E:1]
+[12:02:17] Efeito Item Aliado: Homunculo Carniceiro | Aliado [V:12 A:10 D:4 E:5] | Inimigo [V:0 A:7 D:1 E:1]
+[12:02:19] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:11 A:10 D:4 E:5] | Inimigo [V:0 A:7 D:1 E:1]
+[12:02:20] Magia Ativa Inimigo: Determinação
+Cristalina | Aliado [V:11 A:10 D:4 E:5] | Inimigo [V:0 A:6 D:1 E:1]
+[12:02:21] Magia Ativa Inimigo: Para-raios | Aliado [V:11 A:10 D:4 E:5] | Inimigo [V:0 A:6 D:1 E:0]
+[12:02:22] Morte: Inimigo Isenora,
 Santa das Laminas foi derrotado.

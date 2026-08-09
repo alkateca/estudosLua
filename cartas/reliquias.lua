@@ -162,9 +162,6 @@ reliquias.liberacaoQuimera = {
             heroiEscolhido.ataque = (heroiEscolhido.ataque or 0) + (aliado.ataque or 0)
             heroiEscolhido.defesa = (heroiEscolhido.defesa or 0) + (aliado.defesa or 0)
             heroiEscolhido.espirito = (heroiEscolhido.espirito or 0) + (aliado.espirito or 0)
-            heroiEscolhido.vidaAtual = aliado.vidaAtual
-            heroiEscolhido.vidaMaxima = aliado.vidaMaxima
-            
 
             heroiEscolhido.nome = "Corrupção\nQuimérica"
             
@@ -174,7 +171,7 @@ reliquias.liberacaoQuimera = {
             
         end
     end,
-    descricao = "Se jogada Por:\nQuimera Carniceira\nEscolha um Aliado: Transforme em Corrupção Quimerica"
+    descricao = "Se jogada Por:\nQuimera Carniceira\nEscolha um Aliado: Transforme em Corrupção Quimerica\nCorrupção Quimerica possui a soma do Atributos de Quimera Carniceira e do Alvo.\nOs efeitos do Alvo são Mantidos."
 }
 
 return reliquias
