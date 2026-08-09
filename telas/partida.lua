@@ -380,14 +380,22 @@ if button == 1 then
                 
                 if logicaPartida.estadoAlvo.tipo == "descarte" then
                     for i, carta in ipairs(logicaPartida.jogador1.descarte) do
-                        local xPos = 540 + ((i - 1) * 90)
-                        local yPos = 760
+                        -- A mesma lógica de grade aplicada no draw
+                        local coluna = (i - 1) % 10
+                        local linha = math.floor((i - 1) / 10)
+                        
+                        local xPos = 260 + (coluna * 90)
+                        local yPos = 200 + (linha * 110)
+                        
+                        -- Verifica se o clique do mouse (x, y) ocorreu dentro da carta (80x100)
                         if x >= xPos and x <= xPos + 80 and y >= yPos and y <= yPos + 100 then
                             logicaPartida.estadoAlvo.ativo = false
                             logicaPartida.estadoAlvo.callback(carta, i)
-                                if coroutine.status(rotinaTurno) == "suspended" then
-                                    coroutine.resume(rotinaTurno)
-                                end
+                            
+                            if coroutine.status(rotinaTurno) == "suspended" then
+                                coroutine.resume(rotinaTurno)
+                            end
+                            
                             return 
                         end
                     end
@@ -1310,24 +1318,33 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
             
         elseif logicaPartida.estadoAlvo.tipo == "descarte" then
             
-            local larguraZona = math.max((#logicaPartida.jogador1.descarte * 90) + 10, 100)
-            love.graphics.setColor(1, 0.8, 0, 0.3)
-            love.graphics.rectangle("fill", 530, 750, larguraZona, 120, 10, 10)           
-
-            love.graphics.rectangle("line", 530, 750, larguraZona, 120, 10, 10)
-            love.graphics.setLineWidth(1)
+            -- Desenha o fundo escuro do painel
+            love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+            love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
             
-            for i, carta in ipairs(logicaPartida.jogador1.descarte) do
-                local xPos = 540 + ((i - 1) * 90)
-                local yPos = 760
+            -- Mantém a linha amarela de destaque ao redor da zona inteira
+            love.graphics.setLineWidth(2)
+            love.graphics.setColor(1, 0.8, 0, 1) -- Amarelo
+            love.graphics.rectangle("line", 220, 150, 1000, 600, 20, 20)
+            love.graphics.setLineWidth(1) -- Reseta a linha para não afetar outros desenhos
+            
+            local descarte = logicaPartida.jogador1.descarte
+            
+            for i, carta in ipairs(descarte) do
+                -- Lógica de grade (10 colunas por linha)
+                local coluna = (i - 1) % 10 
+                local linha = math.floor((i - 1) / 10) 
                 
-                love.graphics.setColor(0.5, 0.5, 0.5)
+                local xPos = 260 + (coluna * 90)
+                local yPos = 200 + (linha * 110)
+                
+                -- Desenha a carta
+                love.graphics.setColor(0, 0, 1)
                 love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
                 
+                -- Texto da carta
                 love.graphics.setColor(1, 1, 1)
-                love.graphics.rectangle("line", xPos, yPos, 80, 100, 8, 8)
-                
-                love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
+                love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
             end
 
         elseif logicaPartida.estadoAlvo.tipo == "aliado" then
