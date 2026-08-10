@@ -3,9 +3,60 @@ local herois = {}
 local acoes = require("cartas.acoes")
 
 -- dummies
-
+    herois.dummies = {
+        -- Atributos Básicos
+        tipo = 1,
+        raca = nil, -- Exemplo: {"Goblin"} ou {"Cristal", "Zumbi"}
+        nome = "Nome da Carta",
+        espirito = 0,
+        ataque = 0,
+        defesa = 0,
+        vidaMaxima = 0,
+        vidaAtual = 0,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
+        itemEquipado = {},
+        descricao = "Descrição dos efeitos e lore da carta.",
+        
+        -- Flags de Estado e Controle
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        -- Gatilhos de Habilidades (Mantenha vazios se não houver uso)
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+        end,
+        
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+        end,
+        
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+        end,
+        
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+        end,
+        
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+        end,
+        
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+        end
+    }
     herois.dragaoArcoIris = {
         tipo = 1,
+        raca = nil,
         nome = "Dragão Arco-iris",
         espirito = 3,
         ataque = 7,
@@ -13,14 +64,29 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 14,
         vidaAtual = 14,
         modificadorDeDano = 0,
-        descricao = "Um dragão com as 7 cores do espectro visivel",
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
+        descricao = "Um dragão com as 7 cores do espectro visivel",
         estaVivo = true,
-        estaAtivo = true
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.elfoGelido = {
         tipo = 1,
+        raca = nil,
         nome = "Elfo Gélido",
         espirito = 2,
         ataque = 8,
@@ -28,14 +94,29 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 16,
         vidaAtual = 16,
         modificadorDeDano = 0,
-        descricao = "Um Elfo das planices do sul",
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
+        descricao = "Um Elfo das planices do sul",
         estaVivo = true,
-        estaAtivo = true
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.alucinacaoCintilante = {
         tipo = 1,
+        raca = nil,
         nome = "Alucinação Cintlante",
         espirito = 3,
         ataque = 3,
@@ -43,14 +124,27 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 20,
         vidaAtual = 20,
         modificadorDeDano = 0,
-        descricao = "Um erro",
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
+        descricao = "Um erro",
         estaVivo = true,
-        estaAtivo = true
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-    
 -- goblins
-
     herois.esquadraoGoblin = {
         tipo = 1,
         raca = "Goblin",
@@ -61,13 +155,21 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 12,
         vidaAtual = 12,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Uma vez por Turno, ao Jogar\nMagia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do turno: Cura 2\n",
-        
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
         buffEsp = false,
         buffAtaq = false,
         buffDef = false,
+        ataqueDuplo = false,
         
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             self.buffEsp = false
@@ -76,8 +178,8 @@ local acoes = require("cartas.acoes")
 
             local valorBuff = 1
             
-            for i, al in ipairs(dono.aliados) do
-                if al.nome == "Rei Goblin" and al.estaVivo then
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.nome == "Rei Goblin" and heroiAliado.estaVivo then
                     valorBuff = 2
                     break
                 end
@@ -94,7 +196,6 @@ local acoes = require("cartas.acoes")
                 self.buffDef = true
             end
         end,
-
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
             self.buffEsp = false
@@ -102,30 +203,27 @@ local acoes = require("cartas.acoes")
             self.buffDef = false
             
             local valorBuff = 2
-            for i, al in ipairs(dono.aliados) do
-                if al.nome == "Rei Goblin" and al.estaVivo then
+            
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.nome == "Rei Goblin" and heroiAliado.estaVivo then
                     valorBuff = 3
                     break
                 end
             end
 
-            -- PONTUAÇÃO: Calcula apenas a cura real
             local vidaFaltando = self.vidaMaxima - self.vidaAtual
             if vidaFaltando > 0 then
                 local curaReal = math.min(valorBuff, vidaFaltando)
                 self.vidaAtual = self.vidaAtual + curaReal
-                dono.pontuacao = (dono.pontuacao or 0) + curaReal
                 
                 if partida.emitirVFX then
                     partida.emitirVFX("cura", self)
                 end
             end
         end,
-        
-        estaVivo = true,
-        estaAtivo = true
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.reiGoblin = {
         tipo = 1,
         raca = "Goblin",
@@ -136,12 +234,26 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 12,
         vidaAtual = 12,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Aura:\nSeus Goblins aliados recebem +1 em seus efeitos",
         estaVivo = true,
-        estaAtivo = true
-    }
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
 
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
     herois.traidorGoblin = {
         tipo = 1,
         raca = "Goblin",
@@ -152,9 +264,19 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 12,
         vidaAtual = 12,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Início da Partida:\nAtaque +1 e Defesa +1 para cada aliado Goblin",
+        estaVivo = true,
+        estaAtivo = true,
         efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
         efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             if type(aliado) ~= "table" then 
@@ -164,10 +286,10 @@ local acoes = require("cartas.acoes")
             local oReiGoblin = false
             local goblins = -1
 
-            for i, al in ipairs(dono.aliados) do
-                if al.raca == "Goblin" then
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.raca == "Goblin" then
                     goblins = goblins + 1
-                    if al.nome == "Rei Goblin" then
+                    if heroiAliado.nome == "Rei Goblin" then
                         oReiGoblin = true
                     end
                 end
@@ -181,12 +303,13 @@ local acoes = require("cartas.acoes")
             self.defesa = self.defesa + goblins
 
         end,
-        estaVivo = true,
-        estaAtivo = true
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
 -- zumbis
-
     herois.rainhaGoblin = {
         tipo = 1,
         raca = {"Goblin", "Zumbi"},
@@ -197,17 +320,29 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 12,
         vidaAtual = 12,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Zumbi\nFinal do Turno\nCure seus aliados em 2",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             for _, heroiAliado in ipairs(dono.aliados) do
-                -- PONTUAÇÃO: Calcula a cura real em área
                 local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
                 if vidaFaltando > 0 then
                     local curaReal = math.min(2, vidaFaltando)
                     heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
-                    dono.pontuacao = dono.pontuacao + curaReal
                     
                     if partida.emitirVFX then
                         partida.emitirVFX("cura", heroiAliado)
@@ -216,59 +351,67 @@ local acoes = require("cartas.acoes")
             end
 
         end,
-        estaVivo = true,
-        estaAtivo = true       
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.quimeraCarniceira = {
         tipo = 1,
-        nome = "Quimera\nCarniceira",
         raca = {"Zumbi"},
+        nome = "Quimera\nCarniceira",
         espirito = 0,
         ataque = 5,
         defesa = 2,
         vidaMaxima = 14,
         vidaAtual = 14,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Zumbi\nInicio do Combate:\nPara cada aliado Zumbi:\nEspirito e Ataque +1\nRecupera 2 de vida",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             local valorBonus = -1
                 
-                for _, heroiAliado in ipairs(dono.aliados) do
-
-                    for _, raca in ipairs(heroiAliado.raca) do
-                        if raca == "Zumbi" then
-                            valorBonus = valorBonus + 1
-                        end
+            for _, heroiAliado in ipairs(dono.aliados) do
+                for _, raca in ipairs(heroiAliado.raca) do
+                    if raca == "Zumbi" then
+                        valorBonus = valorBonus + 1
                     end
-
                 end
+            end
+            
+            self.espirito = self.espirito + valorBonus
+            self.ataque = self.ataque + valorBonus
+            
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", self)
+            end
+            
+            local vidaFaltando = self.vidaMaxima - self.vidaAtual
+            if vidaFaltando > 0 then
+                local curaReal = math.min(2, vidaFaltando)
+                self.vidaAtual = self.vidaAtual + curaReal
                 
-                    self.espirito = self.espirito + valorBonus
-                    self.ataque = self.ataque + valorBonus
-                    
-                    if partida.emitirVFX then
-                        partida.emitirVFX("buff", self)
-                    end
-                    
-                    -- PONTUAÇÃO: Cura real
-                    local vidaFaltando = self.vidaMaxima - self.vidaAtual
-                        if vidaFaltando > 0 then
-                        local curaReal = math.min(2, vidaFaltando)
-                        self.vidaAtual = self.vidaAtual + curaReal
-                        dono.pontuacao = dono.pontuacao + curaReal
-                        
-                        if partida.emitirVFX then
-                            partida.emitirVFX("cura", self)
-                        end
-                    end
+                if partida.emitirVFX then
+                    partida.emitirVFX("cura", self)
+                end
+            end
         end,
-        estaVivo = true,
-        estaAtivo = true       
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.necromanteDasAreais = {
         tipo = 1,
         raca = {"Zumbi"},
@@ -279,10 +422,21 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 15,
         vidaAtual = 15,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Zumbi\nInício do Turno:\nCrie e Jogue uma Ritos Fúnebres",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-
             table.insert(partida.filaDeResolucao, {
                 carta = acoes.ritosFunebres,
                 aliado = self,   
@@ -290,14 +444,13 @@ local acoes = require("cartas.acoes")
                 dono = dono,
                 resolvida = false
             })
-        
         end,
-        estaVivo = true,
-        estaAtivo = true     
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
 -- lamina feiticeira
-
     herois.santaDasLaminas = {
         tipo = 1,
         raca = {"Cristal"},
@@ -307,33 +460,43 @@ local acoes = require("cartas.acoes")
         defesa = 1,
         vidaMaxima = 13,
         vidaAtual = 13,
-        efeitoAtivo = false,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Aura:\n Seus Aliados recebem\nEspirito +1\nAtaque +1\nDefesa +1\nFinal do Turno:\nCause 5 de Dano Mágico",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
         efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) 
-            for i, al in ipairs(dono.aliados) do
-                al.espirito = al.espirito + 1
-                al.ataque = al.ataque + 1
-                al.defesa = al.defesa + 1               
+            for _, heroiAliado in ipairs(dono.aliados) do
+                heroiAliado.espirito = heroiAliado.espirito + 1
+                heroiAliado.ataque = heroiAliado.ataque + 1
+                heroiAliado.defesa = heroiAliado.defesa + 1               
             end
         end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            local dano = 5 - inimigo.espirito
+            local danoMagico = 5 - inimigo.espirito
             
-            -- PONTUAÇÃO: Dano Mágico
-            if dano > 0 then
-                inimigo.vidaAtual = inimigo.vidaAtual - dano
-                dono.pontuacao = dono.pontuacao + dano
+            if danoMagico > 0 then
+                inimigo.vidaAtual = inimigo.vidaAtual - danoMagico
             end
             
             if partida.emitirVFX then
                 partida.emitirVFX("danoMagico", inimigo)
             end
         end,
-        estaVivo = true,
-        estaAtivo = true  
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.aprendizDasLaminas = {
         tipo = 1,
         raca = {"Cristal"},
@@ -344,16 +507,25 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 13,
         vidaAtual = 13,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Inicio do turno:\nCause 3 de dano mágico\nAo jogar: Magia\nAtaque +3 até o final do turno",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
         efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-            local dano = 3 - inimigo.espirito
+            local danoMagico = 3 - inimigo.espirito
             
-            -- PONTUAÇÃO: Dano Mágico
-            if dano > 0 then
-                inimigo.vidaAtual = inimigo.vidaAtual - dano
-                dono.pontuacao = dono.pontuacao + dano
+            if danoMagico > 0 then
+                inimigo.vidaAtual = inimigo.vidaAtual - danoMagico
             end
             
             if partida.emitirVFX then
@@ -375,10 +547,9 @@ local acoes = require("cartas.acoes")
                 self.efeitoDoTurno = false     
             end
         end,
-        estaVivo = true,
-        estaAtivo = true
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.artesaDasLaminas = {
         tipo = 1,
         raca = {"Cristal"},
@@ -389,33 +560,43 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 12,
         vidaAtual = 12,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Início da Partida:\nAnexe uma Lamina de Cristal em seus aliados",
+        estaVivo = true,
+        estaAtivo = true,
         efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
         efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
             local itemModulo = require("cartas.itens")
             if itemModulo and itemModulo.laminaDeCristal then
                 
-                for i, al in ipairs(dono.aliados) do
-                    if al.itemEquipado then
+                for _, heroiAliado in ipairs(dono.aliados) do
+                    if heroiAliado.itemEquipado then
 
                         local copiaItem = {}
                         for k, v in pairs(itemModulo.laminaDeCristal) do
                             copiaItem[k] = v
                         end
-                        table.insert(al.itemEquipado, copiaItem)
-                        al.ataque = al.ataque + 1
+                        table.insert(heroiAliado.itemEquipado, copiaItem)
+                        heroiAliado.ataque = heroiAliado.ataque + 1
                     end
                 end
             end
         end,
-
-        estaVivo = true,
-        estaAtivo = true
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
 -- grupo dos heróis
-
     herois.heroiAlka = {
         tipo = 1,
         raca = nil,
@@ -426,9 +607,21 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 14,
         vidaAtual = 14,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
-        ataqueDuplo = false,
         descricao = "Final do Turno:\nSe durante o Turno seu Ataque foi igual ou superior a 10:\nRealize um Ataque extra",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
             if cartaJogada then
@@ -440,23 +633,20 @@ local acoes = require("cartas.acoes")
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if self.ataqueDuplo == true then
-                    local danoFisico = 10 - inimigo.defesa
-                    
-                    -- PONTUAÇÃO: Dano do Ataque Extra
-                    if danoFisico > 0 then
-                        inimigo.vidaAtual = inimigo.vidaAtual - danoFisico
-                        dono.pontuacao = (dono.pontuacao or 0) + danoFisico
-                    end
-                    if partida.emitirVFX then
-                        partida.emitirVFX("danoFisico", inimigo)
-                    end
+                local danoFisico = 10 - inimigo.defesa
+                
+                if danoFisico > 0 then
+                    inimigo.vidaAtual = inimigo.vidaAtual - danoFisico
+                end
+                
+                if partida.emitirVFX then
+                    partida.emitirVFX("danoFisico", inimigo)
+                end
             end
         end,
-
-        estaVivo = true,
-        estaAtivo = true
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.heroinaLeone = {
         tipo = 1,
         raca = nil,
@@ -467,21 +657,30 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 15,
         vidaAtual = 15,
         modificadorDeDano = 0,
-        itemEquipado = {},
         dano = 0,
+        elemento = nil,
+        itemEquipado = {},
         descricao = "Início do Turno:\nCure seus Aliados em 2\nFinal do Turno:\nCause Dano Direto ao seu Inimigo equivalente a soma Cura do Turno",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-            for i, heroiAliado in ipairs(dono.aliados) do
+            for _, heroiAliado in ipairs(dono.aliados) do
                 if heroiAliado.estaVivo then
-                    -- PONTUAÇÃO: Cura real
                     local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
                     if vidaFaltando > 0 then
                         local curaReal = math.min(2, vidaFaltando)
                         self.dano = self.dano + curaReal
                         
                         heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
-                        dono.pontuacao = (dono.pontuacao or 0) + curaReal
                         
                         if partida.emitirVFX then
                             partida.emitirVFX("cura", heroiAliado)
@@ -491,7 +690,6 @@ local acoes = require("cartas.acoes")
             end
 
         end,
-
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
             if cartaJogada.valorCura then
@@ -499,13 +697,10 @@ local acoes = require("cartas.acoes")
             end
 
         end,
-
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-            -- PONTUAÇÃO: Dano Direto (Armazenado pela cura)
             if self.dano > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - self.dano
-                dono.pontuacao = (dono.pontuacao or 0) + self.dano
                 
                 if partida.emitirVFX then
                     partida.emitirVFX("danoDireto", inimigo)
@@ -514,12 +709,196 @@ local acoes = require("cartas.acoes")
 
             self.dano = 0
         end,
-
-        estaVivo = true,
-        estaAtivo = true
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-    
+-- cavaleiros
+    herois.grandeCavaleiroEnamor = {
+        tipo = 1,
+        raca = {"Cavaleiro"},
+        nome = "Enamor,\nO Grande Cavaleiro",
+        espirito = 1,
+        ataque = 5,
+        defesa = 3,
+        vidaMaxima = 14,
+        vidaAtual = 14,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = 5,
+        itemEquipado = {},
+        descricao = "Cavaleiro - Elemental Cristalino\nInicio do turno:\nSe não estiver com Dragast Equipada:\nJogue Dragast de sua Mão, Baralho ou Descarte",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+            local dragastEquipada = false
+            for _, item in ipairs(self.itemEquipado) do
+                if item.nome == "Dragast" then
+                    dragastEquipada = true
+                    break
+                end
+            end
 
+            if dragastEquipada then
+                return
+            end
+
+            local cartaDragast = nil
+
+            for i, carta in ipairs(dono.mao) do
+                if carta.nome == "Dragast" then
+                    cartaDragast = table.remove(dono.mao, i) 
+                    break
+                end
+            end
+
+            if not cartaDragast then
+                for i, carta in ipairs(dono.baralho) do
+                    if carta.nome == "Dragast" then
+                        cartaDragast = table.remove(dono.baralho, i)
+                        break
+                    end
+                end
+            end
+
+            if not cartaDragast then
+                for i, carta in ipairs(dono.descarte) do
+                    if carta.nome == "Dragast" then
+                        cartaDragast = table.remove(dono.descarte, i)
+                        break
+                    end
+                end
+            end
+
+            if cartaDragast then
+                table.insert(self.itemEquipado, cartaDragast)
+                if cartaDragast.efeito then
+                    cartaDragast:efeito(self, inimigo, dono, partida, cartaDragast)
+                end
+            end
+
+        end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
+    herois.ageusConstructoCristalino = {
+        tipo = 1,
+        raca = {"Cavaleiro"},
+        nome = "Ageus, Constructo Cristalino",
+        espirito = 2,
+        ataque = 7,
+        defesa = 3,
+        vidaMaxima = 15,
+        vidaAtual = 15,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = 5,
+        itemEquipado = {},
+        descricao = "Cavaleiro - Elemental Cristalino\nSempre que um aliado morrer, seus Cavaleiros recebem Espirito +2 e Defesa +2.\nAo Morrer:\nSeus Cavaleiros recebem Espirito +2 e Defesa +2.",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if not self.estaVivo then 
+                return     
+            end
+
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.estaVivo then
+                    local ehCavaleiro = false
+                    for _, raca in ipairs(heroiAliado.raca) do
+                        if raca == "Cavaleiro" then
+                            ehCavaleiro = true
+                            break
+                        end
+                    end
+
+                    if ehCavaleiro then
+                        heroiAliado.espirito = heroiAliado.espirito + 2
+                        heroiAliado.defesa = heroiAliado.defesa + 2
+                        
+                        if partida.emitirVFX then
+                            partida.emitirVFX("buff", heroiAliado)
+                        end
+                    end
+                end
+            end
+        end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.estaVivo then
+                    heroiAliado.espirito = heroiAliado.espirito + 2
+                    heroiAliado.defesa = heroiAliado.defesa + 2
+                    if partida.emitirVFX then
+                       partida.emitirVFX("buff", heroiAliado)
+                    end
+                end
+            end
+    
+        end
+    }
+    herois.cavaleiroOenar = {
+        tipo = 1,
+        raca = {"Cavaleiro"},
+        nome = "Cavaleiro Onear",
+        espirito = 2,
+        ataque = 7,
+        defesa = 3,
+        vidaMaxima = 15,
+        vidaAtual = 15,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = 5, 
+        itemEquipado = {},
+        descricao = "Cavaleiro - Elemental Cristalino\nUma vez por Turno:\nAo Jogar uma Magia: Ataque +2",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if self.efeitoDoTurno == false then
+                if cartaJogada.tipo == 2 then
+                    self.ataque = self.ataque + 2
+                    self.efeitoDoTurno = true
+                end
+            end
+        end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            if self.efeitoDoTurno == true then
+                self.ataque = self.ataque - 2
+                self.efeitoDoTurno = false
+            end
+        end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
 -- liberações
     herois.moyraLiberta = {
         tipo = 1,
@@ -531,9 +910,20 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 14,
         vidaAtual = 14,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Inicio do turno:\nO Inimigo recebe -2 de Espirito\nAo jogar: Magia\nAtaque +2 \nFinal do turno:\nCause 5 de dano mágico",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
         efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if inimigo.espirito >= 2 then
                 inimigo.espirito = inimigo.espirito - 2
@@ -555,12 +945,10 @@ local acoes = require("cartas.acoes")
             end
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)            
-            local dano = 5 - inimigo.espirito 
+            local danoMagico = 5 - inimigo.espirito 
 
-            -- PONTUAÇÃO: Dano Mágico
-            if dano > 0 then
-                inimigo.vidaAtual = inimigo.vidaAtual - dano
-                dono.pontuacao = dono.pontuacao + dano
+            if danoMagico > 0 then
+                inimigo.vidaAtual = inimigo.vidaAtual - danoMagico
             end
             
             if partida.emitirVFX then
@@ -570,10 +958,9 @@ local acoes = require("cartas.acoes")
             self.efeitoDoTurno = false
             
         end,
-        estaVivo = true,
-        estaAtivo = true
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
-
     herois.esquadraoGoblinLiberto = {
         tipo = 1,
         raca = "Goblin",
@@ -584,15 +971,27 @@ local acoes = require("cartas.acoes")
         vidaMaxima = 13,
         vidaAtual = 13,
         modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
         itemEquipado = {},
         descricao = "Ao jogar: Magia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do Turno: Cure seus Aliados em 3\nEm área Um terço do seu Espirito\nUm terço do seu Ataque",
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
         
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             local valorBuff = 1
             
-            for i, al in ipairs(dono.aliados) do
-                if al.nome == "Rei Goblin" and al.estaVivo then
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.nome == "Rei Goblin" and heroiAliado.estaVivo then
                     valorBuff = 2
                     break
                 end
@@ -606,28 +1005,26 @@ local acoes = require("cartas.acoes")
                 self.defesa = self.defesa + valorBuff
             end
         end,
-
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
             local valorBuff = 3
-            for i, al in ipairs(dono.aliados) do
-                if al.nome == "Rei Goblin" and al.estaVivo then
+            
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.nome == "Rei Goblin" and heroiAliado.estaVivo then
                     valorBuff = 4
                     break
                 end
             end
 
-            -- PONTUAÇÃO: Cura real em área
-            for i, al in ipairs(dono.aliados) do
-                if al.estaVivo then
-                    local vidaFaltando = al.vidaMaxima - al.vidaAtual
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.estaVivo then
+                    local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
                     if vidaFaltando > 0 then
                         local curaReal = math.min(valorBuff, vidaFaltando)
-                        al.vidaAtual = al.vidaAtual + curaReal
-                        dono.pontuacao = dono.pontuacao + curaReal
+                        heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
                         
                         if partida.emitirVFX then
-                            partida.emitirVFX("cura", al)
+                            partida.emitirVFX("cura", heroiAliado)
                         end
                     end
                 end
@@ -638,24 +1035,20 @@ local acoes = require("cartas.acoes")
             local tercoEspirito = math.floor(self.espirito / 3)
             local tercoAtaque = math.floor(self.ataque / 3)
 
-            for i, inimigoAlvo in ipairs(oponente.aliados) do
+            for _, inimigoAlvo in ipairs(oponente.aliados) do
                 if inimigoAlvo.estaVivo then
                     
-                    -- PONTUAÇÃO: Dano Mágico em área
                     local danoMagico = tercoEspirito - inimigoAlvo.espirito
                     if danoMagico > 0 then
                         inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoMagico
-                        dono.pontuacao = (dono.pontuacao or 0) + danoMagico
                     end
                     if partida.emitirVFX then
                         partida.emitirVFX("danoMagico", inimigoAlvo)
                     end
                         
-                    -- PONTUAÇÃO: Dano Físico em área
                     local danoFisico = tercoAtaque - inimigoAlvo.defesa
                     if danoFisico > 0 then
                         inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoFisico
-                        dono.pontuacao = (dono.pontuacao or 0) + danoFisico
                     end
                     if partida.emitirVFX then
                         partida.emitirVFX("danoFisico", inimigoAlvo)
@@ -663,9 +1056,8 @@ local acoes = require("cartas.acoes")
                 end
             end
         end,
-        
-        estaVivo = true,
-        estaAtivo = true
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
 
 return herois

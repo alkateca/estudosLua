@@ -1,41 +1,49 @@
 local magias = {}
 
 magias.bolaDeFogo = {
-    nome = "Bola de fogo",
     tipo = 2,
+    nome = "Bola de fogo",
+    raca = nil,
+    unica = false,
     dano = 4,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
     descricao = "Cause 4 mais seu espirito de dano mágico ao inimigo",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-        -- Cálculo correto: (Dano Base + Seu Espírito) - Defesa Mágica (Espírito Inimigo)
         local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
-        -- PONTUAÇÃO: Dano Mágico
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
-            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
-        -- O VFX agora recebe a tabela do alvo, e toca fora do if de dano>0
         if partida.emitirVFX then
             partida.emitirVFX("danoMagico", inimigo)
         end
-    end
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 magias.estatica = {
-    nome = "Estatica",
     tipo = 2,
+    nome = "Estatica",
+    raca = nil,
+    unica = false,
     dano = 3,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
     descricao = "Cause 3 mais seu espirito de dano mágico ao inimigo\nCrie uma Estatica em seu baralho",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
         local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
-        -- PONTUAÇÃO: Dano Mágico
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
-            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
         local copiaEstatica = {}
@@ -48,14 +56,22 @@ magias.estatica = {
         if partida.emitirVFX then
             partida.emitirVFX("danoMagico", inimigo)
         end
-    end
+    end,
+
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 magias.paraRaios = {
-    nome = "Para-raios",
     tipo = 2,
+    nome = "Para-raios",
+    raca = nil,
+    unica = false,
     dano = 0,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
     descricao = "Espirito +1 até o Final do Turno\nCrie e Jogue uma Estatica",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.espirito = aliado.espirito + 1
         
@@ -72,17 +88,21 @@ magias.paraRaios = {
         })
         self.efeitoAtivo = true
     end,
-    efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.espirito = aliado.espirito - 1
     end
 }
 
 magias.massacreCristalino = {
+    tipo = 2,
     nome = "Massacre Cristalino",
     raca = {"Cristal"},
     unica = true,
-    tipo = 2,
     dano = 0,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
     descricao = "Única\nCause X de Dano ao seu Inimigo, onde X é o total de cartas de Cristal em jogo ou no Descarte multiplicado por 2",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
@@ -99,13 +119,13 @@ magias.massacreCristalino = {
             return false
         end
 
-        for i, aliadoAtual in ipairs(dono.aliados) do
+        for _, aliadoAtual in ipairs(dono.aliados) do
             if ehCristal(aliadoAtual) then
                 totalCristais = totalCristais + 1
             end
             
             if aliadoAtual.itemEquipado and #aliadoAtual.itemEquipado > 0 then
-                for j, item in ipairs(aliadoAtual.itemEquipado) do
+                for _, item in ipairs(aliadoAtual.itemEquipado) do
                     if ehCristal(item) then
                         totalCristais = totalCristais + 1
                     end
@@ -113,52 +133,56 @@ magias.massacreCristalino = {
             end
         end
         
-        for i, carta in ipairs(dono.descarte) do
-            if ehCristal(carta) then
+        for _, cartaDescarte in ipairs(dono.descarte) do
+            if ehCristal(cartaDescarte) then
                 totalCristais = totalCristais + 1
             end
         end
 
         local danoMagicoTotal = totalCristais * 2
-
         local danoFinal = danoMagicoTotal - inimigo.espirito
         
-        -- PONTUAÇÃO: Dano Mágico
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
-            dono.pontuacao = (dono.pontuacao or 0) + danoFinal
         end
 
         if partida.emitirVFX then
             partida.emitirVFX("danoMagico", inimigo)
         end
-    end
+    end,
+
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 magias.pontoFinal = {
-    nome = "Ponto Final",
     tipo = 2,
-    dano = 0,
+    nome = "Ponto Final",
+    raca = nil,
     unica = true,
+    dano = 0,
+    elemento = nil,
+    efeitoAtivo = false,
     efeitoDoTurno = false,
     descricao = "Seu personagem recebe Ataque + X,\nonde X é seu Espirito vezes 2",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        if dono.heroiDoturno.espirito <= 0 then
+        if aliado.espirito <= 0 then
             return
         end
         
         if partida.emitirVFX then
-            partida.emitirVFX("buff", dono.heroiDoturno)
+            partida.emitirVFX("buff", aliado)
         end
         
-        self.dano = dono.heroiDoturno.espirito * 2
-        dono.heroiDoturno.ataque = dono.heroiDoturno.ataque + self.dano
+        self.dano = aliado.espirito * 2
+        aliado.ataque = aliado.ataque + self.dano
         self.efeitoDoTurno = true
     end,
-    efeitoFinalDeTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
         if self.efeitoDoTurno then
             self.efeitoDoTurno = false
-            dono.heroiDoturno.ataque = dono.heroiDoturno.ataque - self.dano
+            aliado.ataque = aliado.ataque - self.dano
             self.dano = 0
         end
     end
@@ -166,78 +190,82 @@ magias.pontoFinal = {
 
 --necromantes
 magias.atomosferaPesada = {
-    nome = "Atmosfera Pesada",
     tipo = 2,
+    nome = "Atmosfera Pesada",
+    raca = {"Zumbi"},
+    unica = false,
     dano = 0,
+    elemento = nil,
+    efeitoAtivo = false,
     efeitoDoTurno = false,
     descricao = "Zumbi\nOs Heróis Inimigos recebem -1 de Espirito",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         for _, racaAtual in ipairs(aliado.raca) do
-                    
             if racaAtual == "Zumbi" then
-                             
                 local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
                                  
-                    for _, heroiInimigo in ipairs(donoInimigo.aliados) do
-                        
-                            -- Corrigido 'inimigo.espirito' para 'heroiInimigo.espirito'
-                            heroiInimigo.espirito = math.max(0, heroiInimigo.espirito - 1)
-                            
-                        if partida.emitirVFX then
-                            partida.emitirVFX("debuff", heroiInimigo)
-                        end
-                    end 
-            end
+                for _, heroiInimigo in ipairs(donoInimigo.aliados) do
+                    heroiInimigo.espirito = math.max(0, heroiInimigo.espirito - 1)
                     
+                    if partida.emitirVFX then
+                        partida.emitirVFX("debuff", heroiInimigo)
+                    end
+                end 
+            end
         end
     end,
+
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 
 --toolbox
 magias.vendavalArcano = {
-    nome = "Vendaval Arcano",
     tipo = 2,
+    nome = "Vendaval Arcano",
+    raca = nil,
+    unica = false,
     dano = 0,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
     descricao = "Descarte um Item Aleatório de cada Herói Inimigo.",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        -- Identifica quem é o dono dos inimigos
         local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
-
         local itensDestruidos = 0
 
-        -- Percorre todos os heróis da equipe inimiga
         for _, heroiInimigo in ipairs(donoInimigo.aliados) do
             if heroiInimigo.estaVivo and heroiInimigo.itemEquipado and #heroiInimigo.itemEquipado > 0 then
                 
-                -- Sorteia um índice entre 1 e o número total de itens que o herói tem
                 local indiceAleatorio = math.random(1, #heroiInimigo.itemEquipado)
-                
-                -- Usa a função central para desequipar
                 partida.desequiparItem(heroiInimigo, donoInimigo, indiceAleatorio)
                 itensDestruidos = itensDestruidos + 1
             end
         end
 
-        -- Opcional: Feedback visual geral caso tenha quebrado algo
         if itensDestruidos > 0 and partida.emitirVFX then
-            -- Toca um efeito no inimigo ativo como representação
             partida.emitirVFX("debuff", inimigo)
-        else
-            partida.registrarLog("Nenhum item inimigo foi encontrado para ser destruído pelo Vendaval Arcano.")
         end
-    end
+    end,
+
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 magias.quebra = {
-    nome = "Quebra!",
     tipo = 2,
+    nome = "Quebra!",
+    raca = nil,
+    unica = false,
     dano = 0,
+    elemento = nil,
     efeitoAtivo = false,
+    efeitoDoTurno = false,
     descricao = "Escolha um Item Equipado no Herói Inimigo e o Descarte.",
+    
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         
-        -- Checa se o inimigo ativo realmente tem itens antes de pausar a tela
         if inimigo.itemEquipado and #inimigo.itemEquipado > 0 then
             
             partida.estadoAlvo = {
@@ -245,26 +273,126 @@ magias.quebra = {
                 tipo = "item",
                 mensagem = "Escolha um Item do " .. inimigo.nome,
                 dono = dono,
-                listaItens = inimigo.itemEquipado, -- Passa a lista específica deste inimigo
+                listaItens = inimigo.itemEquipado,
                 
                 callback = function(itemEscolhido, index)
                     if itemEscolhido then
                         local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
-                        
-                        -- Desequipa o item baseado no índice que o jogador clicou
                         partida.desequiparItem(inimigo, donoInimigo, index)
                     end
                 end
             }
 
-            -- Pausa a resolução das cartas até o jogador escolher
             coroutine.yield()
-            
-        else
-            -- Se não tiver itens, avisa no log e segue o jogo sem abrir a tela de escolha
-            partida.registrarLog(inimigo.nome .. " não possui itens para serem destruídos.")
+        end
+    end,
+
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+}
+
+--cavaleiros 
+magias.contraAtaque = {
+    tipo = 2,
+    nome = "Contra Ataque",
+    raca = nil,
+    unica = false,
+    dano = 0,
+    elemento = 5,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Descarte uma Arma equipada no Inimigo.\nAtaque +3 até o Final do Combate.\nCavaleiro: Espirito +1 e Defesa +1 até o Final do Combate.",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+        aliado.ataque = aliado.ataque + 3
+
+        for _, racaAtual in ipairs(aliado.raca or {}) do
+            if racaAtual == "Cavaleiro" then
+                aliado.espirito = aliado.espirito + 1
+                aliado.defesa = aliado.defesa + 1
+                self.efeitoAtivo = true
+            end
         end
 
+        if inimigo.itemEquipado and #inimigo.itemEquipado > 0 then
+            
+            partida.estadoAlvo = {
+                ativo = true,
+                tipo = "item",
+                mensagem = "Escolha um Item do " .. inimigo.nome,
+                dono = dono,
+                listaItens = inimigo.itemEquipado,
+                
+                callback = function(itemEscolhido, index)
+                    if itemEscolhido then
+                        local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
+                        partida.desequiparItem(inimigo, donoInimigo, index)
+                    end
+                end
+            }
+
+            coroutine.yield()
+        end
+
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque - 3
+        if self.efeitoAtivo == true then
+            aliado.espirito = aliado.espirito - 1
+            aliado.defesa = aliado.defesa - 1
+            self.efeitoAtivo = false
+        end
+    end
+}
+
+magias.ataqueMagico = {
+    tipo = 2,
+    nome = "Ataque Mágico",
+    raca = nil,
+    unica = false,
+    dano = 0,
+    elemento = 5,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    defesaAtual = 0,
+    descricao = "A Defesa do seu Inimigo se torna 0 até o Final do Combate",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        self.defesaAtual = inimigo.defesa
+        inimigo.defesa = 0
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        inimigo.defesa = inimigo.defesa + self.defesaAtual
+        self.defesaAtual = 0
+    end
+}
+
+magias.golpesPesados = {
+    tipo = 2,
+    nome = "Golpes Pesados",
+    raca = nil,
+    unica = false,
+    dano = 0,
+    elemento = 5,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Ataque +X até o Final do Combate, onde X é seu Espirito",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        self.dano = aliado.espirito
+        if self.efeitoAtivo == false then
+           aliado.ataque = aliado.ataque + self.dano
+           self.efeitoAtivo = true
+        end
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        if self.efeitoAtivo == true then
+            aliado.ataque = aliado.ataque - self.dano
+            self.efeitoAtivo = false
+        end
     end
 }
 
