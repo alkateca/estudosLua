@@ -105,9 +105,6 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
 end
 
 function logicaPartida.efeitos()
-    -- Como é o início da partida, ainda não há um inimigo ativo nem carta jogada.
-    -- Passamos 'nil' para os parâmetros 'inimigo' e 'cartaJogada'.
-
     for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if type(aliado.efeitoInicioDaPartida) == "function" and not aliado.efeitoAtivo then
             aliado.efeitoInicioDaPartida(aliado, aliado, nil, logicaPartida.jogador1, logicaPartida, nil)
@@ -185,7 +182,6 @@ function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
     
     if itemRemovido then
         if type(itemRemovido.efeitoDesequipar) == "function" then
-            -- Passando nil para inimigo e cartaJogada
             itemRemovido.efeitoDesequipar(itemRemovido, heroiAlvo, nil, donoDoHeroi, logicaPartida, nil)
         end
         
