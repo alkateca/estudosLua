@@ -3,7 +3,6 @@ local BotaoVoltar = require("telas.botaoVoltar")
 local Jogador = require("logica.jogador")
 local logicaPartida = require("logica.logicaPartida")
 
--- Importamos os catálogos de cartas para a "tradução"
 local herois = require("cartas.herois")
 local magias = require("cartas.magias")
 local itens = require("cartas.itens")
@@ -26,7 +25,6 @@ local layout = {
     btnPartida = {x = 620, y = 650, w = 200, h = 100}
 }
 
--- Função auxiliar que pega o NOME da carta salva e retorna a tabela real dela
 local function buscarCartaPorNome(nomeProcurado)
     if nomeProcurado == "" or not nomeProcurado then return nil end
     for _, carta in ipairs(bibliotecaCompleta) do
@@ -40,7 +38,6 @@ end
 function Selecao.load()
     fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 20)
     
-    -- Popula a biblioteca de busca para a tradução
     bibliotecaCompleta = {}
     for _, c in pairs(herois) do table.insert(bibliotecaCompleta, c) end
     for _, c in pairs(magias) do table.insert(bibliotecaCompleta, c) end
@@ -48,7 +45,6 @@ function Selecao.load()
     for _, c in pairs(acoes) do table.insert(bibliotecaCompleta, c) end
     for _, c in pairs(reliquias) do table.insert(bibliotecaCompleta, c) end
 
-    -- Tenta carregar os baralhos salvos no HD do jogador com proteção contra arquivos corrompidos
     for i = 1, 3 do
         local nomeArquivo = "baralho_" .. i .. ".lua"
         if love.filesystem.getInfo(nomeArquivo) then
@@ -89,9 +85,6 @@ function Selecao.mousereleased(x, y, button)
             
             if deck and deck.aliados and #deck.aliados == 3 and deck.cartas and #deck.cartas == 20 then
                 
-                -- ========================================================
-                -- INJEÇÃO DO JOGADOR 1 (Traduzindo os Nomes para Cartas)
-                -- ========================================================
                 logicaPartida.jogador1.reliquia = buscarCartaPorNome(deck.reliquia)
                 
                 logicaPartida.jogador1.aliados = {}
@@ -104,13 +97,18 @@ function Selecao.mousereleased(x, y, button)
                     table.insert(logicaPartida.jogador1.baralho, buscarCartaPorNome(nomeCarta)) 
                 end
 
-                -- Limpa a memória temporária do jogador 1
+                logicaPartida.jogador1.extraDeck = {}
+                if deck.extraDeck then
+                    for _, nomeCarta in ipairs(deck.extraDeck) do
+                        table.insert(logicaPartida.jogador1.extraDeck, buscarCartaPorNome(nomeCarta))
+                    end
+                end
+
                 logicaPartida.jogador1.mao = {}
                 logicaPartida.jogador1.descarte = {}
                 logicaPartida.jogador1.cartasEscolhidas = {}
                 logicaPartida.jogador1.heroiDoturno = nil
                 
-                -- Inicia a Partida com o Baralho Carregado do HD!
                 logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
 
                 estadoAtualGlobal = "partida"
@@ -126,7 +124,6 @@ end
 
 function Selecao.draw()
     love.graphics.setFont(fonteIoskeley)
-
     local mouseX, mouseY = love.mouse.getPosition()
     
     local coord = mouseX .. "x" .. mouseY
@@ -141,6 +138,7 @@ function Selecao.draw()
         local qtdHerois = (deck and deck.aliados) and #deck.aliados or 0
         local qtdCartas = (deck and deck.cartas) and #deck.cartas or 0
         local temReliquia = (deck and deck.reliquia and deck.reliquia ~= "") and 1 or 0
+        local qtdExtra = (deck and deck.extraDeck) and #deck.extraDeck or 0
         
         local status = "Incompleto"
         if qtdHerois == 3 and qtdCartas == 20 then
@@ -158,10 +156,11 @@ function Selecao.draw()
         end
         
         love.graphics.printf("Baralho " .. b.id, b.x, b.y + 40, b.w, "center")
-        love.graphics.printf("Status: " .. status, b.x, b.y + 100, b.w, "center")
-        love.graphics.printf("Heróis: " .. qtdHerois .. "/3", b.x, b.y + 180, b.w, "center")
-        love.graphics.printf("Cartas: " .. qtdCartas .. "/20", b.x, b.y + 220, b.w, "center")
-        love.graphics.printf("Relíquia: " .. temReliquia .. "/1", b.x, b.y + 260, b.w, "center")
+        love.graphics.printf("Status: " .. status, b.x, b.y + 90, b.w, "center")
+        love.graphics.printf("Heróis: " .. qtdHerois .. "/3", b.x, b.y + 150, b.w, "center")
+        love.graphics.printf("Cartas: " .. qtdCartas .. "/20", b.x, b.y + 190, b.w, "center")
+        love.graphics.printf("Relíquia: " .. temReliquia .. "/1", b.x, b.y + 230, b.w, "center")
+        love.graphics.printf("Extra Deck: " .. qtdExtra .. "/15", b.x, b.y + 270, b.w, "center")
     end
 
     if mensagemFeedback ~= "" then

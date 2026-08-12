@@ -101,10 +101,12 @@ function logicaPartida.inicioDaPartida(jogador1, jogador2)
     logicaPartida.embaralharCartas(jogador2)
     logicaPartida.comprarCartas(jogador1, 5)
     logicaPartida.comprarCartas(jogador2, 5)
+    logicaPartida.inicioDaPartidaReliquias()
     logicaPartida.efeitos()
 end
 
 function logicaPartida.efeitos()
+
     for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if type(aliado.efeitoInicioDaPartida) == "function" and not aliado.efeitoAtivo then
             aliado.efeitoInicioDaPartida(aliado, aliado, nil, logicaPartida.jogador1, logicaPartida, nil)
@@ -140,6 +142,22 @@ function logicaPartida.efeitos()
             end
         end
     end
+end
+
+function logicaPartida.inicioDaPartidaReliquias()
+
+    for i, reliquia in ipairs(logicaPartida.jogador1.extraDeck) do
+        if type(reliquia.efeitoInicioDaPartida) == "function" then
+            reliquia:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador1, logicaPartida, nil)
+        end
+    end
+
+    for i, reliquia in ipairs(logicaPartida.jogador2.extraDeck) do
+        if type(reliquia.efeitoInicioDaPartida) == "function" then
+            reliquia:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador2, logicaPartida, nil)
+        end
+    end
+    
 end
 
 function logicaPartida.atualizarEstadoAtivo()

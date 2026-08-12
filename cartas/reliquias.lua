@@ -74,7 +74,6 @@ reliquias.liberacaoMoyra = {
 
 }
 
-
 reliquias.liberacaoEsquadrao = {
     tipo = 4,
     nome = "Liberação: Esquadrão",
@@ -172,6 +171,51 @@ reliquias.liberacaoQuimera = {
         end
     end,
     descricao = "Se jogada Por:\nQuimera Carniceira\nEscolha um Aliado: Transforme em Corrupção Quimerica\nCorrupção Quimerica possui a soma do Atributos de Quimera Carniceira e do Alvo.\nOs efeitos do Alvo são Mantidos."
+}
+
+reliquias.artefatoPerfurante = {
+    tipo = 3,
+    nome = "Artefato Perfurante",
+    unica = true,
+    raca = {"Cristal"},
+    dano = 0,
+    descricao = "Inínio da Partida:\nMe anexe em um Aliado.\nAtaque +1\nInício do Combate:\nO Inimigo recebe vida Máxima -1",
+
+    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+        local i = math.random(3)
+
+        local heroi = dono.aliados[i]
+
+        table.insert(heroi.itemEquipado, self)
+
+        self:efeito(heroi, inimigo, dono, partida, cartaJogada)
+
+    end,
+    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
+        if partida.emitirVFX then
+            partida.emitirVFX("debuff", inimigo)
+        end
+        inimigo.vidaMaxima = inimigo.vidaMaxima - 1
+        if inimigo.vidaAtual > inimigo.vidaMaxima then
+            inimigo.vidaAtual = inimigo.vidaMaxima
+        end
+    end,
+    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque + 1
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", aliado)
+        end
+    end,
+
+    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque - 1
+    end
 }
 
 return reliquias
