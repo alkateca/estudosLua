@@ -6,47 +6,6 @@ local item = require("cartas.itens")
 local acao = require("cartas.acoes")
 local reliquia = require("cartas.reliquias")
 
-logicaPartida.turnoAtual = 1
-
-logicaPartida.jogador1 = {
-    reliquia = nil,
-    extraDeck = {},
-    baralho = {},
-    nome = "",
-    mao = {},
-    descarte = {},
-    aliados = {},
-    cartasEscolhidas = {},
-    heroiDoturno = nil,
-    pontuacao = 0
-}
-
-logicaPartida.jogador2 = {
-    reliquia = reliquia.liberacaoMoyra,
-    extraDeck = {},
-    baralho = { 
-        magia.pontoFinal,
-        item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
-        acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
-        magia.estatica, magia.estatica, magia.estatica,
-        magia.paraRaios, magia.paraRaios, magia.paraRaios,
-        acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
-        magia.massacreCristalino,  item.quimera
-    },
-    nome = "",
-    mao = {},
-    descarte = {},
-    aliados = {
-        heroi.santaDasLaminas, heroi.aprendizDasLaminas, heroi.artesaDasLaminas
-    },
-    cartasEscolhidas = {},
-    heroiDoturno = nil,
-    pontuacao = 0
-}
-
-math.randomseed(os.time())
-
-
 local function deepcopy(orig, copies)
     copies = copies or {}
     local orig_type = type(orig)
@@ -68,6 +27,82 @@ local function deepcopy(orig, copies)
     end
     
     return copy
+end
+
+logicaPartida.turnoAtual = 1
+
+logicaPartida.jogador1 = {
+    reliquia = nil,
+    extraDeck = {},
+    baralho = {},
+    nome = "",
+    mao = {},
+    descarte = {},
+    aliados = {},
+    cartasEscolhidas = {},
+    heroiDoturno = nil,
+    pontuacao = 0
+}
+
+logicaPartida.jogador2 = {}
+
+function logicaPartida.prepararOponentePVE()
+    logicaPartida.jogador2 = {
+        reliquia = deepcopy(reliquia.liberacaoMoyra),
+        extraDeck = {},
+        baralho = deepcopy({ 
+            magia.pontoFinal,
+            item.dragaoCristal, item.dragaoCristal, item.dragaoCristal,
+            acao.racaoDeEmergencia, acao.racaoDeEmergencia, acao.racaoDeEmergencia,
+            magia.estatica, magia.estatica, magia.estatica,
+            magia.paraRaios, magia.paraRaios, magia.paraRaios,
+            acao.determinacaoCristalina, acao.determinacaoCristalina, acao.determinacaoCristalina,
+            magia.massacreCristalino,  item.quimera
+        }),
+        nome = "Oponente PVE",
+        mao = {},
+        descarte = {},
+        aliados = deepcopy({
+            heroi.santaDasLaminas, heroi.aprendizDasLaminas, heroi.artesaDasLaminas
+        }),
+        cartasEscolhidas = {},
+        heroiDoturno = nil,
+        pontuacao = 0
+    }
+end
+
+math.randomseed(os.time())
+
+function logicaPartida.resetarPartida()
+
+    -- Zera o jogador 1
+    logicaPartida.jogador1 = {
+        reliquia = nil,
+        extraDeck = {},
+        baralho = {},
+        nome = "",
+        mao = {},
+        descarte = {},
+        aliados = {},
+        cartasEscolhidas = {},
+        heroiDoturno = nil,
+        pontuacao = 0
+    }
+
+    -- Zera o jogador 2 
+    logicaPartida.jogador2 = {}
+
+    local partida = require("telas.partida")
+
+    partida.desenharHeroiEscolhido(nil, nil)
+    partida.faseDoTurno = "preparacao"
+    
+    logicaPartida.turnoAtual = 1
+    
+    -- Limpeza de listas de processamento essenciais que ficavam presas
+    logicaPartida.filaDeResolucao = {}
+    logicaPartida.indiceFila = 1
+    logicaPartida.logIniciado = false -- Reseta para que o arquivo log seja reescrito (modo "w")
 end
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
@@ -97,10 +132,11 @@ function logicaPartida.embaralharCartas(jogador)
 end
 
 function logicaPartida.inicioDaPartida(jogador1, jogador2)
-    logicaPartida.embaralharCartas(jogador1)
-    logicaPartida.embaralharCartas(jogador2)
-    logicaPartida.comprarCartas(jogador1, 5)
-    logicaPartida.comprarCartas(jogador2, 5)
+    logicaPartida.prepararOponentePVE()
+    logicaPartida.embaralharCartas(logicaPartida.jogador1)
+    logicaPartida.embaralharCartas(logicaPartida.jogador2)
+    logicaPartida.comprarCartas(logicaPartida.jogador1, 5)
+    logicaPartida.comprarCartas(logicaPartida.jogador2, 5)
     logicaPartida.inicioDaPartidaReliquias()
     logicaPartida.efeitos()
 end
@@ -433,8 +469,8 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
         inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
         logicaPartida.registrarLog("Efeito Inicio Turno Inimigo: " .. inimigo.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
     end
-    
-    local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
+
+local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
 
     for i = 1, 2 do
         if jogador1TemIniciativa then

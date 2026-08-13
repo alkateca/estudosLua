@@ -25,6 +25,29 @@ local layout = {
     btnPartida = {x = 620, y = 650, w = 200, h = 100}
 }
 
+local function deepcopy(orig, copies)
+    copies = copies or {}
+    local orig_type = type(orig)
+    local copy
+    
+    if orig_type == 'table' then
+        if copies[orig] then
+            copy = copies[orig]
+        else
+            copy = {}
+            copies[orig] = copy
+            for orig_key, orig_value in next, orig, nil do
+                copy[deepcopy(orig_key, copies)] = deepcopy(orig_value, copies)
+            end
+            setmetatable(copy, deepcopy(getmetatable(orig), copies))
+        end
+    else
+        copy = orig
+    end
+    
+    return copy
+end
+
 local function buscarCartaPorNome(nomeProcurado)
     if nomeProcurado == "" or not nomeProcurado then return nil end
     for _, carta in ipairs(bibliotecaCompleta) do
@@ -85,30 +108,34 @@ function Selecao.mousereleased(x, y, button)
             
             if deck and deck.aliados and #deck.aliados == 3 and deck.cartas and #deck.cartas == 20 then
                 
-                logicaPartida.jogador1.reliquia = buscarCartaPorNome(deck.reliquia)
+                -- ADICIONADO DEEPCOPY EM TODAS AS BUSCAS
+                logicaPartida.jogador1.reliquia = deepcopy(buscarCartaPorNome(deck.reliquia))
                 
                 logicaPartida.jogador1.aliados = {}
                 for _, nomeCarta in ipairs(deck.aliados) do 
-                    table.insert(logicaPartida.jogador1.aliados, buscarCartaPorNome(nomeCarta)) 
+                    table.insert(logicaPartida.jogador1.aliados, deepcopy(buscarCartaPorNome(nomeCarta))) 
                 end
                 
                 logicaPartida.jogador1.baralho = {}
                 for _, nomeCarta in ipairs(deck.cartas) do 
-                    table.insert(logicaPartida.jogador1.baralho, buscarCartaPorNome(nomeCarta)) 
+                    table.insert(logicaPartida.jogador1.baralho, deepcopy(buscarCartaPorNome(nomeCarta))) 
                 end
 
                 logicaPartida.jogador1.extraDeck = {}
                 if deck.extraDeck then
                     for _, nomeCarta in ipairs(deck.extraDeck) do
-                        table.insert(logicaPartida.jogador1.extraDeck, buscarCartaPorNome(nomeCarta))
+                        table.insert(logicaPartida.jogador1.extraDeck, deepcopy(buscarCartaPorNome(nomeCarta)))
                     end
                 end
 
+                -- Reseta estados vitais do jogador 1
                 logicaPartida.jogador1.mao = {}
                 logicaPartida.jogador1.descarte = {}
                 logicaPartida.jogador1.cartasEscolhidas = {}
                 logicaPartida.jogador1.heroiDoturno = nil
+                logicaPartida.jogador1.pontuacao = 0
                 
+                -- O logicaPartida cuidará de resetar o PVE e comprar as mãos
                 logicaPartida.inicioDaPartida(logicaPartida.jogador1, logicaPartida.jogador2)
 
                 estadoAtualGlobal = "partida"
