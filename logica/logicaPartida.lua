@@ -108,20 +108,12 @@ end
 function logicaPartida.efeitos()
 
     for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
+        
         if type(aliado.efeitoInicioDaPartida) == "function" and not aliado.efeitoAtivo then
             aliado.efeitoInicioDaPartida(aliado, aliado, nil, logicaPartida.jogador1, logicaPartida, nil)
-            aliado.efeitoAtivo = true 
+            aliado.efeitoAtivo = true
         end
-    end
 
-    for _, inimigo in ipairs(logicaPartida.jogador2.aliados) do
-        if type(inimigo.efeitoInicioDaPartida) == "function" and not inimigo.efeitoAtivo then
-            inimigo.efeitoInicioDaPartida(inimigo, inimigo, nil, logicaPartida.jogador2, logicaPartida, nil)
-            inimigo.efeitoAtivo = true
-        end
-    end
-
-    for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if aliado.itemEquipado then
             for _, itm in ipairs(aliado.itemEquipado) do
                 if type(itm.efeitoInicioDaPartida) == "function" and not itm.efeitoAtivo then
@@ -133,6 +125,12 @@ function logicaPartida.efeitos()
     end
 
     for _, inimigo in ipairs(logicaPartida.jogador2.aliados) do
+        
+        if type(inimigo.efeitoInicioDaPartida) == "function" and not inimigo.efeitoAtivo then
+            inimigo.efeitoInicioDaPartida(inimigo, inimigo, nil, logicaPartida.jogador2, logicaPartida, nil)
+            inimigo.efeitoAtivo = true
+        end
+
         if inimigo.itemEquipado then
             for _, itm in ipairs(inimigo.itemEquipado) do
                 if type(itm.efeitoInicioDaPartida) == "function" and not itm.efeitoAtivo then
@@ -149,15 +147,16 @@ function logicaPartida.inicioDaPartidaReliquias()
     for i, reliquia in ipairs(logicaPartida.jogador1.extraDeck) do
         if type(reliquia.efeitoInicioDaPartida) == "function" then
             reliquia:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador1, logicaPartida, nil)
+            reliquia.efeitoAtivo = true
         end
     end
 
     for i, reliquia in ipairs(logicaPartida.jogador2.extraDeck) do
         if type(reliquia.efeitoInicioDaPartida) == "function" then
             reliquia:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador2, logicaPartida, nil)
+            reliquia.efeitoAtivo = true
         end
     end
-    
 end
 
 function logicaPartida.atualizarEstadoAtivo()

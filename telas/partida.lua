@@ -25,6 +25,9 @@ local animacoesCarregadas = {}
 local rotinaTurno = nil
 local tempoEspera = 0
 
+local imgCartaHeroi
+local imgCartaDiversa
+
 logicaPartida.estadoAlvo = {
     ativo = false,
     tipo = "",
@@ -72,6 +75,12 @@ local function criarQuadsGrid(imagem, colunas, linhas)
 end
 
 function Partida.load()
+
+    imgCartaHeroi = love.graphics.newImage("assets/images/modeloAlfa.jpeg")
+    
+    imgCartaDiversa = love.graphics.newImage("assets/images/modeloAlfaCartas.jpeg")
+
+
     fonteEmoji = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 30)
     fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)    
     fonteIoskeleyPequena = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 12)
@@ -361,6 +370,7 @@ end
 
 function Partida.mousereleased(x, y, button)
 if button == 1 then
+    
         if logicaPartida.estadoAlvo.ativo then        
                 
                 if logicaPartida.estadoAlvo.tipo == "mao" then
@@ -544,31 +554,38 @@ function Partida.checarCliqueMochila(x, y)
     return false
 end
 
-function Partida.desenharHeroiEscolhido(carta1,carta2)
+function Partida.desenharHeroiEscolhido(carta1, carta2)
     if carta1 == nil then
         love.graphics.setColor(0.2, 0.2, 0.2)
         love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
         love.graphics.setColor(1, 1, 1)
         love.graphics.printf("Selecione seu herói", 1000, 660, 280, "center")
     else 
-    love.graphics.setColor(0,0,1)
-    love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
-    love.graphics.setColor(1,1,1)
-    love.graphics.printf(carta1.nome, 1000, 490, 280, "center")
-    love.graphics.printf(carta1.espirito, 1000, 720, 270, "right")
-    love.graphics.printf(carta1.ataque, 1000, 760, 270, "right")
-    love.graphics.printf(carta1.defesa, 1000, 800, 270, "right")
-    love.graphics.printf(carta1.vidaAtual, 1000, 840, 270, "right")
-    love.graphics.setFont(fonteIoskeleyPequena)
-    love.graphics.printf(carta1.descricao, 1040, 720, 200, "center")
-    love.graphics.setFont(fonteEmoji)
+        -- Desenha a imagem da carta
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaHeroi, 1000, 480, 0, 280/747, 380/1024)
         
+        -- Textos em preto
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(carta1.nome, 1005, 495, 280, "center")
+        love.graphics.printf(carta1.espirito, 1000, 720, 265, "right")
+        love.graphics.printf(carta1.ataque, 1000, 760, 265, "right")
+        love.graphics.printf(carta1.defesa, 1000, 800, 265, "right")
+        love.graphics.printf(carta1.vidaAtual, 1000, 840, 270, "right")
+        love.graphics.setFont(fonteIoskeleyPequena)
+        
+        -- Caixa de texto ajustada (X=1015, Y=755, Largura=200)
+        love.graphics.printf(carta1.descricao, 1015, 755, 200, "center")
+        love.graphics.setFont(fonteEmoji)
+        
+        -- Itens equipados
         if #carta1.itemEquipado > 0 then
             for i, item in ipairs(carta1.itemEquipado) do
                 local xPos = 1230 + ((i - 1) * 20)
-                love.graphics.setColor(0,0,0.8)
-                love.graphics.rectangle("fill", xPos, 600, 80, 100, 8, 8)
-                love.graphics.setColor(1,1,1)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, 600, 0, 80/747, 100/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.setFont(fonteIoskeley)
                 love.graphics.printf(item.nome, xPos, 610, 80, "center")
             end
@@ -583,29 +600,36 @@ function Partida.desenharHeroiEscolhido(carta1,carta2)
         love.graphics.setColor(1, 1, 1)
         love.graphics.printf("Selecione o herói inimigo", 1000, 220, 280, "center")
     else
-    love.graphics.setColor(1,0,0)
-    love.graphics.rectangle("fill", 1000, 40, 280, 380, 15, 15)
-    love.graphics.setColor(1,1,1)
-    love.graphics.printf(carta2.nome, 1000, 50, 280, "center")
-    love.graphics.printf(carta2.espirito, 1000, 280, 270, "right")
-    love.graphics.printf(carta2.ataque, 1000, 320, 270, "right")
-    love.graphics.printf(carta2.defesa, 1000, 360, 270, "right")
-    love.graphics.printf(carta2.vidaAtual, 1000, 400, 270, "right")
-    love.graphics.setFont(fonteIoskeleyPequena)
-    love.graphics.printf(carta2.descricao, 1040, 280, 200, "center")
-    love.graphics.setFont(fonteEmoji)
+        -- Desenha a imagem da carta
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaHeroi, 1000, 40, 0, 280/747, 380/1024)
         
+        -- Textos em preto
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(carta2.nome, 1005, 55, 280, "center")
+        love.graphics.printf(carta2.espirito, 1000, 280, 265, "right")
+        love.graphics.printf(carta2.ataque, 1000, 320, 265, "right")
+        love.graphics.printf(carta2.defesa, 1000, 360, 265, "right")
+        love.graphics.printf(carta2.vidaAtual, 1000, 400, 270, "right")
+        love.graphics.setFont(fonteIoskeleyPequena)
+        
+        -- Caixa de texto ajustada para o inimigo (X=1015, Y=315, Largura=200)
+        love.graphics.printf(carta2.descricao, 1015, 315, 200, "center")
+        love.graphics.setFont(fonteEmoji)
+        
+        -- Itens equipados
         if #carta2.itemEquipado > 0 then
             for i, item in ipairs(carta2.itemEquipado) do
                 local xPos = 1230 + ((i - 1) * 20)
-                love.graphics.setColor(0.7,0,0)
-                love.graphics.rectangle("fill", xPos, 160, 80, 100, 8, 8)
-                love.graphics.setColor(1,1,1)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, 160, 0, 80/747, 100/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.setFont(fonteIoskeley)
                 love.graphics.printf(item.nome, xPos, 170, 80, "center")
             end
         end
-    love.graphics.setFont(fonteIoskeley)
+        love.graphics.setFont(fonteIoskeley)
     end
 end
 
@@ -613,7 +637,6 @@ function Partida.desenharHerois()
     local aliados = logicaPartida.jogador1.aliados
 
     for i, aliado in ipairs(aliados) do
-        -- Só desenha no banco se NÃO for o herói aliado que está em combate
         if not (faseDoTurno == "resolucao" and aliado == logicaPartida.jogador1.heroiDoturno) then
             local xPos = 20 + ((i - 1) * 150)
             local yPos = 580
@@ -625,24 +648,25 @@ function Partida.desenharHerois()
                 love.graphics.translate(centroX, centroY)
                 love.graphics.rotate(math.rad(20))
                 love.graphics.translate(-centroX, -centroY)
-                love.graphics.setColor(0,0,1)
-                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
                 love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
                 love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
                 love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
                 love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
+                
                 if #aliado.itemEquipado > 0 then
-                    local xPos = 40 + ((i - 1) * 150)
-                    local yPos = 730
-                    love.graphics.setColor(0,0,0.7)
-                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.setFont(fonteEmoji, 14)
-                    love.graphics.print("🎒", xPos, yPos + 10)
-                    love.graphics.setColor(1,1,1)
+                    local itemX = 40 + ((i - 1) * 150)
+                    local itemY = 730
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.draw(imgCartaDiversa, itemX, itemY + 5, 0, 40/747, 50/1024)
                 end
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.setFont(fonteEmoji)
                 love.graphics.print("💤", xPos + 55, yPos + 80)
                 love.graphics.setFont(fonteIoskeley)
@@ -650,31 +674,29 @@ function Partida.desenharHerois()
             end
 
             if aliado.estaAtivo == true then
-                love.graphics.setColor(0,0,1)
-                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
                 love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
                 love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
                 love.graphics.printf(aliado.defesa, xPos, 150 + yPos, 130, "right")
                 love.graphics.printf(aliado.vidaAtual, xPos, 170 + yPos, 130, "right")
+                
                 if #aliado.itemEquipado > 0 then
-                    local xPos = 40 + ((i - 1) * 150)
-                    local yPos = 730
-                    love.graphics.setColor(0,0,0.7)
-                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.setFont(fonteEmoji, 14)
-                    love.graphics.print("🎒", xPos, yPos + 10)
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.setFont(fonteIoskeley)
+                    local itemX = 40 + ((i - 1) * 150)
+                    local itemY = 730
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.draw(imgCartaDiversa, itemX, itemY + 5, 0, 40/747, 50/1024)
                 end
             end
 
             if aliado.estaVivo == false then
-                love.graphics.setColor(0,0,1)
-                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(aliado.nome, xPos, yPos + 10, 140 ,"center")
                 love.graphics.printf(aliado.espirito, xPos, 110 + yPos, 130, "right")
                 love.graphics.printf(aliado.ataque, xPos, 130 + yPos, 130, "right")
@@ -690,7 +712,6 @@ function Partida.desenharHerois()
     local inimigos = logicaPartida.jogador2.aliados
 
     for i, inimigo in ipairs(inimigos) do
-        -- Só desenha no banco se NÃO for o herói inimigo que está em combate
         if not (faseDoTurno == "resolucao" and inimigo == logicaPartida.jogador2.heroiDoturno) then
             local xPos = 20 + ((i - 1) * 150)
             local yPos = 130
@@ -702,24 +723,25 @@ function Partida.desenharHerois()
                 love.graphics.translate(centroX, centroY)
                 love.graphics.rotate(math.rad(20))
                 love.graphics.translate(-centroX, -centroY)
-                love.graphics.setColor(1,0,0)
-                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
+                
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
                 love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
                 love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
                 love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
                 love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                
                 if #inimigo.itemEquipado > 0 then
-                    local xPos = 40 + ((i - 1) * 150)
-                    local yPos = 280
-                    love.graphics.setColor(0.7,0,0)
-                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.setFont(fonteEmoji, 14)
-                    love.graphics.print("🎒", xPos, yPos + 10)
-                    love.graphics.setColor(1,1,1)
+                    local itemX = 40 + ((i - 1) * 150)
+                    local itemY = 280
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.draw(imgCartaDiversa, itemX, itemY + 5, 0, 40/747, 50/1024)
                 end
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.setFont(fonteEmoji)
                 love.graphics.print("💤", xPos + 55, yPos + 80)
                 love.graphics.setFont(fonteIoskeley)
@@ -727,31 +749,29 @@ function Partida.desenharHerois()
             end
 
             if inimigo.estaAtivo == true then
-                love.graphics.setColor(1,0,0)
-                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
                 love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
                 love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
                 love.graphics.printf(inimigo.defesa, xPos, 150 + yPos, 130, "right")
                 love.graphics.printf(inimigo.vidaAtual, xPos, 170 + yPos, 130, "right")
+                
                 if #inimigo.itemEquipado > 0 then
-                    local xPos = 40 + ((i - 1) * 150)
-                    local yPos = 280
-                    love.graphics.setColor(0.7,0,0)
-                    love.graphics.rectangle("fill", xPos, yPos + 5, 40, 50, 8, 8)
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.setFont(fonteEmoji, 14)
-                    love.graphics.print("🎒", xPos, yPos + 10)
-                    love.graphics.setColor(1,1,1)
-                    love.graphics.setFont(fonteIoskeley)
+                    local itemX = 40 + ((i - 1) * 150)
+                    local itemY = 280
+                    love.graphics.setColor(1, 1, 1)
+                    love.graphics.draw(imgCartaDiversa, itemX, itemY + 5, 0, 40/747, 50/1024)
                 end
             end
 
             if inimigo.estaVivo == false then
-                love.graphics.setColor(1,0,0)
-                love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(inimigo.nome, xPos, yPos + 10, 140 ,"center")
                 love.graphics.printf(inimigo.espirito, xPos, 110 + yPos, 130, "right")
                 love.graphics.printf(inimigo.ataque, xPos, 130 + yPos, 130, "right")
@@ -766,14 +786,17 @@ function Partida.desenharHerois()
 end
 
 function Partida.desenharMao()
-
     local cartasNaMaoAliada = logicaPartida.jogador1.mao
 
     for i, carta in ipairs(cartasNaMaoAliada) do
         local xPos = 540 + ((i - 1) * 90)
-        love.graphics.setColor(0,0,1)
-        love.graphics.rectangle("fill", xPos, 760, 80, 100, 8, 8)
-        love.graphics.setColor(1,1,1)
+        
+        -- Desenha a imagem da carta
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, 760, 0, 80/747, 100/1024)
+        
+        -- Desenha o texto em preto
+        love.graphics.setColor(0, 0, 0)
         love.graphics.printf(carta.nome, xPos, 770, 80, "center")
     end
 
@@ -781,10 +804,11 @@ function Partida.desenharMao()
 
     for i, carta in ipairs(cartasNaMaoInimiga) do
         local xPos = 540 + ((i - 1) * 90)
-        love.graphics.setColor(1,0,0)
-        love.graphics.rectangle("fill", xPos, 40, 80, 100, 8, 8)
+        
+        -- Desenha apenas a imagem da carta (sem revelar o nome para o inimigo)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, 40, 0, 80/747, 100/1024)
     end
-    
 end
 
 function Partida.selecionarCartaMaoAliado(x, y)
@@ -819,16 +843,13 @@ end
 
 function Partida.desenharCartasEscolhidas()
     local cartasParaDesenhar = {}
-    
     local resolvendoBatalha = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
-
     
     if not resolvendoBatalha then
         for i, carta in ipairs(logicaPartida.jogador1.cartasEscolhidas) do
             table.insert(cartasParaDesenhar, { carta = carta, resolvida = false })
         end
     else
-
         for i, jogada in ipairs(logicaPartida.filaDeResolucao) do
             if jogada.dono == logicaPartida.jogador1 then
                 table.insert(cartasParaDesenhar, jogada)
@@ -840,17 +861,15 @@ function Partida.desenharCartasEscolhidas()
         local xPos = 880 - ((i - 1) * 90)
         local yPos = 480
 
-        
-        love.graphics.setColor(0, 0, 1)
-        love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-        
         love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+        
+        love.graphics.setColor(0, 0, 0)
         love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
     end
 
 
     local cartasParaDesenharInimigas = {}
-    
     local resolvendoBatalhaInimigiga = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
 
     if not resolvendoBatalhaInimigiga then
@@ -869,10 +888,10 @@ function Partida.desenharCartasEscolhidas()
         local xPos = 880 - ((i - 1) * 90)
         local yPos = 320
         
-        love.graphics.setColor(1, 0, 0)
-        love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-        
         love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+        
+        love.graphics.setColor(0, 0, 0)
         love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
     end
 end
@@ -1082,17 +1101,17 @@ function Partida.desenharInventarioAberto()
             local xPos = 460 + ((i - 1) * 90)
             local yPos = 320
             
-            love.graphics.setColor(0.3, 0.3, 0.3)
-            love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-            
             love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+            
+            love.graphics.setColor(0, 0, 0)
             love.graphics.printf(item.nome, xPos, yPos + 10, 80, "center")
         end
     end
 end
 
 function Partida.abrirDescartes()
-     if descarteAberto == "inimigo" then
+    if descarteAberto == "inimigo" then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
         love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
         
@@ -1100,20 +1119,20 @@ function Partida.abrirDescartes()
         
         for i, carta in ipairs(descarte) do
             local coluna = (i - 1) % 10 
-            
             local linha = math.floor((i - 1) / 10) 
             
             local xPos = 260 + (coluna * 90)
             local yPos = 200 + (linha * 110)
             
-            love.graphics.setColor(0, 0, 1)
-            love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
             love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+            
+            love.graphics.setColor(0, 0, 0)
             love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
         end
     end
 
-        if descarteAberto == "aliado" then
+    if descarteAberto == "aliado" then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
         love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
         
@@ -1121,15 +1140,15 @@ function Partida.abrirDescartes()
         
         for i, carta in ipairs(descarte) do
             local coluna = (i - 1) % 10 
-            
             local linha = math.floor((i - 1) / 10) 
             
             local xPos = 260 + (coluna * 90)
             local yPos = 200 + (linha * 110)
             
-            love.graphics.setColor(0, 0, 1)
-            love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
             love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+            
+            love.graphics.setColor(0, 0, 0)
             love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
         end
     end
@@ -1163,21 +1182,26 @@ function Partida.desenharReliquias()
     local reliquiaAliada = logicaPartida.jogador1.reliquia
     
     if reliquiaAliada ~= nil then
-        love.graphics.setColor(0,0,1)
-        love.graphics.rectangle("fill", 260, 780, 80, 100, 5, 5)
-        love.graphics.setColor(1,1,1)
-        love.graphics.printf(reliquiaAliada.nome, 260, 780, 80, "center")
+        -- Desenha a imagem da relíquia
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, 260, 780, 0, 80/747, 100/1024)
+        
+        -- Desenha o nome da relíquia em preto
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(reliquiaAliada.nome, 260, 790, 80, "center")
     end
-
-
 
     -- Desenho das reliquias inimigas
     local reliquiaInimiga = logicaPartida.jogador2.reliquia
+    
     if reliquiaInimiga ~= nil then
-        love.graphics.setColor(1,0,0)
-        love.graphics.rectangle("fill", 260, 20, 80, 100, 5, 5)
-        love.graphics.setColor(1,1,1)
-        love.graphics.printf(reliquiaInimiga.nome, 260, 20, 80, "center")
+        -- Desenha a imagem da relíquia
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, 260, 20, 0, 80/747, 100/1024)
+        
+        -- Desenha o nome da relíquia em preto
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(reliquiaInimiga.nome, 260, 30, 80, "center")
     end
 end
 
@@ -1307,12 +1331,10 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                 local xPos = 540 + ((i - 1) * 90)
                 local yPos = 760
                 
-                love.graphics.setColor(0.5, 0.5, 0.5)
-                love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-                
                 love.graphics.setColor(1, 1, 1)
-                love.graphics.rectangle("line", xPos, yPos, 80, 100, 8, 8)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
                 
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
             end
             
@@ -1339,11 +1361,11 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                 local yPos = 200 + (linha * 110)
                 
                 -- Desenha a carta
-                love.graphics.setColor(0, 0, 1)
-                love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
                 
                 -- Texto da carta
-                love.graphics.setColor(1, 1, 1)
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
             end
 
@@ -1359,19 +1381,20 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                 love.graphics.rectangle("fill", 990, 470, 300, 400, 15, 15)
                 
                 -- Carta do Herói Ativo
-                love.graphics.setColor(0, 0, 1)
-                love.graphics.rectangle("fill", 1000, 480, 280, 380, 15, 15)
                 love.graphics.setColor(1, 1, 1)
-                love.graphics.printf(ativoAliado.nome, 1000, 490, 280, "center")
-                love.graphics.printf(ativoAliado.espirito, 1000, 720, 270, "right")
-                love.graphics.printf(ativoAliado.ataque, 1000, 760, 270, "right")
-                love.graphics.printf(ativoAliado.defesa, 1000, 800, 270, "right")
-                love.graphics.printf(ativoAliado.vidaAtual, 1000, 840, 270, "right")
+                love.graphics.draw(imgCartaHeroi, 1000, 480, 0, 280/747, 380/1024)
+                
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(ativoAliado.nome, 1005, 495, 280, "center")
+                love.graphics.print(ativoAliado.espirito, 1260, 720)
+                love.graphics.print(ativoAliado.ataque, 1260, 760)
+                love.graphics.print(ativoAliado.defesa, 1260, 800)
+                love.graphics.print(ativoAliado.vidaAtual, 1260, 840)
                 
                 -- Retorna fonte para descrição
                 if fonteIoskeleyPequena then
                     love.graphics.setFont(fonteIoskeleyPequena)
-                    love.graphics.printf(ativoAliado.descricao, 1040, 720, 200, "center")
+                    love.graphics.printf(ativoAliado.descricao, 1015, 755, 200, "center")
                     love.graphics.setFont(fonteIoskeley) -- Reseta fonte
                 end
             end
@@ -1386,10 +1409,10 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                     local xPos = 20 + ((i - 1) * 150)
                     local yPos = 580
                     
-                    love.graphics.setColor(0, 0, 1) 
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    
                     love.graphics.setColor(1, 1, 1)
+                    love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                    
+                    love.graphics.setColor(0, 0, 0)
                     love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 140 ,"center")
                     love.graphics.printf(heroiAlvo.espirito, xPos, 110 + yPos, 130, "right")
                     love.graphics.printf(heroiAlvo.ataque, xPos, 130 + yPos, 130, "right")
@@ -1399,15 +1422,12 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                     if #heroiAlvo.itemEquipado > 0 then
                         local itemXPos = 40 + ((i - 1) * 150)
                         local itemYPos = 730
-                        love.graphics.setColor(0, 0, 0.7)
-                        love.graphics.rectangle("fill", itemXPos, itemYPos + 5, 40, 50, 8, 8)
                         love.graphics.setColor(1, 1, 1)
-                        love.graphics.setFont(fonteEmoji, 14)
-                        love.graphics.print("🎒", itemXPos, itemYPos + 10)
-                        love.graphics.setFont(fonteIoskeley)
+                        love.graphics.draw(imgCartaDiversa, itemXPos, itemYPos + 5, 0, 40/747, 50/1024)
                     end
                     
                     if not heroiAlvo.estaAtivo then
+                        love.graphics.setColor(0, 0, 0)
                         love.graphics.setFont(fonteEmoji)
                         love.graphics.print("💤", xPos + 55, yPos + 80)
                         love.graphics.setFont(fonteIoskeley)
@@ -1426,18 +1446,19 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                 love.graphics.rectangle("fill", 990, 30, 300, 400, 15, 15)
                 
                 -- Carta do Herói Ativo Inimigo
-                love.graphics.setColor(1, 0, 0)
-                love.graphics.rectangle("fill", 1000, 40, 280, 380, 15, 15)
                 love.graphics.setColor(1, 1, 1)
-                love.graphics.printf(ativoInimigo.nome, 1000, 50, 280, "center")
-                love.graphics.printf(ativoInimigo.espirito, 1000, 280, 270, "right")
-                love.graphics.printf(ativoInimigo.ataque, 1000, 320, 270, "right")
-                love.graphics.printf(ativoInimigo.defesa, 1000, 360, 270, "right")
-                love.graphics.printf(ativoInimigo.vidaAtual, 1000, 400, 270, "right")
+                love.graphics.draw(imgCartaHeroi, 1000, 40, 0, 280/747, 380/1024)
+                
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(ativoInimigo.nome, 1005, 55, 280, "center")
+                love.graphics.print(ativoInimigo.espirito, 1260, 280)
+                love.graphics.print(ativoInimigo.ataque, 1260, 320)
+                love.graphics.print(ativoInimigo.defesa, 1260, 360)
+                love.graphics.print(ativoInimigo.vidaAtual, 1260, 400)
                 
                 if fonteIoskeleyPequena then
                     love.graphics.setFont(fonteIoskeleyPequena)
-                    love.graphics.printf(ativoInimigo.descricao, 1040, 280, 200, "center")
+                    love.graphics.printf(ativoInimigo.descricao, 1015, 315, 200, "center")
                     love.graphics.setFont(fonteIoskeley)
                 end
             end
@@ -1453,10 +1474,10 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                     local xPos = 20 + ((i - 1) * 150)
                     local yPos = 130
                     
-                    love.graphics.setColor(1, 0, 0) 
-                    love.graphics.rectangle("fill", xPos, yPos, 140, 190, 10, 10)
-                    
                     love.graphics.setColor(1, 1, 1)
+                    love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
+                    
+                    love.graphics.setColor(0, 0, 0)
                     love.graphics.printf(heroiAlvo.nome, xPos, yPos + 10, 140 ,"center")
                     love.graphics.printf(heroiAlvo.espirito, xPos, 110 + yPos, 130, "right")
                     love.graphics.printf(heroiAlvo.ataque, xPos, 130 + yPos, 130, "right")
@@ -1466,15 +1487,12 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                     if #heroiAlvo.itemEquipado > 0 then
                         local itemXPos = 40 + ((i - 1) * 150)
                         local itemYPos = 280
-                        love.graphics.setColor(0.7, 0, 0)
-                        love.graphics.rectangle("fill", itemXPos, itemYPos + 5, 40, 50, 8, 8)
                         love.graphics.setColor(1, 1, 1)
-                        love.graphics.setFont(fonteEmoji, 14)
-                        love.graphics.print("🎒", itemXPos, itemYPos + 10)
-                        love.graphics.setFont(fonteIoskeley)
+                        love.graphics.draw(imgCartaDiversa, itemXPos, itemYPos + 5, 0, 40/747, 50/1024)
                     end
                     
                     if not heroiAlvo.estaAtivo then
+                        love.graphics.setColor(0, 0, 0)
                         love.graphics.setFont(fonteEmoji)
                         love.graphics.print("💤", xPos + 55, yPos + 80)
                         love.graphics.setFont(fonteIoskeley)
@@ -1499,10 +1517,10 @@ if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
                 local xPos = 460 + ((i - 1) * 90)
                 local yPos = 320
                 
-                love.graphics.setColor(0.3, 0.3, 0.3)
-                love.graphics.rectangle("fill", xPos, yPos, 80, 100, 8, 8)
-                
                 love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+                
+                love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(itemAtual.nome, xPos, yPos + 10, 80, "center")
             end
         end

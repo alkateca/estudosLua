@@ -8,7 +8,7 @@ reliquias.liberacaoMoyra = {
     unica = true,
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)      
         
-        if aliado.nome == "Moyra,\nAprendiz da Santa" then
+        if aliado.nome == "Moyra, Aprendiz da Santa" then
             local novaForma = heroi.moyraLiberta
             
             if novaForma then
@@ -30,7 +30,7 @@ reliquias.liberacaoMoyra = {
                 
 
                 if partida.emitirVFX then
-                    partida.emitirVFX("buff", dono == partida.jogador1 and "aliado" or "inimigo")
+                    partida.emitirVFX("buff", aliado)
                 end
             end
         end
@@ -179,7 +179,7 @@ reliquias.artefatoPerfurante = {
     unica = true,
     raca = {"Cristal"},
     dano = 0,
-    descricao = "Inínio da Partida:\nMe anexe em um Aliado.\nAtaque +1\nInício do Combate:\nO Inimigo recebe vida Máxima -1",
+    descricao = "Inínio da Partida:\nMe anexe a um Aliado.\nAtaque +1\nInício do Combate:\nO Inimigo recebe vida Máxima -1",
 
     efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
@@ -199,6 +199,9 @@ reliquias.artefatoPerfurante = {
         inimigo.vidaMaxima = inimigo.vidaMaxima - 1
         if inimigo.vidaAtual > inimigo.vidaMaxima then
             inimigo.vidaAtual = inimigo.vidaMaxima
+        end
+        if partida.emitirVFX then
+            partida.emitirVFX("danoDireto", inimigo)
         end
     end,
     efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,

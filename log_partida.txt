@@ -1,16 +1,120 @@
-[12:00:57] Efeito Inicio Turno Aliado: Quimera
-Carniceira | Aliado [V:14 A:7 D:2 E:2] | Inimigo [V:12 A:6 D:1 E:2]
-[12:00:57] Efeito Inicio Turno Inimigo: Naelis, Grande Artesã de Cristais | Aliado [V:14 A:7 D:2 E:2] | Inimigo [V:12 A:6 D:1 E:2]
-[12:00:59] Carta Resolvida: Liberação: Quimera Carniceira usada por Quimera
-Carniceira | Aliado [V:14 A:7 D:2 E:2] | Inimigo [V:12 A:6 D:1 E:2]
-[12:01:00] Carta Resolvida: Para-raios usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:3] | Inimigo [V:14 A:7 D:2 E:2]
-[12:01:02] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:1 E:3] | Inimigo [V:10 A:7 D:2 E:2]
-[12:01:05] Carta Resolvida: Quimera Negra usada por Quimera
-Carniceira | Aliado [V:10 A:7 D:2 E:2] | Inimigo [V:11 A:5 D:0 E:2]
-[12:01:06] Carta Resolvida: Dragão de Cristal usada por Naelis, Grande Artesã de Cristais | Aliado [V:11 A:5 D:0 E:2] | Inimigo [V:10 A:7 D:2 E:2]
-[12:01:07] Combate Fisico: Naelis, Grande Artesã de Cristais causou 3 de dano. | Aliado [V:7 A:7 D:2 E:2] | Inimigo [V:11 A:5 D:0 E:2]
-[12:01:09] Combate Fisico: Quimera
-Carniceira causou 7 de dano. | Aliado [V:7 A:7 D:2 E:2] | Inimigo [V:4 A:5 D:0 E:2]
-[12:01:11] Efeito Final Turno Aliado: Quimera
-Carniceira | Aliado [V:7 A:7 D:2 E:2] | Inimigo [V:4 A:5 D:0 E:2]
-[12:01:12] Efeito Final Turno Inimigo: Naelis, Grande Artesã de Cristais | Aliado [V:7 A:7 D:2 E:2] | Inimigo [V:4 A:5 D:0 E:2]
+[01:42:23] Efeito Inicio Turno Aliado: Enamor,O Grande Cavaleiro | Aliado [V:14 A:7 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
+[01:42:23] Efeito Inicio Turno Inimigo: Naelis, Grande Artesã de Cristais | Aliado [V:14 A:7 D:3 E:3] | Inimigo [V:12 A:6 D:1 E:2]
+[01:42:23] Carta Resolvida: Ataque Mágico usada por Enamor,O Grande Cavaleiro | Aliado [V:14 A:7 D:3 E:3] | Inimigo [V:12 A:6 D:0 E:2]
+[01:42:25] Carta Resolvida: Para-raios usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:0 E:3] | Inimigo [V:14 A:7 D:3 E:3]
+[01:42:27] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:0 E:3] | Inimigo [V:11 A:7 D:3 E:3]
+[01:42:27] Carta Resolvida: Ataque Mágico usada por Enamor,O Grande Cavaleiro | Aliado [V:11 A:7 D:3 E:3] | Inimigo [V:12 A:6 D:0 E:3]
+[01:42:29] Carta Resolvida: Massacre Cristalino usada por Naelis, Grande Artesã de Cristais | Aliado [V:12 A:6 D:0 E:3] | Inimigo [V:2 A:7 D:3 E:3]
+[01:42:30] Combate Fisico: Naelis, Grande Artesã de Cristais causou 3 de dano. | Aliado [V:-1 A:7 D:3 E:3] | Inimigo [V:12 A:6 D:0 E:3]
+[01:42:32] Combate Fisico: Enamor,O Grande Cavaleiro causou 7 de dano. | Aliado [V:-1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:0 E:3]
+[01:42:34] Efeito Final Turno Aliado: Enamor,O Grande Cavaleiro | Aliado [V:-1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:0 E:3]
+[01:42:35] Efeito Final Turno Inimigo: Naelis, Grande Artesã de Cristais | Aliado [V:-1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:0 E:3]
+[01:42:37] Efeito Item Aliado: Dragast | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:0 E:3]
+[01:42:37] Efeito Item Inimigo: Lamina de Cristal | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:0 E:3]
+[01:42:38] Magia Ativa Aliado: Ataque Mágico | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:0 E:3]
+[01:42:39] Magia Ativa Aliado: Ataque Mágico | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:1 E:3]
+[01:42:40] Magia Ativa Inimigo: Massacre Cristalino | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:1 E:3]
+[01:42:41] Magia Ativa Inimigo: Estatica | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:1 E:3]
+[01:42:41] Magia Ativa Inimigo: Para-raios | Aliado [V:1 A:7 D:3 E:3] | Inimigo [V:5 A:6 D:1 E:2]
+[01:42:48] Efeito Inicio Turno Aliado: Ageus, Constructo Cristalino | Aliado [V:15 A:8 D:3 E:2] | Inimigo [V:13 A:7 D:2 E:3]
+[01:42:48] Efeito Inicio Turno Inimigo: Isenora, Santa das Laminas | Aliado [V:15 A:8 D:3 E:2] | Inimigo [V:13 A:7 D:2 E:3]
+[01:42:49] Carta Resolvida: Quimera usada por Isenora, Santa das Laminas | Aliado [V:13 A:8 D:3 E:4] | Inimigo [V:15 A:8 D:3 E:2]
+[01:42:54] Carta Resolvida: Fragmento Afiado usada por Ageus, Constructo Cristalino | Aliado [V:15 A:10 D:3 E:2] | Inimigo [V:13 A:8 D:3 E:4]
+[01:42:54] Carta Resolvida: Ração de emergencia usada por Isenora, Santa das Laminas | Aliado [V:13 A:8 D:3 E:4] | Inimigo [V:15 A:10 D:3 E:2]
+[01:42:55] Carta Resolvida: Determinação
+Cristalina usada por Isenora, Santa das Laminas | Aliado [V:13 A:9 D:3 E:4] | Inimigo [V:15 A:10 D:3 E:2]
+[01:42:57] Carta Resolvida: Massacre Cristalino usada por Isenora, Santa das Laminas | Aliado [V:13 A:9 D:3 E:4] | Inimigo [V:3 A:10 D:3 E:2]
+[01:42:58] Carta Resolvida: Golpes Pesados usada por Ageus, Constructo Cristalino | Aliado [V:3 A:12 D:3 E:2] | Inimigo [V:13 A:9 D:3 E:4]
+[01:42:59] Combate Fisico: Isenora, Santa das Laminas causou 6 de dano. | Aliado [V:-3 A:12 D:3 E:2] | Inimigo [V:13 A:9 D:3 E:4]
+[01:43:01] Combate Fisico: Ageus, Constructo Cristalino causou 9 de dano. | Aliado [V:-3 A:12 D:3 E:2] | Inimigo [V:4 A:9 D:3 E:4]
+[01:43:03] Efeito Final Turno Aliado: Ageus, Constructo Cristalino | Aliado [V:-3 A:12 D:3 E:2] | Inimigo [V:4 A:9 D:3 E:4]
+[01:43:04] Efeito Final Turno Inimigo: Isenora, Santa das Laminas | Aliado [V:-6 A:12 D:3 E:2] | Inimigo [V:4 A:9 D:3 E:4]
+[01:43:05] Efeito Item Aliado: Artefato Perfurante | Aliado [V:-6 A:12 D:3 E:2] | Inimigo [V:4 A:9 D:3 E:4]
+[01:43:06] Efeito Item Aliado: Fragmento Afiado | Aliado [V:-6 A:12 D:3 E:2] | Inimigo [V:4 A:9 D:3 E:4]
+[01:43:07] Efeito Item Inimigo: Lamina de Cristal | Aliado [V:-6 A:12 D:3 E:2] | Inimigo [V:4 A:9 D:3 E:4]
+[01:43:09] Efeito Item Inimigo: Quimera | Aliado [V:-6 A:12 D:3 E:2] | Inimigo [V:8 A:9 D:3 E:4]
+[01:43:09] Magia Ativa Aliado: Golpes Pesados | Aliado [V:-6 A:10 D:3 E:2] | Inimigo [V:8 A:9 D:3 E:4]
+[01:43:10] Magia Ativa Inimigo: Massacre Cristalino | Aliado [V:-6 A:10 D:3 E:2] | Inimigo [V:8 A:9 D:3 E:4]
+[01:43:11] Magia Ativa Inimigo: Determinação
+Cristalina | Aliado [V:-6 A:10 D:3 E:2] | Inimigo [V:8 A:8 D:3 E:4]
+[01:43:12] Morte: Aliado Ageus, Constructo Cristalino foi derrotado.
+[01:43:18] Item Destruído/Desequipado: Fragmento Afiado removido de Ageus, Constructo Cristalino
+[01:43:19] Item Destruído/Desequipado: Artefato Perfurante removido de Ageus, Constructo Cristalino
+[01:43:28] Efeito Inicio Turno Aliado: Cavaleiro Onear | Aliado [V:15 A:7 D:5 E:4] | Inimigo [V:13 A:6 D:1 E:2]
+[01:43:29] Efeito Inicio Turno Inimigo: Moyra, Aprendiz da Santa | Aliado [V:15 A:7 D:5 E:4] | Inimigo [V:13 A:6 D:1 E:2]
+[01:43:30] Carta Resolvida: Quimera usada por Cavaleiro Onear | Aliado [V:15 A:8 D:6 E:5] | Inimigo [V:13 A:6 D:1 E:2]
+[01:43:32] Carta Resolvida: Estatica usada por Moyra, Aprendiz da Santa | Aliado [V:13 A:6 D:1 E:2] | Inimigo [V:15 A:8 D:6 E:5]
+[01:43:35] Carta Resolvida: Ponto Final usada por Cavaleiro Onear | Aliado [V:15 A:18 D:6 E:5] | Inimigo [V:13 A:9 D:1 E:2]
+[01:43:36] Carta Resolvida: Dragão de Cristal usada por Moyra, Aprendiz da Santa | Aliado [V:13 A:9 D:1 E:2] | Inimigo [V:15 A:20 D:6 E:5]
+[01:43:37] Combate Fisico: Moyra, Aprendiz da Santa causou 3 de dano. | Aliado [V:12 A:20 D:6 E:5] | Inimigo [V:13 A:9 D:1 E:2]
+[01:43:39] Combate Fisico: Cavaleiro Onear causou 19 de dano. | Aliado [V:12 A:20 D:6 E:5] | Inimigo [V:-6 A:9 D:1 E:2]
+[01:43:41] Efeito Final Turno Aliado: Cavaleiro Onear | Aliado [V:12 A:18 D:6 E:5] | Inimigo [V:-6 A:9 D:1 E:2]
+[01:43:41] Efeito Final Turno Inimigo: Moyra, Aprendiz da Santa | Aliado [V:12 A:18 D:6 E:5] | Inimigo [V:-6 A:6 D:1 E:2]
+[01:43:43] Efeito Item Aliado: Quimera | Aliado [V:15 A:18 D:6 E:5] | Inimigo [V:-6 A:6 D:1 E:2]
+[01:43:44] Efeito Item Inimigo: Lamina de Cristal | Aliado [V:15 A:18 D:6 E:5] | Inimigo [V:-6 A:6 D:1 E:2]
+[01:43:46] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:14 A:18 D:6 E:5] | Inimigo [V:-6 A:6 D:1 E:2]
+[01:43:47] Magia Ativa Aliado: Ponto Final | Aliado [V:14 A:8 D:6 E:5] | Inimigo [V:-6 A:6 D:1 E:2]
+[01:43:47] Magia Ativa Inimigo: Estatica | Aliado [V:14 A:8 D:6 E:5] | Inimigo [V:-6 A:6 D:1 E:2]
+[01:43:48] Morte: Inimigo Moyra, Aprendiz da Santa foi derrotado.
+[01:43:49] Item Destruído/Desequipado: Dragão de Cristal removido de Moyra, Aprendiz da Santa
+[01:43:50] Item Destruído/Desequipado: Lamina de Cristal removido de Moyra, Aprendiz da Santa
+[01:44:03] Efeito Inicio Turno Aliado: Enamor,O Grande Cavaleiro | Aliado [V:1 A:7 D:5 E:5] | Inimigo [V:8 A:8 D:3 E:4]
+[01:44:03] Efeito Inicio Turno Inimigo: Isenora, Santa das Laminas | Aliado [V:1 A:7 D:5 E:5] | Inimigo [V:8 A:8 D:3 E:4]
+[01:44:03] Carta Resolvida: Dragão de Cristal usada por Isenora, Santa das Laminas | Aliado [V:8 A:8 D:3 E:4] | Inimigo [V:1 A:7 D:5 E:5]
+[01:44:05] Carta Resolvida: Determinação
+Cristalina usada por Enamor,O Grande Cavaleiro | Aliado [V:1 A:8 D:5 E:5] | Inimigo [V:8 A:8 D:3 E:4]
+[01:44:06] Carta Resolvida: Ponto Final usada por Enamor,O Grande Cavaleiro | Aliado [V:1 A:18 D:5 E:5] | Inimigo [V:8 A:8 D:3 E:4]
+[01:44:07] Carta Resolvida: Liberação: Moyra usada por Isenora, Santa das Laminas | Aliado [V:8 A:8 D:3 E:4] | Inimigo [V:1 A:18 D:5 E:5]
+[01:44:08] Carta Resolvida: Determinação
+Cristalina usada por Isenora, Santa das Laminas | Aliado [V:8 A:9 D:3 E:4] | Inimigo [V:1 A:18 D:5 E:5]
+[01:44:10] Carta Resolvida: Estatica usada por Isenora, Santa das Laminas | Aliado [V:8 A:9 D:3 E:4] | Inimigo [V:-1 A:18 D:5 E:5]
+[01:44:11] Carta Resolvida: Ataque Mágico usada por Enamor,O Grande Cavaleiro | Aliado [V:-1 A:18 D:5 E:5] | Inimigo [V:8 A:9 D:0 E:4]
+[01:44:12] Combate Fisico: Isenora, Santa das Laminas causou 4 de dano. | Aliado [V:-5 A:18 D:5 E:5] | Inimigo [V:8 A:9 D:0 E:4]
+[01:44:14] Combate Fisico: Enamor,O Grande Cavaleiro causou 18 de dano. | Aliado [V:-5 A:18 D:5 E:5] | Inimigo [V:-10 A:9 D:0 E:4]
+[01:44:15] Efeito Final Turno Aliado: Enamor,O Grande Cavaleiro | Aliado [V:-5 A:18 D:5 E:5] | Inimigo [V:-10 A:9 D:0 E:4]
+[01:44:17] Efeito Final Turno Inimigo: Isenora, Santa das Laminas | Aliado [V:-5 A:18 D:5 E:5] | Inimigo [V:-10 A:9 D:0 E:4]
+[01:44:19] Efeito Item Aliado: Dragast | Aliado [V:-3 A:18 D:5 E:5] | Inimigo [V:-10 A:9 D:0 E:4]
+[01:44:20] Efeito Item Inimigo: Lamina de Cristal | Aliado [V:-3 A:18 D:5 E:5] | Inimigo [V:-10 A:9 D:0 E:4]
+[01:44:22] Efeito Item Inimigo: Quimera | Aliado [V:-3 A:18 D:5 E:5] | Inimigo [V:-6 A:9 D:0 E:4]
+[01:44:23] Efeito Item Inimigo: Dragão de Cristal | Aliado [V:-4 A:18 D:5 E:5] | Inimigo [V:-6 A:9 D:0 E:4]
+[01:44:24] Magia Ativa Aliado: Ataque Mágico | Aliado [V:-4 A:18 D:5 E:5] | Inimigo [V:-6 A:9 D:3 E:4]
+[01:44:25] Magia Ativa Aliado: Ponto Final | Aliado [V:-4 A:8 D:5 E:5] | Inimigo [V:-6 A:9 D:3 E:4]
+[01:44:26] Magia Ativa Aliado: Determinação
+Cristalina | Aliado [V:-4 A:7 D:5 E:5] | Inimigo [V:-6 A:9 D:3 E:4]
+[01:44:27] Magia Ativa Inimigo: Estatica | Aliado [V:-4 A:7 D:5 E:5] | Inimigo [V:-6 A:9 D:3 E:4]
+[01:44:27] Magia Ativa Inimigo: Determinação
+Cristalina | Aliado [V:-4 A:7 D:5 E:5] | Inimigo [V:-6 A:8 D:3 E:4]
+[01:44:28] Morte: Aliado Enamor,O Grande Cavaleiro foi derrotado.
+[01:44:29] Item Destruído/Desequipado: Dragast removido de Enamor,O Grande Cavaleiro
+[01:44:31] Morte: Inimigo Isenora, Santa das Laminas foi derrotado.
+[01:44:32] Item Destruído/Desequipado: Dragão de Cristal removido de Isenora, Santa das Laminas
+[01:44:33] Item Destruído/Desequipado: Quimera removido de Isenora, Santa das Laminas
+[01:44:34] Item Destruído/Desequipado: Lamina de Cristal removido de Isenora, Santa das Laminas
+[01:44:44] Efeito Inicio Turno Aliado: Cavaleiro Onear | Aliado [V:14 A:8 D:6 E:5] | Inimigo [V:5 A:6 D:1 E:2]
+[01:44:44] Efeito Inicio Turno Inimigo: Naelis, Grande Artesã de Cristais | Aliado [V:14 A:8 D:6 E:5] | Inimigo [V:5 A:6 D:1 E:2]
+[01:44:46] Carta Resolvida: Determinação
+Cristalina usada por Cavaleiro Onear | Aliado [V:14 A:9 D:6 E:5] | Inimigo [V:5 A:6 D:1 E:2]
+[01:44:47] Carta Resolvida: Dragast usada por Cavaleiro Onear | Aliado [V:14 A:11 D:6 E:7] | Inimigo [V:5 A:6 D:1 E:2]
+[01:44:49] Carta Resolvida: Para-raios usada por Naelis, Grande Artesã de Cristais | Aliado [V:5 A:6 D:1 E:3] | Inimigo [V:14 A:11 D:6 E:7]
+[01:44:51] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:5 A:6 D:1 E:3] | Inimigo [V:14 A:11 D:6 E:7]
+[01:44:53] Carta Resolvida: Ração de emergencia usada por Cavaleiro Onear | Aliado [V:14 A:11 D:6 E:7] | Inimigo [V:5 A:6 D:1 E:3]
+[01:45:01] Carta Resolvida: Determinação
+Cristalina usada por Cavaleiro Onear | Aliado [V:14 A:12 D:6 E:7] | Inimigo [V:5 A:6 D:1 E:3]
+[01:45:02] Carta Resolvida: Ponto Final usada por Cavaleiro Onear | Aliado [V:14 A:26 D:6 E:7] | Inimigo [V:5 A:6 D:1 E:3]
+[01:45:04] Carta Resolvida: Estatica usada por Naelis, Grande Artesã de Cristais | Aliado [V:5 A:6 D:1 E:3] | Inimigo [V:14 A:28 D:6 E:7]
+[01:45:05] Combate Fisico: Cavaleiro Onear causou 27 de dano. | Aliado [V:14 A:28 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:07] Efeito Final Turno Aliado: Cavaleiro Onear | Aliado [V:14 A:26 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:08] Efeito Final Turno Inimigo: Naelis, Grande Artesã de Cristais | Aliado [V:14 A:26 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:09] Efeito Item Aliado: Quimera | Aliado [V:15 A:26 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:11] Efeito Item Aliado: Dragast | Aliado [V:15 A:26 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:12] Efeito Item Inimigo: Lamina de Cristal | Aliado [V:15 A:26 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:13] Magia Ativa Aliado: Ponto Final | Aliado [V:15 A:12 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:14] Magia Ativa Aliado: Determinação
+Cristalina | Aliado [V:15 A:11 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:14] Magia Ativa Aliado: Determinação
+Cristalina | Aliado [V:15 A:10 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:15] Magia Ativa Inimigo: Estatica | Aliado [V:15 A:10 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:16] Magia Ativa Inimigo: Estatica | Aliado [V:15 A:10 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:3]
+[01:45:17] Magia Ativa Inimigo: Para-raios | Aliado [V:15 A:10 D:6 E:7] | Inimigo [V:-22 A:6 D:1 E:2]
+[01:45:18] Morte: Inimigo Naelis, Grande Artesã de Cristais foi derrotado.
+[01:45:18] Item Destruído/Desequipado: Lamina de Cristal removido de Naelis, Grande Artesã de Cristais
