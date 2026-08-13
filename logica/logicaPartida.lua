@@ -102,7 +102,6 @@ function logicaPartida.resetarPartida()
     -- Limpeza de listas de processamento essenciais que ficavam presas
     logicaPartida.filaDeResolucao = {}
     logicaPartida.indiceFila = 1
-    logicaPartida.logIniciado = false -- Reseta para que o arquivo log seja reescrito (modo "w")
 end
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
@@ -241,9 +240,7 @@ function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
         if donoDoHeroi and donoDoHeroi.descarte then
             table.insert(donoDoHeroi.descarte, itemRemovido)
         end
-        
-        logicaPartida.registrarLog("Item Destruído/Desequipado: " .. itemRemovido.nome .. " removido de " .. heroiAlvo.nome)
-        
+                
         if logicaPartida.emitirVFX then
             local alvoVFX = donoDoHeroi == logicaPartida.jogador1 and "aliado" or "inimigo"
             logicaPartida.emitirVFX("debuff", alvoVFX)
@@ -255,26 +252,6 @@ function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
     return false
 end
 
---logs
-logicaPartida.logIniciado = false
-
-function logicaPartida.registrarLog(mensagem)
-    local modo = "a"
-    if logicaPartida.logIniciado == false then
-        modo = "w"
-        logicaPartida.logIniciado = true
-    end
-
-    local arquivo = io.open("log_partida.txt", modo)
-    if arquivo then
-        arquivo:write(os.date("[%H:%M:%S] ") .. mensagem .. "\n")
-        arquivo:close()
-    end
-end
-
-function logicaPartida.obterStatusLog(aliado, inimigo)
-    return "| Aliado [V:" .. aliado.vidaAtual .. " A:" .. aliado.ataque .. " D:" .. aliado.defesa .. " E:" .. aliado.espirito .. "] | Inimigo [V:" .. inimigo.vidaAtual .. " A:" .. inimigo.ataque .. " D:" .. inimigo.defesa .. " E:" .. inimigo.espirito .. "]"
-end
 
 function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     logicaPartida.emitirVFX = callbackVisual 
@@ -290,7 +267,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
             
             if type(cartaDaVez.efeito) == "function" then
                 cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida, cartaDaVez)
-                logicaPartida.registrarLog("Carta Gerada Resolvida: " .. cartaDaVez.nome .. " usada por " .. jogada.aliado.nome)
             end
             
             if cartaDaVez.tipo ~= 3 then
@@ -309,7 +285,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     if inimigo.ataque > heroi.defesa then
         local dano = inimigo.ataque - heroi.defesa
         heroi.vidaAtual = heroi.vidaAtual - dano
-        logicaPartida.registrarLog("Combate Fisico: " .. inimigo.nome .. " causou " .. dano .. " de dano. " .. logicaPartida.obterStatusLog(heroi, inimigo))
         if callbackVisual then callbackVisual("danoFisico", "aliado") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
@@ -317,7 +292,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     if heroi.ataque > inimigo.defesa then
         local dano = heroi.ataque - inimigo.defesa
         inimigo.vidaAtual = inimigo.vidaAtual - dano
-        logicaPartida.registrarLog("Combate Fisico: " .. heroi.nome .. " causou " .. dano .. " de dano. " .. logicaPartida.obterStatusLog(heroi, inimigo))
         if callbackVisual then callbackVisual("danoFisico", "inimigo") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
@@ -325,13 +299,11 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     -- Efeitos Finais de Turno
     if type(heroi.efeitoFinalDoTurno) == "function" then
         heroi.efeitoFinalDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
-        logicaPartida.registrarLog("Efeito Final Turno Aliado: " .. heroi.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
     if type(inimigo.efeitoFinalDoTurno) == "function" then
         inimigo.efeitoFinalDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
-        logicaPartida.registrarLog("Efeito Final Turno Inimigo: " .. inimigo.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
@@ -339,7 +311,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         for _, itm in ipairs(heroi.itemEquipado) do
             if type(itm.efeitoFinalDoTurno) == "function" then
                 itm.efeitoFinalDoTurno(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
-                logicaPartida.registrarLog("Efeito Item Aliado: " .. itm.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
                 if callbackAtualizacao then callbackAtualizacao() end
             end
         end
@@ -349,7 +320,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         for _, itm in ipairs(inimigo.itemEquipado) do
             if type(itm.efeitoFinalDoTurno) == "function" then
                 itm.efeitoFinalDoTurno(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
-                logicaPartida.registrarLog("Efeito Item Inimigo: " .. itm.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
                 if callbackAtualizacao then callbackAtualizacao() end
             end
         end
@@ -360,7 +330,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
             local magiaAtiva = heroi.magiasAtivas[i]
             if type(magiaAtiva.efeitoFinalDoTurno) == "function" then
                 magiaAtiva.efeitoFinalDoTurno(magiaAtiva, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
-                logicaPartida.registrarLog("Magia Ativa Aliado: " .. magiaAtiva.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
                 if callbackAtualizacao then callbackAtualizacao() end
             end
             
@@ -374,7 +343,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
             local magiaAtiva = inimigo.magiasAtivas[i]
             if type(magiaAtiva.efeitoFinalDoTurno) == "function" then
                 magiaAtiva.efeitoFinalDoTurno(magiaAtiva, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
-                logicaPartida.registrarLog("Magia Ativa Inimigo: " .. magiaAtiva.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
                 if callbackAtualizacao then callbackAtualizacao() end
             end
             
@@ -394,7 +362,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if aliado.vidaAtual <= 0 and aliado.estaVivo then        
             aliado.estaVivo = false
-            logicaPartida.registrarLog("Morte: Aliado " .. aliado.nome .. " foi derrotado.")
             
             if type(aliado.efeitoAoMorrer) == "function" then
                 aliado.efeitoAoMorrer(aliado, aliado, inimigo, logicaPartida.jogador1, logicaPartida, nil)
@@ -421,7 +388,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     for _, inimigoAlvo in ipairs(logicaPartida.jogador2.aliados) do
         if inimigoAlvo.vidaAtual <= 0 and inimigoAlvo.estaVivo then        
             inimigoAlvo.estaVivo = false
-            logicaPartida.registrarLog("Morte: Inimigo " .. inimigoAlvo.nome .. " foi derrotado.")
             
             if type(inimigoAlvo.efeitoAoMorrer) == "function" then
                 inimigoAlvo.efeitoAoMorrer(inimigoAlvo, inimigoAlvo, heroi, logicaPartida.jogador2, logicaPartida, nil)
@@ -462,12 +428,10 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
     
     if type(heroi.efeitoInicioDoTurno) == "function" then
         heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
-        logicaPartida.registrarLog("Efeito Inicio Turno Aliado: " .. heroi.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
     end
 
     if type(inimigo.efeitoInicioDoTurno) == "function" then
         inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
-        logicaPartida.registrarLog("Efeito Inicio Turno Inimigo: " .. inimigo.nome .. " " .. logicaPartida.obterStatusLog(heroi, inimigo))
     end
 
 local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
@@ -515,8 +479,6 @@ local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
         if type(cartaDaVez.efeito) == "function" then
             cartaDaVez.efeito(cartaDaVez, heroiAtivo, inimigoAtivo, donoDaCarta, logicaPartida, cartaDaVez)
             
-            logicaPartida.registrarLog("Carta Resolvida: " .. cartaDaVez.nome .. " usada por " .. heroiAtivo.nome .. " " .. logicaPartida.obterStatusLog(heroiAtivo, inimigoAtivo))
-
             if cartaDaVez.tipo == 3 then
                 if not heroiAtivo.itemEquipado then heroiAtivo.itemEquipado = {} end
                 table.insert(heroiAtivo.itemEquipado, cartaDaVez)

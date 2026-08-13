@@ -120,7 +120,8 @@ end
 local function atualizarBiblioteca()
     biblioteca = {}
     for _, c in ipairs(bibliotecaCompleta) do
-        if filtrosAtivos[c.tipoFiltro] then
+        -- Verifica se o filtro da categoria está ativo e bloqueia cartas com reliquia = true
+        if filtrosAtivos[c.tipoFiltro] and c.reliquia ~= true then
             table.insert(biblioteca, c)
         end
     end
