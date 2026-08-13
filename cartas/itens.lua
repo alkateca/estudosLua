@@ -78,7 +78,7 @@ itens.laminaDeCristal = {
     unica = false,
     raca = {"Cristal"},
     dano = 0,
-    descricao = "+1 de Espirito\n+1 de Ataque",
+    descricao = "+1 de Ataque",
 
     efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
     efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
