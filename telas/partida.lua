@@ -1265,6 +1265,7 @@ function Partida.checarCliqueDescarte(x, y)
 end
 
 function Partida.draw()
+
     love.graphics.setFont(fonteIoskeley)
 
     local x, y = love.mouse.getPosition()
