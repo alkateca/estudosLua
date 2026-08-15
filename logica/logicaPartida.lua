@@ -1,3 +1,7 @@
+--control + k > 0
+--control + j > 0
+
+
 local logicaPartida = {}
 
 local heroi = require("cartas.herois")
@@ -252,7 +256,6 @@ function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
     return false
 end
 
-
 function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     logicaPartida.emitirVFX = callbackVisual 
     local heroi = logicaPartida.jogador1.heroiDoturno
@@ -281,20 +284,48 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
         logicaPartida.filaDeResolucao = {}
     end
 
-    -- Combate Físico
-    if inimigo.ataque > heroi.defesa then
-        local dano = inimigo.ataque - heroi.defesa
+    -- =====================================
+    -- Combate Físico Modificado
+    -- =====================================
+    
+    -- 1. Resolução do ataque do Inimigo no Herói
+    local defesaEfetivaHeroi = heroi.defesa
+    local efeitoVisualInimigo = "danoFisico"
+    
+    if inimigo.ataqueDireto then
+        defesaEfetivaHeroi = 0
+        efeitoVisualInimigo = "danoDireto"
+    elseif inimigo.ataqueMagico then
+        defesaEfetivaHeroi = heroi.espirito
+        efeitoVisualInimigo = "danoMagico"
+    end
+
+    if inimigo.ataque > defesaEfetivaHeroi then
+        local dano = inimigo.ataque - defesaEfetivaHeroi
         heroi.vidaAtual = heroi.vidaAtual - dano
-        if callbackVisual then callbackVisual("danoFisico", "aliado") end
+        if callbackVisual then callbackVisual(efeitoVisualInimigo, "aliado") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    if heroi.ataque > inimigo.defesa then
-        local dano = heroi.ataque - inimigo.defesa
+    -- 2. Resolução do ataque do Herói no Inimigo
+    local defesaEfetivaInimigo = inimigo.defesa
+    local efeitoVisualHeroi = "danoFisico"
+    
+    if heroi.ataqueDireto then
+        defesaEfetivaInimigo = 0
+        efeitoVisualHeroi = "danoDireto"
+    elseif heroi.ataqueMagico then
+        defesaEfetivaInimigo = inimigo.espirito
+        efeitoVisualHeroi = "danoMagico"
+    end
+
+    if heroi.ataque > defesaEfetivaInimigo then
+        local dano = heroi.ataque - defesaEfetivaInimigo
         inimigo.vidaAtual = inimigo.vidaAtual - dano
-        if callbackVisual then callbackVisual("danoFisico", "inimigo") end
+        if callbackVisual then callbackVisual(efeitoVisualHeroi, "inimigo") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
+    -- =====================================
 
     -- Efeitos Finais de Turno
     if type(heroi.efeitoFinalDoTurno) == "function" then
@@ -426,12 +457,32 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
     local heroi = logicaPartida.jogador1.heroiDoturno
     local inimigo = logicaPartida.jogador2.heroiDoturno
     
+-- Gatilhos de Início de Turno do Herói
     if type(heroi.efeitoInicioDoTurno) == "function" then
         heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
     end
 
+    -- VERIFICA OS ITENS DO HERÓI
+    if heroi.itemEquipado then
+        for _, itm in ipairs(heroi.itemEquipado) do
+            if type(itm.efeitoInicioDoTurno) == "function" then
+                itm.efeitoInicioDoTurno(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
+            end
+        end
+    end
+
+    -- Gatilhos de Início de Turno do Inimigo
     if type(inimigo.efeitoInicioDoTurno) == "function" then
         inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
+    end
+
+    -- VERIFICA OS ITENS DO INIMIGO
+    if inimigo.itemEquipado then
+        for _, itm in ipairs(inimigo.itemEquipado) do
+            if type(itm.efeitoInicioDoTurno) == "function" then
+                itm.efeitoInicioDoTurno(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
+            end
+        end
     end
 
 local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)

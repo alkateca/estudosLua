@@ -305,7 +305,9 @@ magias.contraAtaque = {
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
         aliado.ataque = aliado.ataque + 3
-
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", aliado)
+        end
         for _, racaAtual in ipairs(aliado.raca or {}) do
             if racaAtual == "Cavaleiro" then
                 aliado.espirito = aliado.espirito + 1
@@ -313,6 +315,8 @@ magias.contraAtaque = {
                 self.efeitoAtivo = true
             end
         end
+
+
 
         if inimigo.itemEquipado and #inimigo.itemEquipado > 0 then
             
@@ -361,6 +365,9 @@ magias.ataqueMagico = {
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         self.defesaAtual = inimigo.defesa
         inimigo.defesa = 0
+        if partida.emitirVFX then
+            partida.emitirVFX("debuff", inimigo)
+        end
     end,
     
     efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
@@ -384,6 +391,9 @@ magias.golpesPesados = {
         self.dano = aliado.espirito
         if self.efeitoAtivo == false then
            aliado.ataque = aliado.ataque + self.dano
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", aliado)
+            end
            self.efeitoAtivo = true
         end
     end,
@@ -393,6 +403,71 @@ magias.golpesPesados = {
             aliado.ataque = aliado.ataque - self.dano
             self.efeitoAtivo = false
         end
+    end
+}
+
+--a decidir
+magias.barreiraDeGelo = {
+    tipo = 2,
+    nome = "Barreira de Gelo",
+    raca = {},
+    unica = false,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Aliados recebem Espirito +1 e Defesa +2",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        for i, heroisAliado in ipairs(dono.aliados) do
+            heroisAliado.espirito = heroisAliado.espirito + 1
+            heroisAliado.defesa = heroisAliado.defesa + 2
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", heroisAliado)
+            end
+        end
+    end,
+    
+}
+
+magias.autoDefesaMagica = {
+    tipo = 2,
+    nome = "Auto Defesa Magica",
+    raca = nil,
+    unica = false,
+    dano = 0,
+    debuff = 0,
+    inimigoEsp = 0,
+    elemento = 5,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Ataque +X até o Final do Combate, onde X é seu Espirito\nSeu Inimigo recebe Defesa -X, onde X é o Espirito do seu Inimigo",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        self.dano = aliado.espirito
+        self.inimigoEsp = inimigo.espirito
+        self.debuff = inimigo.defesa - self.inimigoEsp
+        if self.efeitoAtivo == false then
+           aliado.ataque = aliado.ataque + self.dano
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", aliado)
+            end
+            inimigo.defesa = math.max(0, self.debuff)
+            if partida.emitirVFX then
+                partida.emitirVFX("debuff", inimigo)
+            end
+           self.efeitoAtivo = true
+        end
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        if self.efeitoAtivo == true then
+            aliado.ataque = aliado.ataque - self.dano
+            inimigo.defesa = inimigo.defesa + self.inimigoEsp
+            self.efeitoAtivo = false
+        end
+        self.dano = 0
+        self.inimigoEsp = 0
+        self.debuff = 0
     end
 }
 

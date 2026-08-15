@@ -21,6 +21,8 @@ local acoes = require("cartas.acoes")
         descricao = "Descrição dos efeitos e lore da carta.",
         
         -- Flags de Estado e Controle
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -70,6 +72,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Um dragão com as 7 cores do espectro visivel",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -101,6 +105,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Um Elfo das planices do sul",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -132,6 +138,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Um erro",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -164,6 +172,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Uma vez por Turno, ao Jogar\nMagia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do turno: Cura 2\n",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -199,6 +209,9 @@ local acoes = require("cartas.acoes")
             elseif cartaJogada.tipo == 4 and self.buffDef == false then
                 self.defesa = self.defesa + valorBuff
                 self.buffDef = true
+            end
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", self)
             end
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
@@ -244,6 +257,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Aura:\nSeus Goblins aliados recebem +1 em seus efeitos",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -275,6 +290,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Início da Partida:\nAtaque +1 e Defesa +1 para cada aliado Goblin",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -332,6 +349,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Zumbi\nFinal do Turno\nCure seus aliados em 2",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -377,6 +396,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Zumbi\nInicio do Combate:\nPara cada aliado Zumbi:\nEspirito e Ataque +1\nRecupera 2 de vida",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -436,6 +457,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Zumbi\nInício do Turno:\nCrie e Jogue uma Ritos Fúnebres",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -476,6 +499,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Seus Aliados recebem\nEspirito +1 Ataque +1 Defesa +1\nFinal do Turno:\nCause 5 de Dano Mágico",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -523,6 +548,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Inicio do turno:\nCause 3 de dano mágico\nAo jogar: Magia\nAtaque +3 até o final do turno",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -577,6 +604,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Início da Partida:\nAnexe uma Lamina de Cristal em seus aliados",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -625,6 +654,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Final do Turno:\nSe durante o Turno seu Ataque foi igual ou superior a 10:\nRealize um Ataque extra",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -676,6 +707,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Início do Turno:\nCure seus Aliados em 2\nFinal do Turno:\nCause Dano Direto ao seu Inimigo equivalente a soma Cura do Turno",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -743,6 +776,8 @@ local acoes = require("cartas.acoes")
         elemento = 5,
         itemEquipado = {},
         descricao = "Cavaleiro - Elemental Cristalino\nInicio do turno:\nSe não estiver com Dragast Equipada:\nJogue Dragast de sua Mão, Baralho ou Descarte",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -822,6 +857,8 @@ local acoes = require("cartas.acoes")
         elemento = 5,
         itemEquipado = {},
         descricao = "Cavaleiro - Elemental Cristalino\nSeus Aliados recebem Espirito +2 e Defesa +2 para cada Cavaleiro Aliado Morto",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -889,6 +926,8 @@ local acoes = require("cartas.acoes")
         elemento = 5, 
         itemEquipado = {},
         descricao = "Cavaleiro - Elemental Cristalino\nUma vez por Turno:\nAo Jogar uma Magia: Ataque +2",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -907,6 +946,9 @@ local acoes = require("cartas.acoes")
                     self.efeitoDoTurno = true
                 end
             end
+                if partida.emitirVFX then
+                    partida.emitirVFX("buff", self)
+                end
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             if self.efeitoDoTurno == true then
@@ -934,6 +976,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Inicio do turno:\nO Inimigo recebe -2 de Espirito\nAo jogar: Magia\nAtaque +2 \nFinal do turno:\nCause 5 de dano mágico",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -952,7 +996,7 @@ local acoes = require("cartas.acoes")
             end
             
             if partida.emitirVFX then
-                partida.emitirVFX("danoMagico", inimigo)
+                partida.emitirVFX("debuff", inimigo)
             end
         end,
         efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada)
@@ -997,6 +1041,8 @@ local acoes = require("cartas.acoes")
         elemento = nil,
         itemEquipado = {},
         descricao = "Ao jogar: Magia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do Turno: Cure seus Aliados em 3\nEm área Um terço do seu Espirito\nUm terço do seu Ataque",
+        ataqueMagico = false,
+        ataqueDireto = false,
         estaVivo = true,
         estaAtivo = true,
         efeitoAtivo = false,
@@ -1026,6 +1072,9 @@ local acoes = require("cartas.acoes")
             elseif cartaJogada.tipo == 4 then
                 self.defesa = self.defesa + valorBuff
             end
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", self)
+        end
         end,
         efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
             
