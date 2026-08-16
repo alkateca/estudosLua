@@ -1,7 +1,3 @@
---control + k > 0
---control + j > 0
-
-
 local logicaPartida = {}
 
 local heroi = require("cartas.herois")
@@ -34,6 +30,7 @@ local function deepcopy(orig, copies)
 end
 
 logicaPartida.turnoAtual = 1
+logicaPartida.faseDoTurno = "preparacao"
 
 logicaPartida.jogador1 = {
     reliquia = nil,
@@ -44,6 +41,7 @@ logicaPartida.jogador1 = {
     descarte = {},
     aliados = {},
     cartasEscolhidas = {},
+    cartasParaDescarte = {},
     heroiDoturno = nil,
     pontuacao = 0
 }
@@ -70,6 +68,7 @@ function logicaPartida.prepararOponentePVE()
             heroi.santaDasLaminas, heroi.aprendizDasLaminas, heroi.artesaDasLaminas
         }),
         cartasEscolhidas = {},
+        cartasParaDescarte = {},
         heroiDoturno = nil,
         pontuacao = 0
     }
@@ -78,34 +77,25 @@ end
 math.randomseed(os.time())
 
 function logicaPartida.resetarPartida()
-
-    -- Zera o jogador 1
+    -- Zera o jogador 1 com todos os campos limpos
     logicaPartida.jogador1 = {
-        reliquia = nil,
-        extraDeck = {},
-        baralho = {},
-        nome = "",
-        mao = {},
-        descarte = {},
-        aliados = {},
-        cartasEscolhidas = {},
-        heroiDoturno = nil,
-        pontuacao = 0
+        reliquia = nil, extraDeck = {}, baralho = {}, nome = "",
+        mao = {}, descarte = {}, aliados = {}, cartasEscolhidas = {},
+        cartasParaDescarte = {}, heroiDoturno = nil, pontuacao = 0
     }
 
-    -- Zera o jogador 2 
-    logicaPartida.jogador2 = {}
+    -- Zera o jogador 2 com todos os campos limpos
+    logicaPartida.jogador2 = {
+        reliquia = nil, extraDeck = {}, baralho = {}, nome = "",
+        mao = {}, descarte = {}, aliados = {}, cartasEscolhidas = {},
+        cartasParaDescarte = {}, heroiDoturno = nil, pontuacao = 0
+    }
 
-    local partida = require("telas.partida")
-
-    partida.desenharHeroiEscolhido(nil, nil)
-    partida.faseDoTurno = "preparacao"
-    
+    logicaPartida.faseDoTurno = "preparacao"
     logicaPartida.turnoAtual = 1
-    
-    -- Limpeza de listas de processamento essenciais que ficavam presas
     logicaPartida.filaDeResolucao = {}
     logicaPartida.indiceFila = 1
+    logicaPartida.estadoAlvo = { ativo = false, tipo = "", dono = nil, callback = nil }
 end
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
@@ -381,13 +371,6 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
             table.remove(inimigo.magiasAtivas, i)
         end
     end
-    
-    if #logicaPartida.jogador1.mao < 5 then
-        logicaPartida.comprarCartas(logicaPartida.jogador1, 5 - #logicaPartida.jogador1.mao)
-    end
-    if #logicaPartida.jogador2.mao < 5 then
-        logicaPartida.comprarCartas(logicaPartida.jogador2, 5 - #logicaPartida.jogador2.mao)
-    end
 
     -- === RESOLUÇÃO DE MORTES - JOGADOR 1 ===
     for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
@@ -565,6 +548,27 @@ local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
     logicaPartida.filaDeResolucao = {}
     logicaPartida.jogador1.cartasEscolhidas = {}
     logicaPartida.jogador2.cartasEscolhidas = {}
+end
+
+function logicaPartida.entreTurnos(callbackAtualizacao, callbackVisual)
+    -- Efetiva os descartes agendados
+    for _, carta in ipairs(logicaPartida.jogador1.cartasParaDescarte) do
+        table.insert(logicaPartida.jogador1.descarte, carta)
+    end
+    logicaPartida.jogador1.cartasParaDescarte = {}
+
+    for _, carta in ipairs(logicaPartida.jogador2.cartasParaDescarte) do
+        table.insert(logicaPartida.jogador2.descarte, carta)
+    end
+    logicaPartida.jogador2.cartasParaDescarte = {}
+
+    -- Compras de reposição
+    if #logicaPartida.jogador1.mao < 5 then
+        logicaPartida.comprarCartas(logicaPartida.jogador1, 5 - #logicaPartida.jogador1.mao)
+    end
+    if #logicaPartida.jogador2.mao < 5 then
+        logicaPartida.comprarCartas(logicaPartida.jogador2, 5 - #logicaPartida.jogador2.mao)
+    end
 end
 
 return logicaPartida

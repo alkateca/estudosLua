@@ -1,6 +1,6 @@
 local BotaoVoltar = {}
 
-local popUpAberto = false 
+BotaoVoltar.popUpAberto = false -- Agora é público para a Partida.lua poder enxergar
 
 function BotaoVoltar.draw()
     love.graphics.setColor(1, 0, 1)
@@ -9,10 +9,9 @@ function BotaoVoltar.draw()
     love.graphics.setColor(1, 1, 1) 
     love.graphics.printf("Menu", 1300, 25, 100, "center")
 
-    -- SÓ DESENHA O POP-UP SE ESTIVER NA PARTIDA E ELE ESTIVER ABERTO
-    if popUpAberto and estadoAtualGlobal == "partida" then 
+    if BotaoVoltar.popUpAberto and estadoAtualGlobal == "partida" then 
         love.graphics.setColor(0, 0, 0, 0.7)
-        love.graphics.rectangle("fill", 0, 0, 1920, 1080) 
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight()) 
 
         love.graphics.setColor(0.2, 0.2, 0.2)
         love.graphics.rectangle("fill", 600, 300, 400, 200, 10, 10)
@@ -33,37 +32,44 @@ function BotaoVoltar.draw()
 end
 
 function BotaoVoltar.mousereleased(x, y, button)
-    if button == 1 then
+    if button ~= 1 then return false end
+
+    if BotaoVoltar.popUpAberto and estadoAtualGlobal == "partida" then
         
-        if popUpAberto and estadoAtualGlobal == "partida" then
-            
-            -- Clicou em "Sim"
-            if x >= 650 and x <= 750 and y >= 420 and y <= 470 then
-                if logicaPartida and logicaPartida.resetarPartida then
-                    logicaPartida.resetarPartida()
-                end
-                popUpAberto = false
+        -- Clicou em "Sim"
+        if x >= 650 and x <= 750 and y >= 420 and y <= 470 then
+            -- Importa localmente para evitar bugs de require circular
+            local logica = require("logica.logicaPartida")
+            local partidaTela = require("telas.partida")
+
+            if logica.resetarPartida then logica.resetarPartida() end
+            if partidaTela.resetarVisual then partidaTela.resetarVisual() end
+
+            BotaoVoltar.popUpAberto = false
+            estadoAtualGlobal = "menu"
+            return true -- Retorna true avisando que consumiu o clique
+        end
+
+        -- Clicou em "Não"
+        if x >= 850 and x <= 950 and y >= 420 and y <= 470 then
+            BotaoVoltar.popUpAberto = false
+            return true
+        end
+        
+        return true -- Se clicou no fundo escuro, bloqueia o clique para não interagir com o jogo
+    else
+        -- Botão Menu Padrão
+        if x >= 1300 and x <= 1400 and y >= 10 and y <= 60 then
+            if estadoAtualGlobal == "partida" then
+                BotaoVoltar.popUpAberto = true
+            else
                 estadoAtualGlobal = "menu"
             end
-
-            -- Clicou em "Não"
-            if x >= 850 and x <= 950 and y >= 420 and y <= 470 then
-                popUpAberto = false
-            end
-            
-        else
-            -- Botão Menu Padrão
-            if x >= 1300 and x <= 1400 and y >= 10 and y <= 60 then
-                -- Se estiver na partida, abre o pop-up
-                if estadoAtualGlobal == "partida" then
-                    popUpAberto = true
-                else
-                    -- Se estiver em qualquer outra tela (tutorial, deck, etc), volta direto!
-                    estadoAtualGlobal = "menu"
-                end
-            end
+            return true
         end
     end
+    
+    return false
 end
 
 return BotaoVoltar

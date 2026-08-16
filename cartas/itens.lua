@@ -312,41 +312,5 @@ itens.fragmentoAfiado = {
     end
 }
 
---a decidir
-itens.garraEspectral = {
-    tipo = 3,
-    nome = "Garra espectral",
-    unica = true,
-    raca = {},
-    dano = 0,
-    descricao = "Ataque +2\nO Inimigo recebe Espirito -2\nSeus Ataques causam Dano Mágico em vez de Fisico",
-    
-    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    
-    feito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        aliado.ataque = aliado.ataque + 2
-        inimigo.espirito = math.max(0, inimigo.espirito - 2) -- Impede espirito negativo
-        aliado.ataqueMagico = true -- Ativa a flag de ataque mágico
-
-        if partida.emitirVFX then
-            partida.emitirVFX("buff", aliado)
-            partida.emitirVFX("debuff", inimigo)
-        end
-    end,
-    
-    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        aliado.ataque = aliado.ataque - 2
-        inimigo.espirito = inimigo.espirito + 2
-        aliado.ataqueMagico = false
-    end,
-
-    efeitoFinalDoTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
-       
-    end
-}
 
 return itens

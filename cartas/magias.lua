@@ -471,4 +471,44 @@ magias.autoDefesaMagica = {
     end
 }
 
+magias.reforcoEspiritual = {
+    tipo = 2,
+    nome = "Reforço espiritual",
+    raca = {},
+    unica = false,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Aliados recebem Espirito +1",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        for i, heroisAliado in ipairs(dono.aliados) do
+            heroisAliado.espirito = heroisAliado.espirito + 1
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", heroisAliado)
+            end
+        end
+    end,
+}
+
+magias.reforcoTerrestre = {
+    tipo = 2,
+    nome = "Reforço terrestre",
+    raca = {},
+    unica = false,
+    elemento = nil,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Aliados recebem Defesa +1",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        for i, heroisAliado in ipairs(dono.aliados) do
+            heroisAliado.defesa = heroisAliado.defesa + 1
+            if partida.emitirVFX then
+                partida.emitirVFX("buff", heroisAliado)
+            end
+        end
+    end,
+}
+
 return magias

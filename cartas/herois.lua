@@ -1,6 +1,8 @@
 local herois = {}
 
 local acoes = require("cartas.acoes")
+local magias = require("cartas.magias")
+
 
 -- dummies
     herois.dummies = {
@@ -1025,6 +1027,7 @@ local acoes = require("cartas.acoes")
         efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
+
     herois.esquadraoGoblinLiberto = {
         tipo = 1,
         raca = "Goblin",
@@ -1130,5 +1133,284 @@ local acoes = require("cartas.acoes")
         efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
         efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
     }
+-- domadores
+    herois.kaelDomador = {
+        tipo = 1,
+        raca = {},
+        afinidade = {},
+        classe = {"Transformador"},
+        nome = "Kael, Domador de Feras",
+        espirito = 1,
+        ataque = 5,
+        defesa = 2,
+        vidaMaxima = 15,
+        vidaAtual = 15,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
+        itemEquipado = {},
+        descricao = "Início do combate:\nSeus Constructos recebem Ataque +2 e recuperam 2 pontos de vida.",
+        ataqueMagico = false,
+        ataqueDireto = false,
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.estaVivo then
+                    local ehConstructo = false
+                    for _, raca in ipairs(heroiAliado.raca) do
+                        if raca == "Constructo" then
+                            ehConstructo = true
+                            break
+                        end
+                    end
 
+                    if ehConstructo then
+                        -- Buff de Ataque
+                        heroiAliado.ataque = heroiAliado.ataque + 2
+                        
+                        -- Cura
+                        local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
+                        if vidaFaltando > 0 then
+                            local curaReal = math.min(2, vidaFaltando)
+                            heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
+                        end
+
+                        if partida.emitirVFX then
+                            partida.emitirVFX("buff", heroiAliado)
+                            partida.emitirVFX("cura", heroiAliado)
+                        end
+                    end
+                end
+            end
+            self.efeitoDoTurno = true
+        end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
+
+    herois.behemoth29A = {
+        tipo = 1,
+        raca = {"Constructo"},
+        afinidade = {"Terra"},
+        classe = {},
+        nome = "Behemoth-29A",
+        espirito = 0,
+        ataque = 4,
+        defesa = 4,
+        vidaMaxima = 17,
+        vidaAtual = 17,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
+        itemEquipado = {},
+        descricao = "Início do combate:\nSofre 3 de Dano Direto para Curar Kael, Domador de Feras, em 3 pontos.",
+        ataqueMagico = false,
+        ataqueDireto = false,
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            -- Sofre 3 de Dano Direto
+            self.vidaAtual = self.vidaAtual - 3
+            if partida.emitirVFX then
+                partida.emitirVFX("danoDireto", self)
+            end
+
+            -- Verifica morte instantânea
+            if self.vidaAtual <= 0 then
+                self.estaVivo = false
+                if self.efeitoAoMorrer then
+                    self:efeitoAoMorrer(aliado, inimigo, dono, partida, cartaJogada)
+                end
+            end
+
+            -- Procura o Kael e o cura em 3
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.nome == "Kael, Domador de Feras" and heroiAliado.estaVivo then
+                    local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
+                    if vidaFaltando > 0 then
+                        local curaReal = math.min(3, vidaFaltando)
+                        heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
+                        
+                        if partida.emitirVFX then
+                            partida.emitirVFX("cura", heroiAliado)
+                        end
+                    end
+                    break
+                end
+            end
+        end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
+
+    herois.rapinaria7B3 = {
+        tipo = 1,
+        raca = {"Constructo"},
+        afinidade = {"ar", "agua"},
+        classe = {},
+        nome = "Rapinária-7B3",
+        espirito = 2,
+        ataque = 5,
+        defesa = 0,
+        vidaMaxima = 16,
+        vidaAtual = 16,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
+        itemEquipado = {},
+        descricao = "Inicio do combate:\nJogue um Reforço terrestre e Reforço espiritual.",
+        ataqueMagico = false,
+        ataqueDireto = false,
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
+            table.insert(partida.filaDeResolucao, {
+                carta = magias.reforcoTerrestre,
+                aliado = self,   
+                inimigo = inimigo,
+                dono = dono,
+                resolvida = false
+            })
+            
+            table.insert(partida.filaDeResolucao, {
+                carta = magias.reforcoEspiritual,
+                aliado = self,   
+                inimigo = inimigo,
+                dono = dono,
+                resolvida = false
+            })
+        end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
+
+    herois.kaelCavaleiroBestial = {
+        tipo = 1,
+        raca = {"Constructo"},
+        afinidade = {"Agua", "Ar"},
+        classe = {"Transformador"},
+        nome = "Kael, Cavaleiro Bestial",
+        reliquia = true,
+        espirito = 1,
+        ataque = 10,
+        defesa = 2,
+        vidaMaxima = 16,
+        vidaAtual = 16,
+        modificadorDeDano = 0,
+        dano = 0,
+        elemento = nil,
+        itemEquipado = {},
+        descricao = "Início do combate:\nSeus Constructos recebem Ataque +2 e recuperam 2 pontos de vida.\nFinal do combate:\nCausa 2 de Dano Direto a todos os Inimigos.",
+        ataqueMagico = false,
+        ataqueDireto = false,
+        estaVivo = true,
+        estaAtivo = true,
+        efeitoAtivo = false,
+        efeitoDoTurno = false,
+        buffEsp = false,
+        buffAtaq = false,
+        buffDef = false,
+        ataqueDuplo = false,
+        
+        efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            for _, heroiAliado in ipairs(dono.aliados) do
+                if heroiAliado.estaVivo then
+                    local ehConstructo = false
+                    for _, raca in ipairs(heroiAliado.raca) do
+                        if raca == "Constructo" then
+                            ehConstructo = true
+                            break
+                        end
+                    end
+
+                    if ehConstructo then
+                        heroiAliado.ataque = heroiAliado.ataque + 2
+                        
+                        local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
+                        if vidaFaltando > 0 then
+                            local curaReal = math.min(2, vidaFaltando)
+                            heroiAliado.vidaAtual = heroiAliado.vidaAtual + curaReal
+                        end
+
+                        if partida.emitirVFX then
+                            partida.emitirVFX("buff", heroiAliado)
+                            partida.emitirVFX("cura", heroiAliado)
+                        end
+                    end
+                end
+            end
+            self.efeitoDoTurno = true
+        end,
+        efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            -- 1. Reverte o buff de ataque
+            if self.efeitoDoTurno then
+                for _, heroiAliado in ipairs(dono.aliados) do
+                    if heroiAliado.estaVivo then
+                        for _, raca in ipairs(heroiAliado.raca) do
+                            if raca == "Constructo" then
+                                heroiAliado.ataque = heroiAliado.ataque - 2
+                                break
+                            end
+                        end
+                    end
+                end
+                self.efeitoDoTurno = false
+            end
+            
+            -- 2. Dano em Área (AoE) nos Inimigos
+            local jogadorOponente = (partida.jogador1 == dono) and partida.jogador2 or partida.jogador1
+            
+            for _, heroiInimigo in ipairs(jogadorOponente.aliados) do
+                if heroiInimigo.estaVivo then
+                    heroiInimigo.vidaAtual = heroiInimigo.vidaAtual - 2
+                    
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoDireto", heroiInimigo)
+                    end
+                    
+                    if heroiInimigo.vidaAtual <= 0 then
+                        heroiInimigo.estaVivo = false
+                        if heroiInimigo.efeitoAoMorrer then
+                            heroiInimigo:efeitoAoMorrer(aliado, inimigo, dono, partida, cartaJogada)
+                        end
+                    end
+                end
+            end
+        end,
+        efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+        efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end
+    }
 return herois

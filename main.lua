@@ -3,6 +3,7 @@ local Partida = require("telas.partida")
 local Tutorial = require("telas.tutorial")
 local SelecaoBaralho = require("telas.selecaoBaralho")
 local MontarBaralho = require("telas.montarBaralho")
+local DebugRoom = require("telas.debugRoom") 
 
 lurker = require("libs.lurker")
 
@@ -12,8 +13,10 @@ function love.load()
     Tutorial.load()
     SelecaoBaralho.load()
     MontarBaralho.load()
-    estadoAtualGlobal = "menu"
+    DebugRoom.load() 
     
+    estadoAtualGlobal = "menu"
+   
 end
 
 function love.update(dt)
@@ -29,6 +32,8 @@ function love.update(dt)
         SelecaoBaralho.update(dt)
     elseif estadoAtualGlobal == "montarBaralho" then
         MontarBaralho.update(dt)
+    elseif estadoAtualGlobal == "debugRoom" then
+        DebugRoom.update(dt) 
     end
 end
 
@@ -43,6 +48,8 @@ function love.draw()
         SelecaoBaralho.draw()
     elseif estadoAtualGlobal == "montarBaralho" then
         MontarBaralho.draw()
+    elseif estadoAtualGlobal == "debugRoom" then
+        DebugRoom.draw()
     end
 end
 
@@ -57,6 +64,8 @@ function love.mousereleased(x, y, button, istouch, presses)
         SelecaoBaralho.mousereleased(x, y, button)
     elseif estadoAtualGlobal == "montarBaralho" then
         MontarBaralho.mousereleased(x, y, button)
+    elseif estadoAtualGlobal == "debugRoom" then
+        DebugRoom.mousereleased(x, y, button)
     end
 end
 

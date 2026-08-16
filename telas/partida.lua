@@ -16,7 +16,6 @@ local vencedor
 local fonteIoskeley
 local fonteIoskeleyPequena
 local IA = require("logica.ia")
-local faseDoTurno
 
 local efeitosVisuais = {}
 local animacoesCarregadas = {}
@@ -26,6 +25,30 @@ local tempoEspera = 0
 
 local imgCartaHeroi
 local imgCartaDiversa
+local imgModeloBotao
+local imgModeloBaralho
+local imgModeloBaralhoDescarte
+
+-- ========================================================
+-- VARIÁVEIS DO SISTEMA DE ARRASTE UNIFICADO (DRAG AND DROP)
+-- ========================================================
+local itemArrastado = nil
+local tipoArrasto = ""
+local origemIndex = nil
+local dragX, dragY = 0, 0
+local dragOffsetX, dragOffsetY = 0, 0
+local slotSnap = nil
+local wasMouseDown = false
+local clickStartX, clickStartY = 0, 0
+
+local configSlotsCartas = {
+    {x = 880, y = 480}, -- Slot 1 (Direita)
+    {x = 790, y = 480}  -- Slot 2 (Esquerda)
+}
+local configSlotsHerois = {
+    aliado = {x = 1000, y = 480},
+    inimigo = {x = 1000, y = 40}
+}
 
 logicaPartida.estadoAlvo = {
     ativo = false,
@@ -33,6 +56,25 @@ logicaPartida.estadoAlvo = {
     dono = nil,
     callback = nil
 }
+
+-- Limpa todas as instâncias visuais e de manipulação travadas na memória do Front-end
+function Partida.resetarVisual()
+    carta1 = nil
+    carta2 = nil
+    vencedor = nil
+    rotinaTurno = nil
+    tempoEspera = 0
+    cartaInspecionada = nil
+    descarteAberto = nil
+    inventarioAberto = nil
+    
+    -- Limpa também os arrastos, caso estivesse com a carta na mão
+    itemArrastado = nil
+    tipoArrasto = ""
+    origemIndex = nil
+    slotSnap = nil
+    efeitosVisuais = {}
+end
 
 local function esperar(segundos)
     coroutine.yield(segundos)
@@ -79,143 +121,48 @@ local function retomarTurno()
     end
 end
 
-local function desenharInfoHeroi(carta, rectX, rectY, tituloDefault, itemYBase)
-    if carta == nil then
-        love.graphics.setColor(0.2, 0.2, 0.2)
-        love.graphics.rectangle("fill", rectX, rectY, 280, 380, 15, 15)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.printf(tituloDefault, rectX, rectY + 180, 280, "center")
-    else 
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(imgCartaHeroi, rectX, rectY, 0, 280/747, 380/1024)
-        
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.printf(carta.nome, rectX + 5, rectY + 15, 280, "center")
-        love.graphics.printf(carta.espirito, rectX, rectY + 240, 265, "right")
-        love.graphics.printf(carta.ataque, rectX, rectY + 280, 265, "right")
-        love.graphics.printf(carta.defesa, rectX, rectY + 320, 265, "right")
-        love.graphics.printf(carta.vidaAtual, rectX, rectY + 360, 270, "right")
-        
-        love.graphics.setFont(fonteIoskeleyPequena)
-        love.graphics.printf(carta.descricao, rectX + 15, rectY + 275, 200, "center")
-        love.graphics.setFont(fonteEmoji)
-        
-        if #carta.itemEquipado > 0 then
-            for i, item in ipairs(carta.itemEquipado) do
-                local xPos = (rectX + 230) + ((i - 1) * 20)
-                love.graphics.setColor(1, 1, 1)
-                love.graphics.draw(imgCartaDiversa, xPos, itemYBase, 0, 80/747, 100/1024)
-                love.graphics.setColor(0, 0, 0)
-                love.graphics.setFont(fonteIoskeley)
-                love.graphics.printf(item.nome, xPos, itemYBase + 10, 80, "center")
+local function dispararEventoVisual(tipoAnimacao, quemSofreu)
+    local centroX, centroY
+
+    if type(quemSofreu) == "table" then
+        if quemSofreu == logicaPartida.jogador1.heroiDoturno then
+            centroX, centroY = 1140, 670
+        elseif quemSofreu == logicaPartida.jogador2.heroiDoturno then
+            centroX, centroY = 1140, 230
+        else
+            for i, heroi in ipairs(logicaPartida.jogador1.aliados) do
+                if heroi == quemSofreu then
+                    centroX, centroY = 90 + ((i - 1) * 150), 675
+                    break
+                end
+            end
+            if not centroX then
+                for i, heroi in ipairs(logicaPartida.jogador2.aliados) do
+                    if heroi == quemSofreu then
+                        centroX, centroY = 90 + ((i - 1) * 150), 225
+                        break
+                    end
+                end
             end
         end
-        love.graphics.setFont(fonteIoskeley)
-    end
-end
-
-local function desenharMiniaturaHeroi(heroi, xPos, yPos, itemYPos)
-    if not heroi then return end
-
-    local function desenharBase()
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(imgCartaHeroi, xPos, yPos, 0, 140/747, 190/1024)
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.printf(heroi.nome, xPos, yPos + 10, 140 ,"center")
-        love.graphics.printf(heroi.espirito, xPos, 110 + yPos, 130, "right")
-        love.graphics.printf(heroi.ataque, xPos, 130 + yPos, 130, "right")
-        love.graphics.printf(heroi.defesa, xPos, 150 + yPos, 130, "right")
-        love.graphics.printf(heroi.vidaAtual, xPos, 170 + yPos, 130, "right")
-        if itemYPos and #heroi.itemEquipado > 0 then
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.draw(imgCartaDiversa, xPos + 20, itemYPos + 5, 0, 40/747, 50/1024)
+    elseif type(quemSofreu) == "string" then
+        if quemSofreu == "inimigo" then
+            centroX, centroY = 1140, 230
+        elseif quemSofreu == "aliado" then
+            centroX, centroY = 1140, 670
         end
     end
 
-    if heroi.estaVivo == false then
-        desenharBase()
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.setFont(fonteEmoji)
-        love.graphics.print("💀", xPos + 55, yPos + 80)
-        love.graphics.setFont(fonteIoskeley)
-    elseif heroi.estaAtivo == false then
-        love.graphics.push()
-        local centroX = xPos + 70
-        local centroY = yPos + 95
-        love.graphics.translate(centroX, centroY)
-        love.graphics.rotate(math.rad(20))
-        love.graphics.translate(-centroX, -centroY)
-        desenharBase()
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.setFont(fonteEmoji)
-        love.graphics.print("💤", xPos + 55, yPos + 80)
-        love.graphics.setFont(fonteIoskeley)
-        love.graphics.pop()
-    else
-        desenharBase()
+    if centroX and centroY then
+        Partida.tocarAnimacao(tipoAnimacao, centroX, centroY)
+        esperar(1.0) 
     end
 end
-
-local function desenharGridDescarte(descarte, isTargetMode)
-    love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
-    love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
-    
-    if isTargetMode then
-        love.graphics.setLineWidth(2)
-        love.graphics.setColor(1, 0.8, 0, 1)
-        love.graphics.rectangle("line", 220, 150, 1000, 600, 20, 20)
-        love.graphics.setLineWidth(1)
-    end
-    
-    for i, carta in ipairs(descarte) do
-        local coluna = (i - 1) % 10 
-        local linha = math.floor((i - 1) / 10) 
-        local xPos = 260 + (coluna * 90)
-        local yPos = 200 + (linha * 110)
-        
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
-    end
-end
-
-local function abrirJanelaInventario(titulo, itens)
-    love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
-    love.graphics.rectangle("fill", 400, 250, 600, 250, 20, 20)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(titulo, 400, 270, 600, "center")
-    
-    for i, item in ipairs(itens) do
-        local xPos = 460 + ((i - 1) * 90)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(imgCartaDiversa, xPos, 320, 0, 80/747, 100/1024)
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.printf(item.nome, xPos, 330, 80, "center")
-    end
-end
-
-local function desenharPilhaInfo(textoSuperior, r, g, b, rectX, rectY)
-    love.graphics.setColor(r, g, b)
-    love.graphics.rectangle("fill", rectX, rectY, 40, 50, 5, 5)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(textoSuperior, rectX - 20, rectY + 10, 80, "center")
-end
-
-local function desenharMaoJogador(cartas, yPos, ocultarNome)
-    for i, carta in ipairs(cartas) do
-        local xPos = 540 + ((i - 1) * 90)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
-        if not ocultarNome then
-            love.graphics.setColor(0, 0, 0)
-            love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
-        end
-    end
-end
-
 
 function Partida.load()
+    imgModeloBaralhoDescarte = love.graphics.newImage("assets/images/modeloBaralhoDescarte.png")
+    imgModeloBaralho = love.graphics.newImage("assets/images/modeloBaralho.png")
+    imgModeloBotao = love.graphics.newImage("assets/images/modeloBotao.png")
     imgCartaHeroi = love.graphics.newImage("assets/images/modeloAlfa.jpeg")
     imgCartaDiversa = love.graphics.newImage("assets/images/modeloAlfaCartas.jpeg")
 
@@ -231,7 +178,7 @@ function Partida.load()
     cartaInspecionada = nil
     descarteAberto = nil
     inventarioAberto = nil
-    faseDoTurno = "preparacao"
+    logicaPartida.faseDoTurno = "preparacao"
 
     local imgDanoMagico = love.graphics.newImage("assets/images/BlueExplosionA_spritesheet.png")
     local imgDanoFisico = love.graphics.newImage("assets/images/DustExplosion_spritesheet.png")
@@ -250,46 +197,295 @@ end
 
 function Partida.tocarAnimacao(nomeAnimacao, x, y)
     local anim = animacoesCarregadas[nomeAnimacao]
-    if not anim then 
-        print("Erro: Animação " .. nomeAnimacao .. " não encontrada.")
-        return 
-    end
+    if not anim then return end
     table.insert(efeitosVisuais, { animacaoBase = anim, frameAtual = 1, tempoAcumulado = 0, x = x, y = y })
 end
 
 function Partida.update(dt)
-    if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then return end
-
     local mouseX, mouseY = love.mouse.getPosition()
-    local alvoAtual = nil
+    local isMouseDown = love.mouse.isDown(1)
+    local resolvendo = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
+    
+    -- ========================================================
+    -- FÍSICA E LÓGICA DE DRAG AND DROP (CARTAS E HERÓIS)
+    -- ========================================================
+    if not resolvendo and not (logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo) and not inventarioAberto then
+        
+        -- CLIQUE INICIAL: Tentar pegar um elemento da tela
+        if isMouseDown and not wasMouseDown then
+            clickStartX = mouseX
+            clickStartY = mouseY
+            itemArrastado = nil
+            origemIndex = nil
+            tipoArrasto = ""
 
-    if inventarioAberto then
-        for i, item in ipairs(inventarioAberto.itemEquipado) do
-            if dentroDoRetangulo(mouseX, mouseY, 460 + ((i - 1) * 90), 320, 80, 100) then
-                alvoAtual = item
-                break
-            end
-        end
-    else
-        for i, carta in ipairs(logicaPartida.jogador1.mao) do
-            if dentroDoRetangulo(mouseX, mouseY, 540 + ((i - 1) * 90), 760, 80, 100) then
-                alvoAtual = carta
-                break
-            end
-        end
-        if not alvoAtual then
-            for i, carta in ipairs(logicaPartida.jogador1.aliados) do
-                if dentroDoRetangulo(mouseX, mouseY, 20 + ((i - 1) * 150), 580, 140, 190) then
-                    alvoAtual = carta
-                    break
+            -- 1. FASE RESOLUÇÃO: Arrastar Cartas
+            if logicaPartida.faseDoTurno == "resolucao" then
+                -- Contar cartas atualmente no slot
+                local slotsOcupados = (logicaPartida.jogador1.cartasEscolhidas[1] and 1 or 0) + (logicaPartida.jogador1.cartasEscolhidas[2] and 1 or 0)
+
+                -- Pega da mão
+                for i = #logicaPartida.jogador1.mao, 1, -1 do
+                    local xPos = 540 + ((i - 1) * 90)
+                    if dentroDoRetangulo(mouseX, mouseY, xPos, 760, 80, 100) then
+                        if slotsOcupados < 2 then
+                            itemArrastado = table.remove(logicaPartida.jogador1.mao, i)
+                            dragOffsetX = xPos - mouseX
+                            dragOffsetY = 760 - mouseY
+                            dragX = mouseX + dragOffsetX
+                            dragY = mouseY + dragOffsetY
+                            slotSnap = nil
+                            tipoArrasto = "carta_mao"
+                            origemIndex = i
+                            break
+                        end
+                    end
+                end
+
+                -- Pega dos Slots de Escolha
+                if not itemArrastado then
+                    for i = 1, 2 do
+                        if logicaPartida.jogador1.cartasEscolhidas[i] then
+                            local xPos = configSlotsCartas[i].x
+                            local yPos = configSlotsCartas[i].y
+                            if dentroDoRetangulo(mouseX, mouseY, xPos, yPos, 80, 100) then
+                                itemArrastado = logicaPartida.jogador1.cartasEscolhidas[i]
+                                logicaPartida.jogador1.cartasEscolhidas[i] = nil
+                                dragOffsetX = xPos - mouseX
+                                dragOffsetY = yPos - mouseY
+                                dragX = mouseX + dragOffsetX
+                                dragY = mouseY + dragOffsetY
+                                slotSnap = i -- Já começa encaixado!
+                                tipoArrasto = "carta_slot"
+                                origemIndex = i
+                                break
+                            end
+                        end
+                    end
+                end
+                
+            -- 2. FASE PREPARAÇÃO: Arrastar Heróis
+            elseif logicaPartida.faseDoTurno == "preparacao" then
+                -- Pega Herói Aliado da Bancada
+                for i, heroi in ipairs(logicaPartida.jogador1.aliados) do
+                    local xPos = 20 + ((i - 1) * 150)
+                    if heroi.estaVivo and heroi.estaAtivo and dentroDoRetangulo(mouseX, mouseY, xPos, 580, 140, 190) then
+                        itemArrastado = heroi
+                        dragOffsetX = xPos - mouseX
+                        dragOffsetY = 580 - mouseY
+                        dragX = mouseX + dragOffsetX
+                        dragY = mouseY + dragOffsetY
+                        slotSnap = nil
+                        tipoArrasto = "heroi_aliado"
+                        break
+                    end
+                end
+                -- Pega Herói Inimigo da Bancada
+                if not itemArrastado then
+                    for i, heroi in ipairs(logicaPartida.jogador2.aliados) do
+                        local xPos = 20 + ((i - 1) * 150)
+                        if heroi.estaVivo and heroi.estaAtivo and dentroDoRetangulo(mouseX, mouseY, xPos, 130, 140, 190) then
+                            itemArrastado = heroi
+                            dragOffsetX = xPos - mouseX
+                            dragOffsetY = 130 - mouseY
+                            dragX = mouseX + dragOffsetX
+                            dragY = mouseY + dragOffsetY
+                            slotSnap = nil
+                            tipoArrasto = "heroi_inimigo"
+                            break
+                        end
+                    end
+                end
+                -- Pega do Slot do Aliado (Centro)
+                if not itemArrastado and carta1 and dentroDoRetangulo(mouseX, mouseY, 1000, 480, 280, 380) then
+                    itemArrastado = carta1
+                    carta1 = nil
+                    dragOffsetX = 1000 - mouseX
+                    dragOffsetY = 480 - mouseY
+                    dragX = mouseX + dragOffsetX
+                    dragY = mouseY + dragOffsetY
+                    slotSnap = "aliado"
+                    tipoArrasto = "heroi_slot_aliado"
+                end
+                -- Pega do Slot do Inimigo (Centro)
+                if not itemArrastado and carta2 and dentroDoRetangulo(mouseX, mouseY, 1000, 40, 280, 380) then
+                    itemArrastado = carta2
+                    carta2 = nil
+                    dragOffsetX = 1000 - mouseX
+                    dragOffsetY = 40 - mouseY
+                    dragX = mouseX + dragOffsetX
+                    dragY = mouseY + dragOffsetY
+                    slotSnap = "inimigo"
+                    tipoArrasto = "heroi_slot_inimigo"
                 end
             end
         end
-        if not alvoAtual then
-            for i, carta in ipairs(logicaPartida.jogador2.aliados) do
-                if dentroDoRetangulo(mouseX, mouseY, 20 + ((i - 1) * 150), 130, 140, 190) then
-                    alvoAtual = carta
-                    break
+
+        -- MOVIMENTO: Atualizar posição com lerp e verificar magnetismo
+        if isMouseDown and itemArrastado then
+            local targetX = mouseX + dragOffsetX
+            local targetY = mouseY + dragOffsetY
+
+            -- Comportamento para Cartas
+            if tipoArrasto == "carta_mao" or tipoArrasto == "carta_slot" then
+                if slotSnap then
+                    -- Quebra de resistência
+                    local slotCX = configSlotsCartas[slotSnap].x + 40
+                    local slotCY = configSlotsCartas[slotSnap].y + 50
+                    if math.sqrt((mouseX - slotCX)^2 + (mouseY - slotCY)^2) > 120 then slotSnap = nil end
+                else
+                    -- Magnetismo
+                    for i = 1, 2 do
+                        local slotCX = configSlotsCartas[i].x + 40
+                        local slotCY = configSlotsCartas[i].y + 50
+                        if math.sqrt((mouseX - slotCX)^2 + (mouseY - slotCY)^2) < 70 then slotSnap = i; break end
+                    end
+                end
+                
+                if slotSnap then
+                    dragX = dragX + (configSlotsCartas[slotSnap].x - dragX) * 20 * dt
+                    dragY = dragY + (configSlotsCartas[slotSnap].y - dragY) * 20 * dt
+                else
+                    dragX = dragX + (targetX - dragX) * 20 * dt
+                    dragY = dragY + (targetY - dragY) * 20 * dt
+                end
+
+            -- Comportamento para Herói Aliado
+            elseif tipoArrasto == "heroi_aliado" or tipoArrasto == "heroi_slot_aliado" then
+                if slotSnap then
+                    local slotCX = configSlotsHerois.aliado.x + 140
+                    local slotCY = configSlotsHerois.aliado.y + 190
+                    if math.sqrt((mouseX - slotCX)^2 + (mouseY - slotCY)^2) > 200 then slotSnap = nil end
+                else
+                    local slotCX = configSlotsHerois.aliado.x + 140
+                    local slotCY = configSlotsHerois.aliado.y + 190
+                    if math.sqrt((mouseX - slotCX)^2 + (mouseY - slotCY)^2) < 150 then slotSnap = "aliado" end
+                end
+                
+                if slotSnap then
+                    dragX = dragX + (configSlotsHerois.aliado.x - dragX) * 20 * dt
+                    dragY = dragY + (configSlotsHerois.aliado.y - dragY) * 20 * dt
+                else
+                    dragX = dragX + (targetX - dragX) * 20 * dt
+                    dragY = dragY + (targetY - dragY) * 20 * dt
+                end
+
+            -- Comportamento para Herói Inimigo
+            elseif tipoArrasto == "heroi_inimigo" or tipoArrasto == "heroi_slot_inimigo" then
+                if slotSnap then
+                    local slotCX = configSlotsHerois.inimigo.x + 140
+                    local slotCY = configSlotsHerois.inimigo.y + 190
+                    if math.sqrt((mouseX - slotCX)^2 + (mouseY - slotCY)^2) > 200 then slotSnap = nil end
+                else
+                    local slotCX = configSlotsHerois.inimigo.x + 140
+                    local slotCY = configSlotsHerois.inimigo.y + 190
+                    if math.sqrt((mouseX - slotCX)^2 + (mouseY - slotCY)^2) < 150 then slotSnap = "inimigo" end
+                end
+                
+                if slotSnap then
+                    dragX = dragX + (configSlotsHerois.inimigo.x - dragX) * 20 * dt
+                    dragY = dragY + (configSlotsHerois.inimigo.y - dragY) * 20 * dt
+                else
+                    dragX = dragX + (targetX - dragX) * 20 * dt
+                    dragY = dragY + (targetY - dragY) * 20 * dt
+                end
+            end
+        end
+
+        -- SOLTAR O CLIQUE: Registrar posicionamentos (Trata arrasto e clique rapido)
+        if not isMouseDown and wasMouseDown and itemArrastado then
+            local distMouse = math.sqrt((mouseX - clickStartX)^2 + (mouseY - clickStartY)^2)
+            local foiCliqueRapido = (distMouse < 10)
+
+            -- Resolução de Drop para CARTAS
+            if tipoArrasto == "carta_mao" or tipoArrasto == "carta_slot" then
+                if slotSnap then
+                    local cartaExistente = logicaPartida.jogador1.cartasEscolhidas[slotSnap]
+                    if cartaExistente then
+                        if tipoArrasto == "carta_slot" then
+                            -- Inverte de lugar (Swap)
+                            logicaPartida.jogador1.cartasEscolhidas[origemIndex] = cartaExistente
+                        else
+                            -- Devolve a que estava la para a mão
+                            table.insert(logicaPartida.jogador1.mao, cartaExistente)
+                        end
+                    end
+                    logicaPartida.jogador1.cartasEscolhidas[slotSnap] = itemArrastado
+                elseif foiCliqueRapido then
+                    if tipoArrasto == "carta_mao" then
+                        -- Encontra o primeiro slot livre
+                        if not logicaPartida.jogador1.cartasEscolhidas[1] then logicaPartida.jogador1.cartasEscolhidas[1] = itemArrastado
+                        elseif not logicaPartida.jogador1.cartasEscolhidas[2] then logicaPartida.jogador1.cartasEscolhidas[2] = itemArrastado
+                        else table.insert(logicaPartida.jogador1.mao, itemArrastado) end
+                    else
+                        table.insert(logicaPartida.jogador1.mao, itemArrastado) -- Devolve pra mao (clicou no slot)
+                    end
+                else
+                    table.insert(logicaPartida.jogador1.mao, itemArrastado) -- Soltou fora
+                end
+            
+            -- Resolução de Drop para HERÓI ALIADO
+            elseif tipoArrasto == "heroi_aliado" or tipoArrasto == "heroi_slot_aliado" then
+                if slotSnap == "aliado" then
+                    carta1 = itemArrastado
+                elseif foiCliqueRapido then
+                    if tipoArrasto == "heroi_aliado" then carta1 = itemArrastado
+                    else carta1 = nil end
+                else
+                    carta1 = nil
+                end
+
+            -- Resolução de Drop para HERÓI INIMIGO
+            elseif tipoArrasto == "heroi_inimigo" or tipoArrasto == "heroi_slot_inimigo" then
+                if slotSnap == "inimigo" then
+                    carta2 = itemArrastado
+                elseif foiCliqueRapido then
+                    if tipoArrasto == "heroi_inimigo" then carta2 = itemArrastado
+                    else carta2 = nil end
+                else
+                    carta2 = nil
+                end
+            end
+            
+            itemArrastado = nil
+            slotSnap = nil
+            origemIndex = nil
+            tipoArrasto = ""
+        end
+    end
+    wasMouseDown = isMouseDown
+
+    -- ========================================================
+    -- CONTROLE DE HOVER DA PARTIDA (NÃO RODA SE ESTIVER ARRASTANDO)
+    -- ========================================================
+    if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then return end
+
+    local alvoAtual = nil
+    if not itemArrastado then
+        if inventarioAberto then
+            for i, item in ipairs(inventarioAberto.itemEquipado) do
+                if dentroDoRetangulo(mouseX, mouseY, 460 + ((i - 1) * 90), 320, 80, 100) then
+                    alvoAtual = item; break
+                end
+            end
+        else
+            for i, carta in ipairs(logicaPartida.jogador1.mao) do
+                if dentroDoRetangulo(mouseX, mouseY, 540 + ((i - 1) * 90), 760, 80, 100) then
+                    alvoAtual = carta; break
+                end
+            end
+            if not alvoAtual then
+                for i, carta in ipairs(logicaPartida.jogador1.aliados) do
+                    if dentroDoRetangulo(mouseX, mouseY, 20 + ((i - 1) * 150), 580, 140, 190) then
+                        alvoAtual = carta; break
+                    end
+                end
+            end
+            if not alvoAtual then
+                for i, carta in ipairs(logicaPartida.jogador2.aliados) do
+                    if dentroDoRetangulo(mouseX, mouseY, 20 + ((i - 1) * 150), 130, 140, 190) then
+                        alvoAtual = carta; break
+                    end
                 end
             end
         end
@@ -336,46 +532,8 @@ function Partida.atualizarTela(tempoDePausa)
     esperar(tempoDePausa or 0.8)
 end
 
-local function dispararEventoVisual(tipoAnimacao, quemSofreu)
-    local centroX, centroY
-
-    if type(quemSofreu) == "table" then
-        if quemSofreu == logicaPartida.jogador1.heroiDoturno then
-            centroX, centroY = 1140, 670
-        elseif quemSofreu == logicaPartida.jogador2.heroiDoturno then
-            centroX, centroY = 1140, 230
-        else
-            for i, heroi in ipairs(logicaPartida.jogador1.aliados) do
-                if heroi == quemSofreu then
-                    centroX, centroY = 90 + ((i - 1) * 150), 675
-                    break
-                end
-            end
-            if not centroX then
-                for i, heroi in ipairs(logicaPartida.jogador2.aliados) do
-                    if heroi == quemSofreu then
-                        centroX, centroY = 90 + ((i - 1) * 150), 225
-                        break
-                    end
-                end
-            end
-        end
-    elseif type(quemSofreu) == "string" then
-        if quemSofreu == "inimigo" then
-            centroX, centroY = 1140, 230
-        elseif quemSofreu == "aliado" then
-            centroX, centroY = 1140, 670
-        end
-    end
-
-    if centroX and centroY then
-        Partida.tocarAnimacao(tipoAnimacao, centroX, centroY)
-        esperar(1.0) 
-    end
-end
-
 function Partida.desenharInspecaoDeCarta()
-    if cartaInspecionada and tempoHover >= tempoNecessario then
+    if cartaInspecionada and tempoHover >= tempoNecessario and not itemArrastado then
         local mouseX, mouseY = love.mouse.getPosition()
         local larguraTooltip = 280
         local textoDescricao = cartaInspecionada.descricao or "Sem efeito."
@@ -402,6 +560,11 @@ function Partida.desenharInspecaoDeCarta()
 end
 
 function Partida.mousereleased(x, y, button)
+    
+    if BotaoVoltar.mousereleased(x, y, button) then 
+        return 
+    end
+    
     if button ~= 1 then return end
 
     if logicaPartida.estadoAlvo.ativo then
@@ -477,9 +640,8 @@ function Partida.mousereleased(x, y, button)
         return
     end
 
-    Partida.selecionarHeroi(x, y)
-    Partida.selecionarCartaMaoAliado(x, y)
-    Partida.deSelecionarCartaMaoAliada(x, y)
+    Partida.descartarCartaMaoAliado(x, y)
+    Partida.deSelecionarCartaDescarte(x, y)
     Partida.botaoTurno(x, y)
     BotaoVoltar.mousereleased(x, y, button)
 end
@@ -497,101 +659,281 @@ function Partida.checarCliqueMochila(x, y)
     return checar(logicaPartida.jogador1.aliados, 730) or checar(logicaPartida.jogador2.aliados, 280)
 end
 
+function Partida.desenharInfoHeroi(carta, rectX, rectY, tituloDefault, itemYBase)
+    if carta == nil or logicaPartida.faseDoTurno == "descarte" then
+        love.graphics.setColor(0.2, 0.2, 0.2)
+        love.graphics.rectangle("fill", rectX, rectY, 280, 380, 15, 15)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf(tituloDefault, rectX, rectY + 180, 280, "center")
+    else 
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaHeroi, rectX, rectY, 0, 280/747, 380/1024)
+        
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(carta.nome, rectX + 5, rectY + 15, 280, "center")
+        love.graphics.printf(carta.espirito, rectX, rectY + 240, 265, "right")
+        love.graphics.printf(carta.ataque, rectX, rectY + 280, 265, "right")
+        love.graphics.printf(carta.defesa, rectX, rectY + 320, 265, "right")
+        love.graphics.printf(carta.vidaAtual, rectX, rectY + 360, 270, "right")
+        
+        love.graphics.setFont(fonteIoskeleyPequena)
+        love.graphics.printf(carta.descricao, rectX + 15, rectY + 275, 200, "center")
+        love.graphics.setFont(fonteEmoji)
+        
+        if #carta.itemEquipado > 0 then
+            for i, item in ipairs(carta.itemEquipado) do
+                local xPos = (rectX + 230) + ((i - 1) * 20)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, itemYBase, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.setFont(fonteIoskeley)
+                love.graphics.printf(item.nome, xPos, itemYBase + 10, 80, "center")
+            end
+        end
+        love.graphics.setFont(fonteIoskeley)
+    end
+end
+
+function Partida.desenharMiniaturaHeroi(heroi, xPos, yPos, itemYPos, escalaExtra, offsetYExtra)
+    if not heroi then return end
+    
+    local escala = escalaExtra or 1
+    local yOffset = offsetYExtra or 0
+    local finalX = xPos - ((140 * (escala - 1)) / 2) -- Centraliza a expansão para crescer de dentro para fora
+    local finalY = yPos + yOffset
+
+    local function desenharBase()
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaHeroi, finalX, finalY, 0, (140/747) * escala, (190/1024) * escala)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(heroi.nome, finalX, finalY + 10, 140 * escala ,"center")
+        love.graphics.printf(heroi.espirito, finalX, (110 * escala) + finalY, (130 * escala), "right")
+        love.graphics.printf(heroi.ataque, finalX, (130 * escala) + finalY, (130 * escala), "right")
+        love.graphics.printf(heroi.defesa, finalX, (150 * escala) + finalY, (130 * escala), "right")
+        love.graphics.printf(heroi.vidaAtual, finalX, (170 * escala) + finalY, (130 * escala), "right")
+        if itemYPos and #heroi.itemEquipado > 0 then
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, finalX + (20 * escala), finalY + ((itemYPos - yPos) * escala) + 5, 0, (40/747) * escala, (50/1024) * escala)
+        end
+    end
+
+    if heroi.estaVivo == false then
+        desenharBase()
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.setFont(fonteEmoji)
+        love.graphics.print("💀", finalX + (55 * escala), finalY + (80 * escala))
+        love.graphics.setFont(fonteIoskeley)
+    elseif heroi.estaAtivo == false then
+        love.graphics.push()
+        local centroX, centroY = finalX + (70 * escala), finalY + (95 * escala)
+        love.graphics.translate(centroX, centroY)
+        love.graphics.rotate(math.rad(20))
+        love.graphics.translate(-centroX, -centroY)
+        desenharBase()
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.setFont(fonteEmoji)
+        love.graphics.print("💤", finalX + (55 * escala), finalY + (80 * escala))
+        love.graphics.setFont(fonteIoskeley)
+        love.graphics.pop()
+    else
+        desenharBase()
+    end
+end
+
 function Partida.desenharHeroiEscolhido(c1, c2)
-    desenharInfoHeroi(c1, 1000, 480, "Selecione seu herói", 600)
-    desenharInfoHeroi(c2, 1000, 40, "Selecione o herói inimigo", 160)
+    Partida.desenharInfoHeroi(c1, 1000, 480, "Selecione seu herói", 600)
+    Partida.desenharInfoHeroi(c2, 1000, 40, "Selecione o herói inimigo", 160)
 end
 
 function Partida.desenharHerois()
+    local mouseX, mouseY = love.mouse.getPosition()
+    local heroiHover = nil
+    local hoverX, hoverY, hoverItemY, hoverEhInimigo = 0, 0, 0, false
+
+    -- 1. Desenha os aliados normais e identifica se há hover
     for i, aliado in ipairs(logicaPartida.jogador1.aliados) do
-        if not (faseDoTurno == "resolucao" and aliado == logicaPartida.jogador1.heroiDoturno) then
-            desenharMiniaturaHeroi(aliado, 20 + ((i - 1) * 150), 580, 730)
+        if aliado ~= itemArrastado then
+            if logicaPartida.faseDoTurno == "descarte" or not (logicaPartida.faseDoTurno == "resolucao" and aliado == logicaPartida.jogador1.heroiDoturno) then
+                local xPos = 20 + ((i - 1) * 150)
+                local yPos = 580
+                
+                if not itemArrastado and dentroDoRetangulo(mouseX, mouseY, xPos, yPos, 140, 190) then
+                    heroiHover = aliado
+                    hoverX, hoverY, hoverItemY, hoverEhInimigo = xPos, yPos, 730, false
+                else
+                    Partida.desenharMiniaturaHeroi(aliado, xPos, yPos, 730)
+                end
+            end
         end
     end
+
+    -- 2. Desenha os inimigos normais e identifica se há hover
     for i, inimigo in ipairs(logicaPartida.jogador2.aliados) do
-        if not (faseDoTurno == "resolucao" and inimigo == logicaPartida.jogador2.heroiDoturno) then
-            desenharMiniaturaHeroi(inimigo, 20 + ((i - 1) * 150), 130, 280)
+        if inimigo ~= itemArrastado then
+            if logicaPartida.faseDoTurno == "descarte" or not (logicaPartida.faseDoTurno == "resolucao" and inimigo == logicaPartida.jogador2.heroiDoturno) then
+                local xPos = 20 + ((i - 1) * 150)
+                local yPos = 130
+                
+                if not itemArrastado and dentroDoRetangulo(mouseX, mouseY, xPos, yPos, 140, 190) then
+                    heroiHover = inimigo
+                    hoverX, hoverY, hoverItemY, hoverEhInimigo = xPos, yPos, 280, true
+                else
+                    Partida.desenharMiniaturaHeroi(inimigo, xPos, yPos, 280)
+                end
+            end
         end
+    end
+
+    -- 3. Desenha o herói em hover por último, maior (escala 1.15) e levemente elevado (-15 pixels no Y)
+    if heroiHover then
+        local offsetSubida = hoverEhInimigo and 15 or -15 -- Inimigos sobem, aliados sobem (eixo Y inverte direção)
+        Partida.desenharMiniaturaHeroi(heroiHover, hoverX, hoverY, hoverItemY, 1.15, offsetSubida)
     end
 end
 
 function Partida.desenharMao()
-    desenharMaoJogador(logicaPartida.jogador1.mao, 760, false)
-    desenharMaoJogador(logicaPartida.jogador2.mao, 40, true)
+    for i, carta in ipairs(logicaPartida.jogador2.mao) do
+        local xPos = 540 + ((i - 1) * 90)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgModeloBaralho, xPos, 40, 0, 80 / imgModeloBaralho:getWidth(), 100 / imgModeloBaralho:getHeight())
+    end
+
+    local cartaHover = nil
+    local xHover, yHover = 0, 0
+
+    for i, carta in ipairs(logicaPartida.jogador1.mao) do
+        local xPos = 540 + ((i - 1) * 90)
+        local yPos = 760
+        
+        if carta == cartaInspecionada and not itemArrastado then
+            cartaHover = carta
+            xHover = xPos
+            yHover = yPos
+        else
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
+        end
+    end
+
+    if cartaHover then
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xHover - 10, yHover - 20, 0, 100/747, 125/1024)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(cartaHover.nome, xHover - 10, yHover - 10, 100, "center")
+    end
 end
 
-function Partida.selecionarCartaMaoAliado(x, y)
-    if faseDoTurno == "preparacao" or carta1 == nil or carta2 == nil then return end
-
+function Partida.descartarCartaMaoAliado(x, y)
+    if logicaPartida.faseDoTurno ~= "descarte" then return end
     local mao = logicaPartida.jogador1.mao
     for i = #mao, 1, -1 do
         if dentroDoRetangulo(x, y, 540 + ((i - 1) * 90), 760, 80, 100) then
-            if #logicaPartida.jogador1.cartasEscolhidas < 2 then
-                table.insert(logicaPartida.jogador1.cartasEscolhidas, table.remove(mao, i))
-            end
+            table.insert(logicaPartida.jogador1.cartasParaDescarte, table.remove(mao, i))
+            break
+        end
+    end
+end
+
+function Partida.deSelecionarCartaDescarte(x, y)
+    if logicaPartida.faseDoTurno ~= "descarte" then return end
+    local descartes = logicaPartida.jogador1.cartasParaDescarte
+    for i = #descartes, 1, -1 do
+        if dentroDoRetangulo(x, y, 880 - ((i - 1) * 90), 480, 80, 100) then
+            table.insert(logicaPartida.jogador1.mao, table.remove(descartes, i))
             break
         end
     end
 end
 
 function Partida.desenharCartasEscolhidas()
-    local function desenhar(cartas, dono, yPos)
-        local paraDesenhar = {}
-        local resolvendo = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
-        if not resolvendo then
-            for _, carta in ipairs(cartas) do table.insert(paraDesenhar, { carta = carta, resolvida = false }) end
-        else
-            for _, jogada in ipairs(logicaPartida.filaDeResolucao) do
-                if jogada.dono == dono then table.insert(paraDesenhar, jogada) end
+    local resolvendo = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
+    
+    -- Se estivermos na fase de RESOLUÇÃO (aguardando jogar as cartas), desenha os "SLOTS VAZIOS" como guias visuais
+    if logicaPartida.faseDoTurno == "resolucao" and not resolvendo then
+        love.graphics.setLineWidth(2)
+        love.graphics.setColor(1, 1, 1, 0.3)
+        for _, slot in ipairs(configSlotsCartas) do
+            love.graphics.rectangle("line", slot.x, slot.y, 80, 100, 5, 5)
+        end
+        love.graphics.setLineWidth(1)
+        love.graphics.setColor(1, 1, 1, 1)
+    end
+
+    -- Desenha de forma exata de acordo com o slot indexado (Gap Supported)
+    if not resolvendo then
+        for i = 1, 2 do
+            local carta = logicaPartida.jogador1.cartasEscolhidas[i]
+            if carta then
+                local xPos = configSlotsCartas[i].x
+                local yPos = configSlotsCartas[i].y
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
             end
         end
+    else
+        -- Durante a resolução animada pela fila
+        local indiceDesenho = 1
+        for _, jogada in ipairs(logicaPartida.filaDeResolucao) do
+            if jogada.dono == logicaPartida.jogador1 then 
+                
+                -- CORREÇÃO: Fallback matemático caso a fila tenha mais de 2 cartas (ex: combos com descarte)
+                local xPos, yPos
+                if configSlotsCartas[indiceDesenho] then
+                    xPos = configSlotsCartas[indiceDesenho].x
+                    yPos = configSlotsCartas[indiceDesenho].y
+                else
+                    -- Se passar de 2 cartas, empilha para a esquerda matematicamente
+                    xPos = 880 - ((indiceDesenho - 1) * 90)
+                    yPos = 480
+                end
 
-        for i, jogada in ipairs(paraDesenhar) do
-            local xPos = 880 - ((i - 1) * 90)
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
-            love.graphics.setColor(0, 0, 0)
-            love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
-        end
-    end
-
-    desenhar(logicaPartida.jogador1.cartasEscolhidas, logicaPartida.jogador1, 480)
-    desenhar(logicaPartida.jogador2.cartasEscolhidas, logicaPartida.jogador2, 320)
-end
-
-function Partida.deSelecionarCartaMaoAliada(x, y)
-    local escolhidas = logicaPartida.jogador1.cartasEscolhidas
-    for i = #escolhidas, 1, -1 do
-        if dentroDoRetangulo(x, y, 880 - ((i - 1) * 90), 480, 80, 100) then
-            table.insert(logicaPartida.jogador1.mao, table.remove(escolhidas, i))
-            break
-        end
-    end
-end
-
-function Partida.selecionarHeroi(x, y)
-    if logicaPartida.turnoAtual == 2 or faseDoTurno == "resolucao" then return end
-
-    local function buscarHeroi(herois, yPos)
-        for i, heroi in ipairs(herois) do
-            if dentroDoRetangulo(x, y, 20 + ((i - 1) * 150), yPos, 140, 190) and heroi.estaVivo and heroi.estaAtivo then
-                return heroi
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(jogada.carta.nome, xPos, yPos + 10, 80, "center")
+                indiceDesenho = indiceDesenho + 1
             end
         end
-        return nil
     end
 
-    local h1 = buscarHeroi(logicaPartida.jogador1.aliados, 580)
-    if h1 then
-        carta1 = h1
-        Partida.desenharHeroiEscolhido(carta1, carta2)
-        return
+    -- Lógica Inimiga (Já usa matemática por padrão, então suporta infinitas cartas)
+    local paraDesenharJ2 = {}
+    if not resolvendo then
+        for _, carta in ipairs(logicaPartida.jogador2.cartasEscolhidas) do table.insert(paraDesenharJ2, { carta = carta, resolvida = false }) end
+    else
+        for _, jogada in ipairs(logicaPartida.filaDeResolucao) do
+            if jogada.dono == logicaPartida.jogador2 then table.insert(paraDesenharJ2, jogada) end
+        end
     end
+    for i, jogada in ipairs(paraDesenharJ2) do
+        local xPos = 880 - ((i - 1) * 90)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, 320, 0, 80/747, 100/1024)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(jogada.carta.nome, xPos, 330, 80, "center")
+    end
+end
 
-    local h2 = buscarHeroi(logicaPartida.jogador2.aliados, 130)
-    if h2 then
-        carta2 = h2
-        Partida.desenharHeroiEscolhido(carta1, carta2)
+function Partida.desenharCartasParaDescarte()
+    if logicaPartida.faseDoTurno ~= "descarte" then return end
+    
+    for i, carta in ipairs(logicaPartida.jogador1.cartasParaDescarte or {}) do
+        local xPos = 880 - ((i - 1) * 90)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, 480, 0, 80/747, 100/1024)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(carta.nome, xPos, 490, 80, "center")
+    end
+    for i, carta in ipairs(logicaPartida.jogador2.cartasParaDescarte or {}) do
+        local xPos = 880 - ((i - 1) * 90)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, xPos, 320, 0, 80/747, 100/1024)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(carta.nome, xPos, 330, 80, "center")
     end
 end
 
@@ -599,26 +941,42 @@ function Partida.botaoTurno(x, y)
     if x >= 1300 and x <= 1430 and y >= 400 and y <= 500 then
         if rotinaTurno and coroutine.status(rotinaTurno) ~= "dead" then return end
 
+        if logicaPartida.faseDoTurno == "descarte" then
+            logicaPartida.entreTurnos()
+            
+            if logicaPartida.turnoAtual == 1 then
+                logicaPartida.turnoAtual = 2 
+                IA.escolherHerois(logicaPartida)
+                IA.escolherCartas(logicaPartida)
+                logicaPartida.faseDoTurno = "resolucao"
+                carta1 = logicaPartida.jogador1.heroiDoturno
+                carta2 = logicaPartida.jogador2.heroiDoturno
+            else
+                logicaPartida.turnoAtual = 1 
+                logicaPartida.faseDoTurno = "preparacao"
+                carta1 = nil
+                carta2 = nil
+            end
+            return
+        end
+
         if logicaPartida.turnoAtual == 1 then
-            if faseDoTurno == "preparacao" then
+            if logicaPartida.faseDoTurno == "preparacao" then
                 if carta1 == nil or carta2 == nil then return end
                 logicaPartida.jogador1.heroiDoturno = carta1
                 logicaPartida.jogador2.heroiDoturno = carta2
                 IA.escolherCartas(logicaPartida)                
-                faseDoTurno = "resolucao"
-            elseif faseDoTurno == "resolucao" then
+                logicaPartida.faseDoTurno = "resolucao"
+            elseif logicaPartida.faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
                     rotinaTurno = coroutine.create(function()
                         logicaPartida.resolverCartasDaMao(Partida.atualizarTela, dispararEventoVisual)
                         esperar(0.5) 
                         logicaPartida.calcularDanoFisico(Partida.atualizarTela, dispararEventoVisual)
                         Partida.checarFinalDeJogo()
-                        logicaPartida.turnoAtual = 2 
-                        IA.escolherHerois(logicaPartida)
-                        IA.escolherCartas(logicaPartida)
-                        faseDoTurno = "resolucao"
-                        carta1 = logicaPartida.jogador1.heroiDoturno
-                        carta2 = logicaPartida.jogador2.heroiDoturno
+                        carta1 = nil
+                        carta2 = nil
+                        logicaPartida.faseDoTurno = "descarte"
                     end)
                     local sucesso, tempo = coroutine.resume(rotinaTurno)
                     tempoEspera = tempo or 0
@@ -626,19 +984,16 @@ function Partida.botaoTurno(x, y)
             end
             
         elseif logicaPartida.turnoAtual == 2 then
-            if faseDoTurno == "preparacao" then
-                faseDoTurno = "resolucao"
-            elseif faseDoTurno == "resolucao" then
+            if logicaPartida.faseDoTurno == "resolucao" then
                 if carta1.estaVivo and carta2.estaVivo then
                     rotinaTurno = coroutine.create(function()
                         logicaPartida.resolverCartasDaMao(Partida.atualizarTela, dispararEventoVisual)
                         esperar(0.5) 
                         logicaPartida.calcularDanoFisico(Partida.atualizarTela, dispararEventoVisual)
                         Partida.checarFinalDeJogo()
-                        logicaPartida.turnoAtual = 1 
-                        faseDoTurno = "preparacao"
                         carta1 = nil
                         carta2 = nil
+                        logicaPartida.faseDoTurno = "descarte"
                     end)
                     local sucesso, tempo = coroutine.resume(rotinaTurno)
                     tempoEspera = tempo or 0
@@ -673,50 +1028,110 @@ end
 
 function Partida.desenharInventarioAberto()
     if inventarioAberto then
-        abrirJanelaInventario("Inventário de " .. inventarioAberto.nome, inventarioAberto.itemEquipado)
+        love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+        love.graphics.rectangle("fill", 400, 250, 600, 250, 20, 20)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf("Inventário de " .. inventarioAberto.nome, 400, 270, 600, "center")
+        
+        for i, item in ipairs(inventarioAberto.itemEquipado) do
+            local xPos = 460 + ((i - 1) * 90)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, xPos, 320, 0, 80/747, 100/1024)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf(item.nome, xPos, 330, 80, "center")
+        end
     end
 end
 
 function Partida.abrirDescartes()
-    if descarteAberto == "inimigo" then
-        desenharGridDescarte(logicaPartida.jogador2.descarte, false)
-    elseif descarteAberto == "aliado" then
-        desenharGridDescarte(logicaPartida.jogador1.descarte, false)
+    local descarteAtivo = nil
+    if descarteAberto == "inimigo" then descarteAtivo = logicaPartida.jogador2.descarte
+    elseif descarteAberto == "aliado" then descarteAtivo = logicaPartida.jogador1.descarte end
+
+    if descarteAtivo then
+        love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+        love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
+        
+        for i, carta in ipairs(descarteAtivo) do
+            local coluna = (i - 1) % 10 
+            local linha = math.floor((i - 1) / 10) 
+            local xPos = 260 + (coluna * 90)
+            local yPos = 200 + (linha * 110)
+            
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
+        end
     end
 end
 
 function Partida.desenharBaralhos()
-    desenharPilhaInfo(#logicaPartida.jogador1.baralho.."/20", 0,0,1, 360, 810)
-    desenharPilhaInfo(#logicaPartida.jogador2.baralho.."/20", 1,0,0, 360, 40)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(imgModeloBaralho, 360, 810, 0, 40 / imgModeloBaralho:getWidth(), 50 / imgModeloBaralho:getHeight())
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.printf(#logicaPartida.jogador1.baralho.."/20", 340, 820, 80, "center")
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(imgModeloBaralho, 360, 40, 0, 40 / imgModeloBaralho:getWidth(), 50 / imgModeloBaralho:getHeight())
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.printf(#logicaPartida.jogador2.baralho.."/20", 340, 50, 80, "center")
 end
 
 function Partida.desenharReliquias()
     love.graphics.setFont(fonteIoskeley)
-    local function desenharR(r, yImg, yText)
-        if r ~= nil then
-            love.graphics.setColor(1, 1, 1)
-            love.graphics.draw(imgCartaDiversa, 260, yImg, 0, 80/747, 100/1024)
-            love.graphics.setColor(0, 0, 0)
-            love.graphics.printf(r.nome, 260, yText, 80, "center")
-        end
+    
+    if logicaPartida.jogador1.reliquia ~= nil then
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, 260, 780, 0, 80/747, 100/1024)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(logicaPartida.jogador1.reliquia.nome, 260, 790, 80, "center")
     end
-    desenharR(logicaPartida.jogador1.reliquia, 780, 790)
-    desenharR(logicaPartida.jogador2.reliquia, 20, 30)
+    
+    if logicaPartida.jogador2.reliquia ~= nil then
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(imgCartaDiversa, 260, 20, 0, 80/747, 100/1024)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.printf(logicaPartida.jogador2.reliquia.nome, 260, 30, 80, "center")
+    end
 end
 
 function Partida.checarCliqueExtradeck(x, y)
-    if logicaPartida.turnoAtual ~= 2 and faseDoTurno ~= "resolucao" then return false end
+    -- Verifica se as cartas já estão em processo de resolução animada
+    local resolvendo = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
+    
+    -- A relíquia só pode ser sacada se a fase for "resolucao" e o combate ainda NÃO estiver rodando
+    if logicaPartida.faseDoTurno ~= "resolucao" or resolvendo then 
+        return false 
+    end
+    
+    -- Se clicou na área correta e a relíquia existir, transfere para a mão
     if dentroDoRetangulo(x, y, 260, 780, 80, 100) and logicaPartida.jogador1.reliquia ~= nil then
         table.insert(logicaPartida.jogador1.mao, logicaPartida.jogador1.reliquia)
         logicaPartida.jogador1.reliquia = nil 
         return true
     end
+    
     return false
 end
 
 function Partida.desenharDescartes()
-    desenharPilhaInfo("Descarte", 0,0,1, 420, 810)
-    desenharPilhaInfo("Descarte", 1,0,0, 420, 40)
+    -- ==========================================
+    -- DESCARTE DO JOGADOR 1 (ALIADO)
+    -- ==========================================
+    love.graphics.setColor(1, 1, 1) -- Cor branca para desenhar a imagem na cor original
+    love.graphics.draw(imgModeloBaralhoDescarte, 420, 810, 0, 40 / imgModeloBaralhoDescarte:getWidth(), 50 / imgModeloBaralhoDescarte:getHeight())
+    
+    -- Texto com a quantidade de cartas no cemitério (centralizado sobre o ícone)
+
+
+    -- ==========================================
+    -- DESCARTE DO JOGADOR 2 (INIMIGO)
+    -- ==========================================
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(imgModeloBaralhoDescarte, 420, 40, 0, 40 / imgModeloBaralhoDescarte:getWidth(), 50 / imgModeloBaralhoDescarte:getHeight())
+    
+
 end
 
 function Partida.checarCliqueDescarte(x, y)
@@ -729,23 +1144,65 @@ function Partida.checarCliqueDescarte(x, y)
     return false
 end
 
+function Partida.desenharBotaoTurno()
+    -- Verifica se o jogo está em momento de resolução/animação dos efeitos
+    local resolvendo = (rotinaTurno and coroutine.status(rotinaTurno) ~= "dead")
+    
+    local mouseX, mouseY = love.mouse.getPosition()
+    
+    -- O botão só reage ao mouse se NÃO estiver resolvendo efeitos na tela
+    local isHovering = not resolvendo and (mouseX >= 1300 and mouseX <= 1430 and mouseY >= 400 and mouseY <= 500)
+    local isPressing = isHovering and love.mouse.isDown(1)
+    
+    local offsetX, offsetY = 0, 0
+    
+    -- Efeitos físicos do botão (só acontecem se não estiver resolvendo)
+    if not resolvendo then
+        if isPressing then
+            offsetY = 3 -- Efeito de "afundar" ao clicar
+        elseif isHovering then
+            -- Tremer suave apenas quando estiver disponível para clique
+            local tempo = love.timer.getTime()
+            offsetX = math.sin(tempo * 20) * 1.1
+            offsetY = math.cos(tempo * 30) * 1.1
+        end
+    end
+    
+    -- Desenha a imagem do botão aplicando os offsets (ou estática se estiver travado)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(imgModeloBotao, 1300 + offsetX, 400 + offsetY, 0, 130 / imgModeloBotao:getWidth(), 100 / imgModeloBotao:getHeight())
+    
+    -- Lógica do texto
+    local textoBotao = ""
+    if logicaPartida.faseDoTurno == "preparacao" then
+        textoBotao = "Confirmar\nHeróis"
+    elseif logicaPartida.faseDoTurno == "resolucao" then
+        textoBotao = (logicaPartida.turnoAtual == 1) and "Confirmar\nCartas" or "Confirmar\nCartas"
+    elseif logicaPartida.faseDoTurno == "descarte" then
+        textoBotao = "Confirmar\nDescarte"
+    end
+    
+    -- Desenha o texto acompanhando o estado do botão
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.printf(textoBotao, 1300 + offsetX, 430 + offsetY, 130, "center")
+end
+
 function Partida.draw()
     love.graphics.setFont(fonteIoskeley)
-
     local x, y = love.mouse.getPosition()
     love.graphics.printf(x.." x "..y, 5, 5, 100, "center")
     
-    love.graphics.setColor(1,0,1)
-    love.graphics.rectangle("fill", 1300, 400, 130, 100, 15, 15)
-    love.graphics.setColor(0,0,0)
-    
-    local textoBotao = (logicaPartida.turnoAtual == 1 and faseDoTurno == "preparacao") and "Iniciar\nturno" or "Resolver\nturno"
-    love.graphics.printf(textoBotao, 1300, 430, 130, "center")
 
     BotaoVoltar.draw()
     Partida.desenharBaralhos()
-    Partida.desenharHeroiEscolhido(carta1, carta2)
+    
+    if logicaPartida.faseDoTurno ~= "descarte" then
+        Partida.desenharHeroiEscolhido(carta1, carta2)
+    end
+    
+    Partida.desenharBotaoTurno()
     Partida.desenharCartasEscolhidas()
+    Partida.desenharCartasParaDescarte()
     Partida.desenharMao()
     Partida.desenharHerois()
     Partida.desenharReliquias()
@@ -768,41 +1225,94 @@ function Partida.draw()
             love.graphics.rectangle("fill", 530, 750, larguraZona, 120, 10, 10)
             love.graphics.rectangle("line", 530, 750, larguraZona, 120, 10, 10)
             love.graphics.setLineWidth(1)
-            desenharMaoJogador(logicaPartida.jogador1.mao, 760, false)
+            
+            for i, carta in ipairs(logicaPartida.jogador1.mao) do
+                local xPos = 540 + ((i - 1) * 90)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, 760, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(carta.nome, xPos, 770, 80, "center")
+            end
             
         elseif tipo == "descarte" then
-            desenharGridDescarte(logicaPartida.jogador1.descarte, true)
+            love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+            love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
+            love.graphics.setLineWidth(2)
+            love.graphics.setColor(1, 0.8, 0, 1)
+            love.graphics.rectangle("line", 220, 150, 1000, 600, 20, 20)
+            love.graphics.setLineWidth(1)
+            
+            for i, carta in ipairs(logicaPartida.jogador1.descarte) do
+                local coluna = (i - 1) % 10 
+                local linha = math.floor((i - 1) / 10) 
+                local xPos = 260 + (coluna * 90)
+                local yPos = 200 + (linha * 110)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
+            end
             
         elseif tipo == "aliado" then
             if logicaPartida.jogador1.heroiDoturno then
                 love.graphics.setColor(1, 0.8, 0, 0.3)
                 love.graphics.rectangle("fill", 990, 470, 300, 400, 15, 15)
-                desenharInfoHeroi(logicaPartida.jogador1.heroiDoturno, 1000, 480, "", 600)
+                Partida.desenharInfoHeroi(logicaPartida.jogador1.heroiDoturno, 1000, 480, "", 600)
             end
             local larguraZona = (#logicaPartida.jogador1.aliados * 150) + 10
             love.graphics.setColor(1, 0.8, 0, 0.3)
             love.graphics.rectangle("fill", 10, 570, larguraZona, 210, 15, 15)
             for i, heroiAlvo in ipairs(logicaPartida.jogador1.aliados) do
-                desenharMiniaturaHeroi(heroiAlvo, 20 + ((i - 1) * 150), 580, 730)
+                Partida.desenharMiniaturaHeroi(heroiAlvo, 20 + ((i - 1) * 150), 580, 730)
             end
             
         elseif tipo == "inimigo" then
             if logicaPartida.jogador2.heroiDoturno then
                 love.graphics.setColor(1, 0.8, 0, 0.3)
                 love.graphics.rectangle("fill", 990, 30, 300, 400, 15, 15)
-                desenharInfoHeroi(logicaPartida.jogador2.heroiDoturno, 1000, 40, "", 160)
+                Partida.desenharInfoHeroi(logicaPartida.jogador2.heroiDoturno, 1000, 40, "", 160)
             end
             local larguraZona = (#logicaPartida.jogador2.aliados * 150) + 10
             love.graphics.setColor(1, 0.8, 0, 0.3) 
             love.graphics.rectangle("fill", 10, 120, larguraZona, 210, 15, 15)
             for i, heroiAlvo in ipairs(logicaPartida.jogador2.aliados) do
                 if heroiAlvo.estaVivo then
-                    desenharMiniaturaHeroi(heroiAlvo, 20 + ((i - 1) * 150), 130, 280)
+                    Partida.desenharMiniaturaHeroi(heroiAlvo, 20 + ((i - 1) * 150), 130, 280)
                 end
             end
         
         elseif tipo == "item" then
-            abrirJanelaInventario(logicaPartida.estadoAlvo.mensagem, logicaPartida.estadoAlvo.listaItens or {})
+            love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+            love.graphics.rectangle("fill", 400, 250, 600, 250, 20, 20)
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.printf(logicaPartida.estadoAlvo.mensagem, 400, 270, 600, "center")
+            
+            for i, item in ipairs(logicaPartida.estadoAlvo.listaItens or {}) do
+                local xPos = 460 + ((i - 1) * 90)
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, 320, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(item.nome, xPos, 330, 80, "center")
+            end
+        end
+    end
+
+    -- DESENHA O ITEM ARRASTADO (CARTAS E HERÓIS) POR ÚLTIMO, SOBRE TUDO
+    if itemArrastado then
+        love.graphics.setColor(1, 1, 1)
+        if tipoArrasto == "carta_mao" or tipoArrasto == "carta_slot" then
+            love.graphics.draw(imgCartaDiversa, dragX - 10, dragY - 12.5, 0, 100/747, 125/1024)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf(itemArrastado.nome, dragX - 10, dragY - 2.5, 100, "center")
+        else
+            -- Drag de Heróis (Utiliza a mesma lógica de status da miniatura, mas flutuando)
+            love.graphics.draw(imgCartaHeroi, dragX, dragY, 0, 140/747, 190/1024)
+            love.graphics.setColor(0, 0, 0)
+            love.graphics.printf(itemArrastado.nome, dragX, dragY + 10, 140 ,"center")
+            love.graphics.printf(itemArrastado.espirito, dragX, 110 + dragY, 130, "right")
+            love.graphics.printf(itemArrastado.ataque, dragX, 130 + dragY, 130, "right")
+            love.graphics.printf(itemArrastado.defesa, dragX, 150 + dragY, 130, "right")
+            love.graphics.printf(itemArrastado.vidaAtual, dragX, 170 + dragY, 130, "right")
         end
     end
 
@@ -815,7 +1325,6 @@ function Partida.draw()
         love.graphics.draw(img, quad, ef.x, ef.y, 0, escala, escala, frameW / 2, frameH / 2)
     end
 
-    Partida.anunciarVitoria()
     love.graphics.setColor(1, 1, 1)
 end
 

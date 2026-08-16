@@ -221,4 +221,104 @@ reliquias.artefatoPerfurante = {
     end
 }
 
+reliquias.garraEspectral = {
+    tipo = 3,
+    nome = "Garra espectral",
+    unica = true,
+    raca = {},
+    dano = 0,
+    descricao = "Ataque +2\nAo jogar: O Inimigo recebe Espirito -2\nInício do Combate: O Inimigo recebe Espirito -2\nSeus Ataques causam Dano Mágico em vez de Fisico",
+    
+    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
+        inimigo.espirito = math.max(0, inimigo.espirito - 2)
+    end,
+    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    
+    feito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque + 2
+        aliado.ataqueMagico = true
+        inimigo.espirito = math.max(0, inimigo.espirito - 2)
+
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", aliado)
+            partida.emitirVFX("debuff", inimigo)
+        end
+    end,
+    
+    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque - 2
+        inimigo.espirito = inimigo.espirito + 2
+        aliado.ataqueMagico = false
+    end,
+
+    efeitoFinalDoTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
+       
+    end
+}
+
+reliquias.liberacaoKael = {
+        tipo = 4,
+        nome = "Liberação: Cavaleiro Bestial",
+        unica = true,
+        descricao = "Requisito: Dois Constructos aliados mortos na partida.\nSe jogada Por:\nKael, Domador de Feras\nO Substitua por\nKael, Cavaleiro Bestial",
+        
+        efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+            
+            -- PASSO 1: Verificação da Missão (2 Constructos Mortos nos Aliados)
+            local constructosMortos = 0
+            
+            for _, heroiAliado in ipairs(dono.aliados) do
+                -- Verifica se o aliado está morto e se possui a chave raca
+                if not heroiAliado.estaVivo and heroiAliado.raca then
+                    for _, raca in ipairs(heroiAliado.raca) do
+                        if raca == "Constructo" then
+                            constructosMortos = constructosMortos + 1
+                            break -- Encontrou a raça, vai para o próximo herói
+                        end
+                    end
+                end
+            end
+            
+            if constructosMortos < 2 then
+                -- O requisito não foi cumprido, a relíquia falha ou não tem efeito
+                return
+            end
+
+            -- PASSO 2: Transformação
+            if aliado.nome == "Kael, Domador de Feras" then
+                local novaForma = heroi.kaelCavaleiroBestial
+                
+                if novaForma then
+                    local vidaAnterior = aliado.vidaAtual
+                    local itensAnteriores = aliado.itemEquipado or {}
+                    local magiasAnteriores = aliado.magiasAtivas or {}
+                    
+                    -- Limpa chaves antigas da tabela original
+                    for k, _ in pairs(aliado) do
+                        aliado[k] = nil
+                    end
+                    
+                    -- Injeta nova forma mantendo a mesma referência de memória
+                    for k, v in pairs(novaForma) do
+                        aliado[k] = v
+                    end
+                    
+                    -- Mescla atributos dinâmicos
+                    aliado.vidaAtual = math.min(vidaAnterior, aliado.vidaMaxima)
+                    aliado.itemEquipado = itensAnteriores
+                    aliado.magiasAtivas = magiasAnteriores
+
+                    if partida.emitirVFX then
+                        partida.emitirVFX("buff", aliado)
+                    end
+                end
+            end
+            
+            coroutine.yield()
+        end
+}
+
 return reliquias
