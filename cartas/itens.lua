@@ -4,6 +4,8 @@ itens.quimera = {
     tipo = 3,
     nome = "Quimera",
     unica = true,
+    categoria = "arma",           
+    empunhadura = "uma_mao",
     raca = {"Cristal"},
     dano = 0,
     descricao = "+1 de Espirito\n+1 de Defesa\n+1 de Ataque\nNo final do turno:\nRecupere vida igual seu espirito",
@@ -47,6 +49,8 @@ itens.brocheCristal = {
     tipo = 3,
     nome = "Broche de Cristal",
     unica = false,
+    categoria = "joia",           
+    
     raca = {"Cristal"},
     dano = 0,
     descricao = "+1 de Defesa\n+1 de Espirito",
@@ -76,6 +80,8 @@ itens.laminaDeCristal = {
     tipo = 3,
     nome = "Lamina de Cristal",
     unica = false,
+    categoria = "arma",           
+    empunhadura = "uma_mao",
     raca = {"Cristal"},
     dano = 0,
     descricao = "+1 de Ataque",
@@ -103,6 +109,7 @@ itens.dragaoCristal = {
     tipo = 3,
     nome = "Dragão de Cristal",
     unica = false,
+    categoria = "joia",           
     raca = {"Cristal"},
     dano = 6,
     descricao = "No final do turno:\nCause 6 de dano mágico ao inimigo",
@@ -121,6 +128,7 @@ itens.dragaoCristal = {
 
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.danoTotal = (dono.danoTotal or 0) + danoFinal
         end
 
         if partida.emitirVFX then
@@ -134,6 +142,7 @@ itens.homunculoCarniceiro = {
     tipo = 3,
     nome = "Homunculo Carniceiro",
     unica = false,
+    categoria = "joia",           
     raca = {"Zumbi"},
     dano = 0,
     descricao = "Zumbi:\nFinal do Turno:\nRecupere 1 de vida\nSeu Inimigo Recebe 1 de Dano Direto",
@@ -151,6 +160,7 @@ itens.homunculoCarniceiro = {
             if racaAtual == "Zumbi" then
                 
                 inimigo.vidaAtual = inimigo.vidaAtual - 1
+                dono.danoTotal = (dono.danoTotal or 0) + 1
 
                 local vidaFaltando = aliado.vidaMaxima - aliado.vidaAtual
                 if vidaFaltando > 0 then
@@ -171,6 +181,8 @@ itens.quimeraNegra = {
     tipo = 3,
     nome = "Quimera Negra",
     unica = false,
+    categoria = "arma",           
+    empunhadura = "uma_mao",
     raca = {"Zumbi"},
     dano = 0,
     descricao = "Zumbi:\nAo Jogar e no Inicio do Turno:\nInimigo Espirito -1\nInimigo Ataque -1\nInimigo Defesa -1\nInimigo Vida -1\n",
@@ -196,6 +208,7 @@ itens.quimeraNegra = {
                 
                 if inimigo.vidaAtual > 0 then
                     inimigo.vidaAtual = inimigo.vidaAtual - 1
+                    dono.danoTotal = (dono.danoTotal or 0) + 1
                 end
                 
                 if partida.emitirVFX then
@@ -216,6 +229,8 @@ itens.dragast = {
     tipo = 3,
     nome = "Dragast",
     unica = true,
+    categoria = "arma",    
+    empunhadura = "uma_mao",
     raca = {"Cavaleiro"},
     dano = 0,
     descricao = "Única - Cavaleiro:\n+2 de Espirito +2 de Ataque\nFinal do Combate: Recupere 2 pontos de Vida",
@@ -264,6 +279,8 @@ itens.fragmentoAfiado = {
     tipo = 3,
     nome = "Fragmento Afiado",
     unica = false,
+    categoria = "arma",           
+    empunhadura = "uma_mao",
     raca = {"Cavaleiro"},
     dano = 0,
     descricao = "Cavaleiro:\nVocê e seus Aliados Recebem Ataque +2\nRecupere 2 pontos de Vida",

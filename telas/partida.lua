@@ -224,11 +224,14 @@ function Partida.update(dt)
                 -- Contar cartas atualmente no slot
                 local slotsOcupados = (logicaPartida.jogador1.cartasEscolhidas[1] and 1 or 0) + (logicaPartida.jogador1.cartasEscolhidas[2] and 1 or 0)
 
-                -- Pega da mão
+        -- Pega da mão
                 for i = #logicaPartida.jogador1.mao, 1, -1 do
                     local xPos = 540 + ((i - 1) * 90)
                     if dentroDoRetangulo(mouseX, mouseY, xPos, 760, 80, 100) then
-                        if slotsOcupados < 2 then
+                        local cartaNaMao = logicaPartida.jogador1.mao[i]
+                        
+                        -- NOVA REGRA: Só permite o arrasto se o herói do turno puder jogar a carta
+                        if slotsOcupados < 2 and logicaPartida.podeJogarCarta(logicaPartida.jogador1.heroiDoturno, cartaNaMao) then
                             itemArrastado = table.remove(logicaPartida.jogador1.mao, i)
                             dragOffsetX = xPos - mouseX
                             dragOffsetY = 760 - mouseY
@@ -238,28 +241,6 @@ function Partida.update(dt)
                             tipoArrasto = "carta_mao"
                             origemIndex = i
                             break
-                        end
-                    end
-                end
-
-                -- Pega dos Slots de Escolha
-                if not itemArrastado then
-                    for i = 1, 2 do
-                        if logicaPartida.jogador1.cartasEscolhidas[i] then
-                            local xPos = configSlotsCartas[i].x
-                            local yPos = configSlotsCartas[i].y
-                            if dentroDoRetangulo(mouseX, mouseY, xPos, yPos, 80, 100) then
-                                itemArrastado = logicaPartida.jogador1.cartasEscolhidas[i]
-                                logicaPartida.jogador1.cartasEscolhidas[i] = nil
-                                dragOffsetX = xPos - mouseX
-                                dragOffsetY = yPos - mouseY
-                                dragX = mouseX + dragOffsetX
-                                dragY = mouseY + dragOffsetY
-                                slotSnap = i -- Já começa encaixado!
-                                tipoArrasto = "carta_slot"
-                                origemIndex = i
-                                break
-                            end
                         end
                     end
                 end
@@ -805,22 +786,58 @@ function Partida.desenharMao()
         local xPos = 540 + ((i - 1) * 90)
         local yPos = 760
         
+        -- Verifica se o herói ativo pode jogar a carta (só faz sentido verificar na fase de resolução)
+        local podeJogar = true
+        if logicaPartida.faseDoTurno == "resolucao" and logicaPartida.jogador1.heroiDoturno then
+            podeJogar = logicaPartida.podeJogarCarta(logicaPartida.jogador1.heroiDoturno, carta)
+        end
+        
         if carta == cartaInspecionada and not itemArrastado then
             cartaHover = carta
             xHover = xPos
             yHover = yPos
         else
-            love.graphics.setColor(1, 1, 1)
+            -- Aplicar o efeito escurecido
+            if podeJogar then
+                love.graphics.setColor(1, 1, 1) -- Cor normal
+            else
+                love.graphics.setColor(0.3, 0.3, 0.3) -- Escurecida (Indisponível)
+            end
+            
             love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
-            love.graphics.setColor(0, 0, 0)
+            
+            -- Ajusta a cor do texto para dar leitura se a carta estiver escura
+            if podeJogar then
+                love.graphics.setColor(0, 0, 0)
+            else
+                love.graphics.setColor(0.8, 0.8, 0.8) -- Texto claro para o fundo escuro
+            end
+            
             love.graphics.printf(carta.nome, xPos, yPos + 10, 80, "center")
         end
     end
 
+    -- Desenha a carta com o Hover por último, aplicando a mesma regra visual
     if cartaHover then
-        love.graphics.setColor(1, 1, 1)
+        local podeJogarHover = true
+        if logicaPartida.faseDoTurno == "resolucao" and logicaPartida.jogador1.heroiDoturno then
+            podeJogarHover = logicaPartida.podeJogarCarta(logicaPartida.jogador1.heroiDoturno, cartaHover)
+        end
+        
+        if podeJogarHover then
+            love.graphics.setColor(1, 1, 1)
+        else
+            love.graphics.setColor(0.3, 0.3, 0.3)
+        end
+        
         love.graphics.draw(imgCartaDiversa, xHover - 10, yHover - 20, 0, 100/747, 125/1024)
-        love.graphics.setColor(0, 0, 0)
+        
+        if podeJogarHover then
+            love.graphics.setColor(0, 0, 0)
+        else
+            love.graphics.setColor(0.8, 0.8, 0.8)
+        end
+        
         love.graphics.printf(cartaHover.nome, xHover - 10, yHover - 10, 100, "center")
     end
 end
@@ -1004,25 +1021,51 @@ function Partida.botaoTurno(x, y)
 end
 
 function Partida.checarFinalDeJogo()
-    local function mortosTotais(herois)
-        local count = 0
-        for _, h in ipairs(herois) do if h.estaVivo == false then count = count + 1 end end
-        return count
+    local mortosJ1, mortosJ2 = 0, 0
+    for _, h in ipairs(logicaPartida.jogador1.aliados) do if h.estaVivo == false then mortosJ1 = mortosJ1 + 1 end end
+    for _, h in ipairs(logicaPartida.jogador2.aliados) do if h.estaVivo == false then mortosJ2 = mortosJ2 + 1 end end
+
+    local j1Eliminado = (mortosJ1 == 3)
+    local j2Eliminado = (mortosJ2 == 3)
+
+    if j1Eliminado and j2Eliminado then
+        -- Morte Súbita (Desempate)
+        local pontosJ1 = logicaPartida.jogador1.danoTotal + logicaPartida.jogador1.curaTotal
+        local pontosJ2 = logicaPartida.jogador2.danoTotal + logicaPartida.jogador2.curaTotal
+        
+        if pontosJ1 > pontosJ2 then vencedor = "azul"
+        elseif pontosJ2 > pontosJ1 then vencedor = "vermelho"
+        else vencedor = "empate_absoluto" end
+    elseif j1Eliminado then
+        vencedor = "vermelho"
+    elseif j2Eliminado then
+        vencedor = "azul"
     end
-    if mortosTotais(logicaPartida.jogador1.aliados) == 3 then vencedor = "vermelho" end
-    if mortosTotais(logicaPartida.jogador2.aliados) == 3 then vencedor = "azul" end
 end
 
 function Partida.anunciarVitoria()
     if not vencedor then return end
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.rectangle("fill", 420, 250, 600, 400)
+    love.graphics.rectangle("fill", 420, 250, 600, 400, 15, 15)
     love.graphics.setColor(0, 0, 0)
 
-    local textoPontuacao = "\n\nPontos Azul: " .. (logicaPartida.jogador1.pontuacao or 0) .. "\nPontos Vermelho: " .. (logicaPartida.jogador2.pontuacao or 0)
-    local msg = (vencedor == "vermelho" and "Time vermelho venceu!") or (vencedor == "azul" and "Time azul venceu!") or "Empate Absoluto!"
+    -- Adicionando 'or 0' para evitar crash caso a variável esteja nil
+    local danoJ1 = logicaPartida.jogador1.danoTotal or 0
+    local curaJ1 = logicaPartida.jogador1.curaTotal or 0
+    local ptsJ1 = danoJ1 + curaJ1
+
+    local danoJ2 = logicaPartida.jogador2.danoTotal or 0
+    local curaJ2 = logicaPartida.jogador2.curaTotal or 0
+    local ptsJ2 = danoJ2 + curaJ2
     
+    local textoPontuacao = "\n\nPontos Azul: " .. ptsJ1 .. "\nPontos Vermelho: " .. ptsJ2
+    
+    local msg = ""
+    if vencedor == "vermelho" then msg = "Time Vermelho Venceu!"
+    elseif vencedor == "azul" then msg = "Time Azul Venceu!"
+    else msg = "Empate Absoluto!" end
+
     love.graphics.printf(msg .. textoPontuacao, 420, 410, 600, "center")
 end
 
@@ -1200,6 +1243,9 @@ function Partida.draw()
         Partida.desenharHeroiEscolhido(carta1, carta2)
     end
     
+
+    
+    Partida.desenharInventarioAberto()
     Partida.desenharBotaoTurno()
     Partida.desenharCartasEscolhidas()
     Partida.desenharCartasParaDescarte()
@@ -1210,6 +1256,11 @@ function Partida.draw()
     Partida.desenharDescartes()
     Partida.desenharInventarioAberto()
     Partida.desenharInspecaoDeCarta()
+
+
+    if vencedor then
+         Partida.anunciarVitoria()
+    end
 
     if logicaPartida.estadoAlvo and logicaPartida.estadoAlvo.ativo then
         love.graphics.setColor(0, 0, 0, 0.8)

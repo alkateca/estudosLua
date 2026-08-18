@@ -13,13 +13,14 @@ magias.bolaDeFogo = {
     dano = 4,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Cause 4 mais seu espirito de dano mágico ao inimigo",
+    descricao = "Afinidade Fogo\nCause 4 mais seu espirito de dano mágico ao inimigo",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.danoTotal = (dono.danoTotal or 0) + danoFinal
         end
 
         if partida.emitirVFX then
@@ -33,6 +34,7 @@ magias.bolaDeFogo = {
 -- ==========================================
 -- AR
 -- ==========================================
+
 magias.estatica = {
     tipo = 2,
     nome = "Estatica",
@@ -43,13 +45,14 @@ magias.estatica = {
     dano = 3,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Cause 3 mais seu espirito de dano mágico ao inimigo\nCrie uma Estatica em seu baralho",
+    descricao = "Afinidade Ar\nCause 3 mais seu espirito de dano mágico ao inimigo\nCrie uma Estatica em seu baralho",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.danoTotal = (dono.danoTotal or 0) + danoFinal
         end
 
         local copiaEstatica = {}
@@ -77,7 +80,7 @@ magias.paraRaios = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Espirito +1 até o Final do Turno\nCrie e Jogue uma Estatica",
+    descricao = "Afinidade Ar\nEspirito +1 até o Final do Turno\nCrie e Jogue uma Estatica",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.espirito = aliado.espirito + 1
@@ -101,30 +104,6 @@ magias.paraRaios = {
     end
 }
 
-magias.reforcoEspiritual = {
-    tipo = 2,
-    nome = "Reforço espiritual",
-    raca = nil,
-    classeExclusiva = nil,
-    elemento = "ar",
-    unica = false,
-    dano = 0,
-    efeitoAtivo = false,
-    efeitoDoTurno = false,
-    descricao = "Aliados recebem Espirito +1",
-    
-    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        for i, heroisAliado in ipairs(dono.aliados) do
-            heroisAliado.espirito = heroisAliado.espirito + 1
-            if partida.emitirVFX then
-                partida.emitirVFX("buff", heroisAliado)
-            end
-        end
-    end,
-
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
-}
-
 magias.atomosferaPesada = {
     tipo = 2,
     nome = "Atmosfera Pesada",
@@ -135,7 +114,7 @@ magias.atomosferaPesada = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Zumbi\nOs Heróis Inimigos recebem -1 de Espirito",
+    descricao = "Afinidade Ar - Zumbi\nOs Heróis Inimigos recebem -1 de Espirito",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         for _, racaAtual in ipairs(aliado.raca or {}) do
@@ -166,7 +145,7 @@ magias.vendavalArcano = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Descarte um Item Aleatório de cada Herói Inimigo.",
+    descricao = "Afinidade Ar\nDescarte um Item Aleatório de cada Herói Inimigo.",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
@@ -201,7 +180,7 @@ magias.quebra = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Escolha um Item Equipado no Herói Inimigo e o Descarte.",
+    descricao = "Afinidade Água\nEscolha um Item Equipado no Herói Inimigo e o Descarte.",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         if inimigo.itemEquipado and #inimigo.itemEquipado > 0 then
@@ -232,29 +211,35 @@ magias.barreiraDeGelo = {
     nome = "Barreira de Gelo",
     raca = nil,
     classeExclusiva = nil,
+    categoria = "encantamento",
     elemento = "agua",
     unica = false,
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Aliados recebem Espirito +1 e Defesa +2",
-    
-    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+    descricao = "Afinidade Água\nEnquanto estiver Equipada\nAliados recebem Espirito +1 e Defesa +2",
+    efeito = function(self, aliado, inimigo, dono, partida, cartaJogada)
         for i, heroisAliado in ipairs(dono.aliados) do
             heroisAliado.espirito = heroisAliado.espirito + 1
             heroisAliado.defesa = heroisAliado.defesa + 2
-            if partida.emitirVFX then
-                partida.emitirVFX("buff", heroisAliado)
-            end
+            if partida.emitirVFX then partida.emitirVFX("buff", heroisAliado) end
         end
     end,
-    
+
+    efeitoDesequipar = function(self, aliado, inimigo, dono, partida, cartaJogada)
+        for i, heroisAliado in ipairs(dono.aliados) do
+            heroisAliado.espirito = math.max(0, heroisAliado.espirito - 1)
+            heroisAliado.defesa = math.max(0, heroisAliado.defesa - 2)
+        end
+    end,
+
     efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 -- ==========================================
 -- CRISTAL
 -- ==========================================
+
 magias.contraAtaque = {
     tipo = 2,
     nome = "Contra Ataque",
@@ -321,7 +306,7 @@ magias.ataqueMagico = {
     efeitoAtivo = false,
     efeitoDoTurno = false,
     defesaAtual = 0,
-    descricao = "A Defesa do seu Inimigo se torna 0 até o Final do Combate",
+    descricao = "Afinidade Cristal\nA Defesa do seu Inimigo se torna 0 até o Final do Combate",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         self.defesaAtual = inimigo.defesa
@@ -347,7 +332,7 @@ magias.golpesPesados = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Ataque +X até o Final do Combate, onde X é seu Espirito",
+    descricao = "Afinidade Cristal\nAtaque +X até o Final do Combate, onde X é seu Espirito",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         self.dano = aliado.espirito
@@ -378,7 +363,7 @@ magias.massacreCristalino = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Única\nCause X de Dano ao seu Inimigo, onde X é o total de cartas de Cristal em jogo ou no Descarte multiplicado por 2",
+    descricao = "Afinidade Cristal\nÚnica\nCause X de Dano ao seu Inimigo, onde X é o total de cartas de Cristal em jogo ou no Descarte multiplicado por 2",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         local totalCristais = 0
@@ -410,7 +395,7 @@ magias.massacreCristalino = {
         
         for _, cartaDescarte in ipairs(dono.descarte) do
             if ehCristal(cartaDescarte) then
-                totalCristais = totalCristais + 1
+                 totalCristais = totalCristais + 1
             end
         end
 
@@ -419,7 +404,8 @@ magias.massacreCristalino = {
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
-        end
+            dono.danoTotal = (dono.danoTotal or 0) + danoFinal
+         end
 
         if partida.emitirVFX then
             partida.emitirVFX("danoMagico", inimigo)
@@ -439,7 +425,7 @@ magias.pontoFinal = {
     dano = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Seu personagem recebe Ataque + X,\nonde X é seu Espirito vezes 2",
+    descricao = "Afinidade Cristal\nSeu personagem recebe Ataque + X,\nonde X é seu Espirito vezes 2",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         if aliado.espirito <= 0 then
@@ -447,7 +433,7 @@ magias.pontoFinal = {
         end
         
         if partida.emitirVFX then
-            partida.emitirVFX("buff", aliado)
+             partida.emitirVFX("buff", aliado)
         end
         
         self.dano = aliado.espirito * 2
@@ -476,7 +462,7 @@ magias.autoDefesaMagica = {
     inimigoEsp = 0,
     efeitoAtivo = false,
     efeitoDoTurno = false,
-    descricao = "Ataque +X até o Final do Combate, onde X é seu Espirito\nSeu Inimigo recebe Defesa -X, onde X é o Espirito do seu Inimigo",
+    descricao = "Afinidade Cristal\nAtaque +X até o Final do Combate, onde X é seu Espirito\nSeu Inimigo recebe Defesa -X, onde X é o Espirito do seu Inimigo",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
         self.dano = aliado.espirito
@@ -510,28 +496,6 @@ magias.autoDefesaMagica = {
 -- ==========================================
 -- TERRA
 -- ==========================================
-magias.reforcoTerrestre = {
-    tipo = 2,
-    nome = "Reforço terrestre",
-    raca = nil,
-    classeExclusiva = nil,
-    elemento = "terra",
-    unica = false,
-    dano = 0,
-    efeitoAtivo = false,
-    efeitoDoTurno = false,
-    descricao = "Aliados recebem Defesa +1",
-    
-    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        for i, heroisAliado in ipairs(dono.aliados) do
-            heroisAliado.defesa = heroisAliado.defesa + 1
-            if partida.emitirVFX then
-                partida.emitirVFX("buff", heroisAliado)
-            end
-        end
-    end,
 
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
-}
 
 return magias

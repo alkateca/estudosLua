@@ -43,10 +43,26 @@ logicaPartida.jogador1 = {
     cartasEscolhidas = {},
     cartasParaDescarte = {},
     heroiDoturno = nil,
-    pontuacao = 0
+    pontuacao = 0,
+    danoTotal = 0,
+    curaTotal = 0
 }
 
-logicaPartida.jogador2 = {}
+logicaPartida.jogador2 = {
+    reliquia = nil,
+    extraDeck = {},
+    baralho = {},
+    nome = "",
+    mao = {},
+    descarte = {},
+    aliados = {},
+    cartasEscolhidas = {},
+    cartasParaDescarte = {},
+    heroiDoturno = nil,
+    pontuacao = 0,
+    danoTotal = 0,
+    curaTotal = 0
+}
 
 function logicaPartida.prepararOponentePVE()
     logicaPartida.jogador2 = {
@@ -70,25 +86,31 @@ function logicaPartida.prepararOponentePVE()
         cartasEscolhidas = {},
         cartasParaDescarte = {},
         heroiDoturno = nil,
-        pontuacao = 0
+        pontuacao = 0,
+        danoTotal = 0,
+        curaTotal = 0
     }
 end
 
 math.randomseed(os.time())
 
 function logicaPartida.resetarPartida()
-    -- Zera o jogador 1 com todos os campos limpos
+    -- Zera o jogador 1 com todos os campos limpos, incluindo os contadores
     logicaPartida.jogador1 = {
         reliquia = nil, extraDeck = {}, baralho = {}, nome = "",
         mao = {}, descarte = {}, aliados = {}, cartasEscolhidas = {},
-        cartasParaDescarte = {}, heroiDoturno = nil, pontuacao = 0
+        cartasParaDescarte = {}, heroiDoturno = nil, pontuacao = 0,
+        danoTotal = 0, -- CORRIGIDO: Adicionado aqui!
+        curaTotal = 0  -- CORRIGIDO: Adicionado aqui!
     }
 
-    -- Zera o jogador 2 com todos os campos limpos
+    -- Zera o jogador 2 com todos os campos limpos, incluindo os contadores
     logicaPartida.jogador2 = {
         reliquia = nil, extraDeck = {}, baralho = {}, nome = "",
         mao = {}, descarte = {}, aliados = {}, cartasEscolhidas = {},
-        cartasParaDescarte = {}, heroiDoturno = nil, pontuacao = 0
+        cartasParaDescarte = {}, heroiDoturno = nil, pontuacao = 0,
+        danoTotal = 0, -- CORRIGIDO: Adicionado aqui!
+        curaTotal = 0  -- CORRIGIDO: Adicionado aqui!
     }
 
     logicaPartida.faseDoTurno = "preparacao"
@@ -246,6 +268,69 @@ function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
     return false
 end
 
+local CUSTO_SLOT = { ["uma_mao"] = 1, ["duas_maos"] = 2, ["tres_maos"] = 3, ["quatro_maos"] = 4 }
+
+function logicaPartida.equiparItem(heroi, dono, novoItem)
+    if not heroi.itemEquipado then heroi.itemEquipado = {} end
+
+    -- 1. Joias e Encantamentos (Livres)
+    if novoItem.categoria == "joia" or novoItem.categoria == "encantamento" then
+        table.insert(heroi.itemEquipado, novoItem)
+        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroi, dono) end
+        return
+    end
+
+    -- 2. Armadura/Escudo (Apenas 1)
+    if novoItem.categoria == "armadura" or novoItem.categoria == "escudo" then
+        for i = #heroi.itemEquipado, 1, -1 do
+            if heroi.itemEquipado[i].categoria == novoItem.categoria then
+                logicaPartida.desequiparItem(heroi, dono, i)
+            end
+        end
+        table.insert(heroi.itemEquipado, novoItem)
+        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroi, dono) end
+        return
+    end
+
+    -- 3. Armas (Gestão de Mãos)
+    if novoItem.categoria == "arma" then
+        local capacidadeMaxima = heroi.maxSlots or 2
+        local custoNovo = CUSTO_SLOT[novoItem.empunhadura] or 1
+
+        if custoNovo >= 2 then
+            for i = #heroi.itemEquipado, 1, -1 do
+                if heroi.itemEquipado[i].categoria == "arma" then
+                    logicaPartida.desequiparItem(heroi, dono, i)
+                end
+            end
+        else
+            local slotsOcupados = 0
+            for _, item in ipairs(heroi.itemEquipado) do
+                if item.categoria == "arma" then
+                    slotsOcupados = slotsOcupados + (CUSTO_SLOT[item.empunhadura] or 1)
+                end
+            end
+
+            while (slotsOcupados + custoNovo) > capacidadeMaxima do
+                for i = #heroi.itemEquipado, 1, -1 do
+                    local item = heroi.itemEquipado[i]
+                    if item.categoria == "arma" then
+                        slotsOcupados = slotsOcupados - (CUSTO_SLOT[item.empunhadura] or 1)
+                        logicaPartida.desequiparItem(heroi, dono, i)
+                        break
+                    end
+                end
+            end
+        end
+        table.insert(heroi.itemEquipado, novoItem)
+        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroi, dono) end
+        return
+    end
+    
+    -- Fallback
+    table.insert(heroi.itemEquipado, novoItem)
+end
+
 function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     logicaPartida.emitirVFX = callbackVisual 
     local heroi = logicaPartida.jogador1.heroiDoturno
@@ -293,6 +378,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     if inimigo.ataque > defesaEfetivaHeroi then
         local dano = inimigo.ataque - defesaEfetivaHeroi
         heroi.vidaAtual = heroi.vidaAtual - dano
+        logicaPartida.jogador2.danoTotal = (logicaPartida.jogador2.danoTotal or 0) + dano -- NOVO
         if callbackVisual then callbackVisual(efeitoVisualInimigo, "aliado") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
@@ -312,6 +398,7 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     if heroi.ataque > defesaEfetivaInimigo then
         local dano = heroi.ataque - defesaEfetivaInimigo
         inimigo.vidaAtual = inimigo.vidaAtual - dano
+        logicaPartida.jogador1.danoTotal = (logicaPartida.jogador1.danoTotal or 0) + dano
         if callbackVisual then callbackVisual(efeitoVisualHeroi, "inimigo") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
@@ -510,12 +597,12 @@ local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
         local inimigoAtivo = jogada.inimigo
         local donoDaCarta = jogada.dono
         
-        if type(cartaDaVez.efeito) == "function" then
+    if type(cartaDaVez.efeito) == "function" then
             cartaDaVez.efeito(cartaDaVez, heroiAtivo, inimigoAtivo, donoDaCarta, logicaPartida, cartaDaVez)
             
-            if cartaDaVez.tipo == 3 then
-                if not heroiAtivo.itemEquipado then heroiAtivo.itemEquipado = {} end
-                table.insert(heroiAtivo.itemEquipado, cartaDaVez)
+            -- ATUALIZADO: Itens (tipo 3) e Magias do tipo Encantamento vão para o corpo do herói!
+            if cartaDaVez.tipo == 3 or cartaDaVez.categoria == "encantamento" then
+                logicaPartida.equiparItem(heroiAtivo, donoDaCarta, cartaDaVez)
             else
                 if type(cartaDaVez.efeitoFinalDoTurno) == "function" then
                     if not heroiAtivo.magiasAtivas then heroiAtivo.magiasAtivas = {} end
@@ -569,6 +656,79 @@ function logicaPartida.entreTurnos(callbackAtualizacao, callbackVisual)
     if #logicaPartida.jogador2.mao < 5 then
         logicaPartida.comprarCartas(logicaPartida.jogador2, 5 - #logicaPartida.jogador2.mao)
     end
+end
+
+function logicaPartida.podeJogarCarta(heroi, carta)
+    if not heroi or not carta then return false end
+
+    -- Função auxiliar aprimorada: suporta tabelas (múltiplas afinidades/raças) e ignora maiúsculas/minúsculas
+    local function possuiAtributo(lista, valor)
+        if not lista or not valor then return false end
+        
+        local valorBuscado = string.lower(tostring(valor))
+        
+        if type(lista) == "string" then 
+            return string.lower(lista) == valorBuscado 
+        end
+        
+        if type(lista) == "table" then
+            for _, v in ipairs(lista) do
+                if string.lower(tostring(v)) == valorBuscado then 
+                    return true 
+                end
+            end
+        end
+        
+        return false
+    end
+
+    local ehConstructo = possuiAtributo(heroi.raca, "constructo")
+    local ehGoblin = possuiAtributo(heroi.raca, "goblin")
+    local ehEmissor = possuiAtributo(heroi.classe, "emissor")
+
+    -- 1. Regra de Classe Exclusiva (Criador, Transformador, etc.)
+    if carta.classeExclusiva and carta.classeExclusiva ~= "" then
+        if not possuiAtributo(heroi.classe, carta.classeExclusiva) then
+            return false
+        end
+    end
+
+    -- 2. Regra de Raça (Ex: Atmosfera Pesada só para Zumbis)
+    if carta.raca and ((type(carta.raca) == "table" and #carta.raca > 0) or (type(carta.raca) == "string" and carta.raca ~= "")) then
+        
+        -- Constructos ignoram restrição de raça PARA ITENS (tipo 3)
+        local ignoraRaca = (ehConstructo and carta.tipo == 3)
+        
+        if not ignoraRaca then
+            local racaPermitida = false
+            if type(carta.raca) == "table" then
+                for _, r in ipairs(carta.raca) do
+                    if possuiAtributo(heroi.raca, r) then
+                        racaPermitida = true
+                        break
+                    end
+                end
+            elseif type(carta.raca) == "string" then
+                racaPermitida = possuiAtributo(heroi.raca, carta.raca)
+            end
+
+            if not racaPermitida then
+                return false
+            end
+        end
+    end
+
+    -- 3. Regra de Magias (tipo = 2) e Múltiplas Afinidades Elementais
+    if carta.tipo == 2 and carta.elemento then
+        local possuiAfinidade = possuiAtributo(heroi.afinidade, carta.elemento)
+        local magiaLiberada = ehGoblin or ehEmissor -- Goblins e Emissores ignoram afinidade
+
+        if not (possuiAfinidade or magiaLiberada) then
+            return false
+        end
+    end
+
+    return true
 end
 
 return logicaPartida

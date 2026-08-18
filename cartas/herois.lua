@@ -194,7 +194,7 @@ herois.esquadraoGoblin = {
             end
         end
 
-        if cartaJogada.tipo == 2 and self.buffEsp == false then                    
+        if cartaJogada.tipo == 2 and self.buffEsp == false then                   
             self.espirito = self.espirito + valorBuff
             self.buffEsp = true
         elseif cartaJogada.tipo == 3 and self.buffAtaq == false then
@@ -414,7 +414,7 @@ herois.quimeraCarniceira = {
             
         for _, heroiAliado in ipairs(dono.aliados) do
             for _, raca in ipairs(heroiAliado.raca) do
-                if raca == "Zumbi" then
+                 if raca == "Zumbi" then
                     valorBonus = valorBonus + 1
                 end
             end
@@ -530,6 +530,7 @@ herois.santaDasLaminas = {
         
         if danoMagico > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoMagico
+            dono.danoTotal = (dono.danoTotal or 0) + danoMagico
         end
         
         if partida.emitirVFX then
@@ -574,6 +575,7 @@ herois.aprendizDasLaminas = {
         
         if danoMagico > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoMagico
+            dono.danoTotal = (dono.danoTotal or 0) + danoMagico
         end
         
         if partida.emitirVFX then
@@ -636,7 +638,7 @@ herois.artesaDasLaminas = {
                     for k, v in pairs(itemModulo.laminaDeCristal) do
                         copiaItem[k] = v
                     end
-                    table.insert(heroiAliado.itemEquipado, copiaItem)
+                table.insert(heroiAliado.itemEquipado, copiaItem)
                     heroiAliado.ataque = heroiAliado.ataque + 1
                 end
             end
@@ -693,6 +695,7 @@ herois.heroiAlka = {
             
             if danoFisico > 0 then
                 inimigo.vidaAtual = inimigo.vidaAtual - danoFisico
+                dono.danoTotal = (dono.danoTotal or 0) + danoFisico
             end
             
             if partida.emitirVFX then
@@ -758,6 +761,7 @@ herois.heroinaLeone = {
     efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
         if self.dano > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - self.dano
+            dono.danoTotal = (dono.danoTotal or 0) + self.dano
             
             if partida.emitirVFX then
                 partida.emitirVFX("danoDireto", inimigo)
@@ -1025,17 +1029,18 @@ herois.moyraLiberta = {
             self.efeitoDoTurno = true
         end
     end,
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)            
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)     
         local danoMagico = 5 - inimigo.espirito 
 
         if danoMagico > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoMagico
+            dono.danoTotal = (dono.danoTotal or 0) + danoMagico
         end
         
         if partida.emitirVFX then
             partida.emitirVFX("danoMagico", inimigo)
         end
-        
+    
         self.efeitoDoTurno = false
     end,
     efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
@@ -1082,7 +1087,7 @@ herois.esquadraoGoblinLiberto = {
             end
         end
 
-        if cartaJogada.tipo == 2 then                    
+        if cartaJogada.tipo == 2 then           
             self.espirito = self.espirito + valorBuff
         elseif cartaJogada.tipo == 3 then
             self.ataque = self.ataque + valorBuff
@@ -1127,6 +1132,7 @@ herois.esquadraoGoblinLiberto = {
                 local danoMagico = tercoEspirito - inimigoAlvo.espirito
                 if danoMagico > 0 then
                     inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoMagico
+                    dono.danoTotal = (dono.danoTotal or 0) + danoMagico
                 end
                 if partida.emitirVFX then
                     partida.emitirVFX("danoMagico", inimigoAlvo)
@@ -1135,6 +1141,7 @@ herois.esquadraoGoblinLiberto = {
                 local danoFisico = tercoAtaque - inimigoAlvo.defesa
                 if danoFisico > 0 then
                     inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoFisico
+                    dono.danoTotal = (dono.danoTotal or 0) + danoFisico
                 end
                 if partida.emitirVFX then
                     partida.emitirVFX("danoFisico", inimigoAlvo)
@@ -1241,18 +1248,6 @@ herois.behemoth29A = {
     
     efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
     efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        self.vidaAtual = self.vidaAtual - 3
-        if partida.emitirVFX then
-            partida.emitirVFX("danoDireto", self)
-        end
-
-        if self.vidaAtual <= 0 then
-            self.estaVivo = false
-            if self.efeitoAoMorrer then
-                self:efeitoAoMorrer(aliado, inimigo, dono, partida, cartaJogada)
-            end
-        end
-
         for _, heroiAliado in ipairs(dono.aliados) do
             if heroiAliado.nome == "Kael, Domador de Feras" and heroiAliado.estaVivo then
                 local vidaFaltando = heroiAliado.vidaMaxima - heroiAliado.vidaAtual
@@ -1263,6 +1258,12 @@ herois.behemoth29A = {
                     if partida.emitirVFX then
                         partida.emitirVFX("cura", heroiAliado)
                     end
+
+                    self.vidaAtual = self.vidaAtual - 3
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoDireto", self)
+                    end
+                    
                 end
                 break
             end
@@ -1281,16 +1282,16 @@ herois.rapinaria7B3 = {
     classe = {},
     reliquia = false,
     nome = "Rapinária-7B3",
-    espirito = 2,
-    ataque = 5,
+    espirito = 0,
+    ataque = 4,
     defesa = 0,
-    vidaMaxima = 16,
-    vidaAtual = 16,
+    vidaMaxima = 12,
+    vidaAtual = 12,
     modificadorDeDano = 0,
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Água e Ar\nInicio do combate:\nJogue um Reforço terrestre e Reforço espiritual.",
+    descricao = "Afinidade Água e Ar\nInicio do combate:\nJogue um Vendaval Arcano e uma Barreira De Gelo.",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -1305,7 +1306,7 @@ herois.rapinaria7B3 = {
     efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
     efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
         table.insert(partida.filaDeResolucao, {
-            carta = magias.reforcoTerrestre,
+            carta = magias.barreiraDeGelo,
             aliado = self,   
             inimigo = inimigo,
             dono = dono,
@@ -1313,7 +1314,7 @@ herois.rapinaria7B3 = {
         })
         
         table.insert(partida.filaDeResolucao, {
-            carta = magias.reforcoEspiritual,
+            carta = magias.vendavalArcano,
             aliado = self,   
             inimigo = inimigo,
             dono = dono,
@@ -1405,6 +1406,7 @@ herois.kaelCavaleiroBestial = {
         for _, heroiInimigo in ipairs(jogadorOponente.aliados) do
             if heroiInimigo.estaVivo then
                 heroiInimigo.vidaAtual = heroiInimigo.vidaAtual - 2
+                dono.danoTotal = (dono.danoTotal or 0) + 2
                 
                 if partida.emitirVFX then
                     partida.emitirVFX("danoDireto", heroiInimigo)

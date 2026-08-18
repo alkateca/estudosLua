@@ -197,6 +197,7 @@ reliquias.artefatoPerfurante = {
             partida.emitirVFX("debuff", inimigo)
         end
         inimigo.vidaMaxima = inimigo.vidaMaxima - 1
+        dono.danoTotal = (dono.danoTotal or 0) + 1
         if inimigo.vidaAtual > inimigo.vidaMaxima then
             inimigo.vidaAtual = inimigo.vidaMaxima
         end
@@ -225,6 +226,8 @@ reliquias.garraEspectral = {
     tipo = 3,
     nome = "Garra espectral",
     unica = true,
+    categoria = "arma",          
+    empunhadura = "uma_mao", 
     raca = {},
     dano = 0,
     descricao = "Ataque +2\nAo jogar: O Inimigo recebe Espirito -2\nInício do Combate: O Inimigo recebe Espirito -2\nSeus Ataques causam Dano Mágico em vez de Fisico",

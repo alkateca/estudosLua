@@ -136,6 +136,9 @@ acoes.mirarNaCabeca = {
                     
                     dono.pontuacao = dono.pontuacao + 3
 
+                    dono.pontuacao = dono.pontuacao + 3
+                    dono.danoTotal = (dono.danoTotal or 0) + 3
+
                     if partida.emitirVFX then
                         partida.emitirVFX("danoDireto", cartaEscolhida)
                     end
