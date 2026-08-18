@@ -152,11 +152,11 @@ herois.alucinacaoCintilante = {
 -- goblins
 herois.esquadraoGoblin = {
     tipo = 1,
-    raca = "Goblin",
+    raca = {"Goblin"},
     classe = {},
     afinidade = {},
     reliquia = false,
-    nome = "Esquadrão\nGoblin",
+    nome = "Esquadrão Goblin",
     espirito = 2,
     ataque = 4,
     defesa = 2,
@@ -238,7 +238,7 @@ herois.esquadraoGoblin = {
 
 herois.reiGoblin = {
     tipo = 1,
-    raca = "Goblin",
+    raca = {"Goblin"},
     classe = {},
     afinidade = {},
     reliquia = false,
@@ -274,7 +274,7 @@ herois.reiGoblin = {
 
 herois.traidorGoblin = {
     tipo = 1,
-    raca = "Goblin",
+    raca = {"Goblin"},
     classe = {},
     afinidade = {},
     reliquia = false,
@@ -348,7 +348,7 @@ herois.rainhaGoblin = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Zumbi\nFinal do Turno\nCure seus aliados em 2",
+    descricao = "Final do Turno\nCure seus aliados em 2",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -382,7 +382,7 @@ herois.rainhaGoblin = {
 
 herois.quimeraCarniceira = {
     tipo = 1,
-    raca = {"Zumbi"},
+    raca = {"Zumbi", "Constructo"},
     classe = {},
     afinidade = {},
     reliquia = false,
@@ -396,7 +396,7 @@ herois.quimeraCarniceira = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Zumbi\nInicio do Combate:\nPara cada aliado Zumbi:\nEspirito e Ataque +1\nRecupera 2 de vida",
+    descricao = "Inicio do Combate:\nPara cada aliado Zumbi:\nEspirito e Ataque +1\nRecupera 2 de vida",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -446,7 +446,7 @@ herois.quimeraCarniceira = {
 herois.necromanteDasAreais = {
     tipo = 1,
     raca = {"Zumbi"},
-    classe = {"Transformador"},
+    classe = {"Emissor", "Transformador"},
     afinidade = {},
     reliquia = false,
     nome = "Necromante das\nAreias",
@@ -459,7 +459,7 @@ herois.necromanteDasAreais = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Zumbi\nInício do Turno:\nCrie e Jogue uma Ritos Fúnebres",
+    descricao = "Início do Turno:\nCrie e Jogue uma Ritos Fúnebres",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -504,7 +504,7 @@ herois.santaDasLaminas = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Cristal\nSeus Aliados recebem\nEspirito +1 Ataque +1 Defesa +1\nFinal do Turno:\nCause 5 de Dano Mágico",
+    descricao = "Seus Aliados recebem\nEspirito +1 Ataque +1 Defesa +1\nFinal do Turno:\nCause 5 de Dano Mágico",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -557,7 +557,7 @@ herois.aprendizDasLaminas = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Cristal\nInicio do turno:\nCause 3 de dano mágico\nAo jogar: Magia\nAtaque +3 até o final do turno",
+    descricao = "Inicio do turno:\nCause 3 de dano mágico\nAo jogar: Magia\nAtaque +3 até o final do turno",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -617,7 +617,7 @@ herois.artesaDasLaminas = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Cristal\nInício da Partida:\nAnexe uma Lamina de Cristal em seus aliados",
+    descricao = "Início da Partida:\nAnexe uma Lamina de Cristal em seus aliados",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -723,7 +723,7 @@ herois.heroinaLeone = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Ar\nInício do Turno:\nCure seus Aliados em 2\nFinal do Turno:\nCause Dano Direto ao seu Inimigo equivalente a soma Cura do Turno",
+    descricao = "Início do Turno:\nCure seus Aliados em 2\nFinal do Turno:\nCause Dano Direto ao seu Inimigo equivalente a soma Cura do Turno",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -791,7 +791,7 @@ herois.grandeCavaleiroEnamor = {
     dano = 0,
     elemento = 5,
     itemEquipado = {},
-    descricao = "Cavaleiro - Afinidade Cristal\nInicio do turno:\nSe não estiver com Dragast Equipada:\nJogue Dragast de sua Mão, Baralho ou Descarte",
+    descricao = "Inicio do turno:\nSe não estiver com Dragast Equipada:\nJogue Dragast de sua Mão, Baralho ou Descarte",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -873,7 +873,7 @@ herois.ageusConstructoCristalino = {
     dano = 0,
     elemento = 5,
     itemEquipado = {},
-    descricao = "Cavaleiro - Afinidade Cristal\nSeus Aliados recebem Espirito +2 e Defesa +2 para cada Cavaleiro Aliado Morto",
+    descricao = "Seus Aliados recebem Espirito +2 e Defesa +2 para cada Cavaleiro Aliado Morto",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -944,7 +944,7 @@ herois.cavaleiroOenar = {
     dano = 0,
     elemento = 5, 
     itemEquipado = {},
-    descricao = "Cavaleiro - Afinidade Cristal\nUma vez por Turno:\nAo Jogar uma Magia: Ataque +2",
+    descricao = "Uma vez por Turno:\nAo Jogar uma Magia: Ataque +2",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -1049,7 +1049,7 @@ herois.moyraLiberta = {
 
 herois.esquadraoGoblinLiberto = {
     tipo = 1,
-    raca = "Goblin",
+    raca = {"Goblin"},
     classe = {},
     afinidade = {},
     reliquia = true,
@@ -1063,7 +1063,7 @@ herois.esquadraoGoblinLiberto = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Ao jogar: Magia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do Turno: Cure seus Aliados em 3\nEm área Um terço do seu Espirito\nUm terço do seu Ataque",
+    descricao = "Ao jogar: Magia: Espirito +1\nItem: Ataque +1\nAção: Defesa +1\nFinal do Turno: Cure seus Aliados em 3",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -1118,33 +1118,6 @@ herois.esquadraoGoblinLiberto = {
                     if partida.emitirVFX then
                         partida.emitirVFX("cura", heroiAliado)
                     end
-                end
-            end
-        end
-
-        local oponente = dono == partida.jogador1 and partida.jogador2 or partida.jogador1
-
-        local tercoEspirito = math.floor(self.espirito / 3)
-        local tercoAtaque = math.floor(self.ataque / 3)
-
-        for _, inimigoAlvo in ipairs(oponente.aliados) do
-            if inimigoAlvo.estaVivo then
-                local danoMagico = tercoEspirito - inimigoAlvo.espirito
-                if danoMagico > 0 then
-                    inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoMagico
-                    dono.danoTotal = (dono.danoTotal or 0) + danoMagico
-                end
-                if partida.emitirVFX then
-                    partida.emitirVFX("danoMagico", inimigoAlvo)
-                end
-                    
-                local danoFisico = tercoAtaque - inimigoAlvo.defesa
-                if danoFisico > 0 then
-                    inimigoAlvo.vidaAtual = inimigoAlvo.vidaAtual - danoFisico
-                    dono.danoTotal = (dono.danoTotal or 0) + danoFisico
-                end
-                if partida.emitirVFX then
-                    partida.emitirVFX("danoFisico", inimigoAlvo)
                 end
             end
         end
@@ -1234,7 +1207,7 @@ herois.behemoth29A = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Terra\nInício do combate:\nSofre 3 de Dano Direto para Curar Kael, Domador de Feras, em 3 pontos.",
+    descricao = "Início do combate:\nSofre 3 de Dano Direto para Curar Kael, Domador de Feras, em 3 pontos.",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -1291,7 +1264,7 @@ herois.rapinaria7B3 = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Água e Ar\nInicio do combate:\nJogue um Vendaval Arcano e uma Barreira De Gelo.",
+    descricao = "Inicio do combate:\nJogue um Vendaval Arcano e uma Barreira De Gelo.",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,
@@ -1343,7 +1316,7 @@ herois.kaelCavaleiroBestial = {
     dano = 0,
     elemento = nil,
     itemEquipado = {},
-    descricao = "Afinidade Água, Ar e Terra\nInício do combate:\nSeus Constructos recebem Ataque +2 e recuperam 2 pontos de vida.\nFinal do combate:\nCausa 2 de Dano Direto a todos os Inimigos.",
+    descricao = "Início do combate:\nSeus Constructos recebem Ataque +2 e recuperam 2 pontos de vida.\nFinal do combate:\nCausa 2 de Dano Direto a todos os Inimigos.",
     ataqueMagico = false,
     ataqueDireto = false,
     estaVivo = true,

@@ -527,7 +527,7 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
     local heroi = logicaPartida.jogador1.heroiDoturno
     local inimigo = logicaPartida.jogador2.heroiDoturno
     
--- Gatilhos de Início de Turno do Herói
+    -- Gatilhos de Início de Turno do Herói
     if type(heroi.efeitoInicioDoTurno) == "function" then
         heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
     end
@@ -555,7 +555,7 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
         end
     end
 
-local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
+    local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
 
     for i = 1, 2 do
         if jogador1TemIniciativa then
@@ -597,16 +597,19 @@ local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
         local inimigoAtivo = jogada.inimigo
         local donoDaCarta = jogada.dono
         
-    if type(cartaDaVez.efeito) == "function" then
+        if type(cartaDaVez.efeito) == "function" then
             cartaDaVez.efeito(cartaDaVez, heroiAtivo, inimigoAtivo, donoDaCarta, logicaPartida, cartaDaVez)
             
-            -- ATUALIZADO: Itens (tipo 3) e Magias do tipo Encantamento vão para o corpo do herói!
-            if cartaDaVez.tipo == 3 or cartaDaVez.categoria == "encantamento" then
-                logicaPartida.equiparItem(heroiAtivo, donoDaCarta, cartaDaVez)
-            else
-                if type(cartaDaVez.efeitoFinalDoTurno) == "function" then
-                    if not heroiAtivo.magiasAtivas then heroiAtivo.magiasAtivas = {} end
-                    table.insert(heroiAtivo.magiasAtivas, cartaDaVez)
+            -- BLOQUEIO DE EXÍLIO: Impede que a carta vá para o corpo do herói ou ative efeitos contínuos
+            if not cartaDaVez.exilar then
+                -- ATUALIZADO: Itens (tipo 3) e Magias do tipo Encantamento vão para o corpo do herói!
+                if cartaDaVez.tipo == 3 or cartaDaVez.categoria == "encantamento" then
+                    logicaPartida.equiparItem(heroiAtivo, donoDaCarta, cartaDaVez)
+                else
+                    if type(cartaDaVez.efeitoFinalDoTurno) == "function" then
+                        if not heroiAtivo.magiasAtivas then heroiAtivo.magiasAtivas = {} end
+                        table.insert(heroiAtivo.magiasAtivas, cartaDaVez)
+                    end
                 end
             end
         end
@@ -625,9 +628,12 @@ local jogador1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
         local carta = jogada.carta
         local dono = jogada.dono
         
-        if carta.tipo ~= 3 then
-            if type(carta.efeitoFinalDoTurno) ~= "function" then
-                table.insert(dono.descarte, carta)
+        -- BLOQUEIO DE EXÍLIO: Impede que a carta vá para o descarte
+        if not carta.exilar then
+            if carta.tipo ~= 3 then
+                if type(carta.efeitoFinalDoTurno) ~= "function" then
+                    table.insert(dono.descarte, carta)
+                end
             end
         end
     end

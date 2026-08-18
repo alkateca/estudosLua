@@ -31,6 +31,37 @@ magias.bolaDeFogo = {
     efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
+magias.maestriaComChamas = {
+    tipo = 2,
+    nome = "Maestria com Chamas",
+    raca = nil,
+    classeExclusiva = nil,
+    elemento = "fogo",
+    unica = true,
+    exilar = true,
+    dano = 0,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Afinidade Fogo\nCrie e Jogue 3 Bolas de Fogo.\nFinal do Combate: Exile está Carta",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        local i = 0
+        while i < 3 do
+            i = i + 1
+            table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
+            carta = magias.bolaDeFogo,
+            aliado = aliado,
+            inimigo = inimigo,
+            dono = dono,
+            resolvida = false
+        })
+        end
+
+    end,
+
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)      
+    end,
+}
 -- ==========================================
 -- AR
 -- ==========================================

@@ -107,7 +107,7 @@ reliquias.liberacaoEsquadrao = {
             coroutine.yield()
         end
 
-        if aliado.nome == "Esquadrão\nGoblin" then
+        if aliado.nome == "Esquadrão Goblin" then
             local novaForma = heroi.esquadraoGoblinLiberto
             
             if novaForma then

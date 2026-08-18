@@ -570,7 +570,8 @@ function Partida.mousereleased(x, y, button)
 
     if logicaPartida.estadoAlvo.ativo then
         local tipo = logicaPartida.estadoAlvo.tipo
-    if tipo == "mao" then
+        
+        if tipo == "mao" then
             for i, carta in ipairs(logicaPartida.jogador1.mao) do
                 if dentroDoRetangulo(x, y, 540 + ((i - 1) * 90), 760, 80, 100) then
                     -- SÓ DEIXA CLICAR SE PUDER JOGAR
@@ -583,6 +584,7 @@ function Partida.mousereleased(x, y, button)
                     return 
                 end
             end
+            
         elseif tipo == "descarte" then
             for i, carta in ipairs(logicaPartida.jogador1.descarte) do
                 if dentroDoRetangulo(x, y, 260 + (((i - 1) % 10) * 90), 200 + (math.floor((i - 1) / 10) * 110), 80, 100) then
@@ -596,26 +598,7 @@ function Partida.mousereleased(x, y, button)
                     return 
                 end
             end
-            for i, carta in ipairs(logicaPartida.jogador1.descarte) do
-                if dentroDoRetangulo(x, y, 260 + (((i - 1) % 10) * 90), 200 + (math.floor((i - 1) / 10) * 110), 80, 100) then
-                    -- SÓ DEIXA CLICAR SE PUDER JOGAR
-                    local podeJogar = logicaPartida.estadoAlvo.ignoraRestricoes or logicaPartida.podeJogarCarta(logicaPartida.jogador1.heroiDoturno, carta)
-                    if podeJogar then
-                        logicaPartida.estadoAlvo.ativo = false
-                        logicaPartida.estadoAlvo.callback(carta, i)
-                        retomarTurno()
-                    end
-                    return 
-                end
-            end
-            for i, carta in ipairs(logicaPartida.jogador1.descarte) do
-                if dentroDoRetangulo(x, y, 260 + (((i - 1) % 10) * 90), 200 + (math.floor((i - 1) / 10) * 110), 80, 100) then
-                    logicaPartida.estadoAlvo.ativo = false
-                    logicaPartida.estadoAlvo.callback(carta, i)
-                    retomarTurno()
-                    return 
-                end
-            end
+            
         elseif tipo == "aliado" then
             if logicaPartida.jogador1.heroiDoturno and dentroDoRetangulo(x, y, 1000, 480, 280, 380) then
                 logicaPartida.estadoAlvo.ativo = false
@@ -631,6 +614,7 @@ function Partida.mousereleased(x, y, button)
                     return 
                 end
             end
+            
         elseif tipo == "inimigo" then
             if logicaPartida.jogador2.heroiDoturno and dentroDoRetangulo(x, y, 1000, 40, 280, 380) then
                 logicaPartida.estadoAlvo.ativo = false
@@ -646,6 +630,7 @@ function Partida.mousereleased(x, y, button)
                     return 
                 end
             end
+            
         elseif tipo == "item" then
             for i, itemAtual in ipairs(logicaPartida.estadoAlvo.listaItens or {}) do
                 if dentroDoRetangulo(x, y, 460 + ((i - 1) * 90), 320, 80, 100) then
@@ -656,7 +641,23 @@ function Partida.mousereleased(x, y, button)
                     return 
                 end
             end
+            
+        elseif tipo == "listaGeral" then
+            for i, carta in ipairs(logicaPartida.estadoAlvo.listaCartas or {}) do
+                local coluna = (i - 1) % 10 
+                local linha = math.floor((i - 1) / 10) 
+                local xPos = 260 + (coluna * 90)
+                local yPos = 200 + (linha * 110)
+                
+                if dentroDoRetangulo(x, y, xPos, yPos, 80, 100) then
+                    logicaPartida.estadoAlvo.ativo = false
+                    logicaPartida.estadoAlvo.callback(carta, i)
+                    retomarTurno()
+                    return 
+                end
+            end
         end
+
         return
     end
 
@@ -699,14 +700,68 @@ function Partida.desenharInfoHeroi(carta, rectX, rectY, tituloDefault, itemYBase
         love.graphics.draw(imgCartaHeroi, rectX, rectY, 0, 280/747, 380/1024)
         
         love.graphics.setColor(0, 0, 0)
-        love.graphics.printf(carta.nome, rectX + 5, rectY + 15, 280, "center")
+        love.graphics.printf(carta.nome, rectX, rectY + 15, 280, "center")
+        
         love.graphics.printf(carta.espirito, rectX, rectY + 240, 265, "right")
         love.graphics.printf(carta.ataque, rectX, rectY + 280, 265, "right")
         love.graphics.printf(carta.defesa, rectX, rectY + 320, 265, "right")
         love.graphics.printf(carta.vidaAtual, rectX, rectY + 360, 270, "right")
         
         love.graphics.setFont(fonteIoskeleyPequena)
-        love.graphics.printf(carta.descricao, rectX + 15, rectY + 275, 200, "center")
+        
+        -- ========================================================
+        -- LÓGICA DOS ATRIBUTOS (CLASSE, RAÇA, AFINIDADE)
+        -- ========================================================
+        
+        local function PrimeiraLetraMaiuscula(str)
+            if not str or str == "" then return nil end
+            return str:sub(1,1):upper() .. str:sub(2):lower()
+        end
+
+        local function obterTextoAtributo(attr, prefixo)
+            prefixo = prefixo or ""
+            if type(attr) == "table" then
+                local formatados = {}
+                for _, v in ipairs(attr) do
+                    table.insert(formatados, prefixo .. PrimeiraLetraMaiuscula(tostring(v)))
+                end
+                return #formatados > 0 and table.concat(formatados, " - ") or nil
+            elseif type(attr) == "string" and attr ~= "" then
+                return prefixo .. PrimeiraLetraMaiuscula(attr)
+            end
+            return nil
+        end
+
+        local atributos = {}
+        local txtClasse = obterTextoAtributo(carta.classe)
+        local txtRaca = obterTextoAtributo(carta.raca)
+        local txtAfinidade = obterTextoAtributo(carta.afinidade, "Afinidade ")
+        
+        if txtClasse then table.insert(atributos, txtClasse) end
+        if txtRaca then table.insert(atributos, txtRaca) end
+        if txtAfinidade then table.insert(atributos, txtAfinidade) end
+        
+        local linhaAtributos = table.concat(atributos, " - ")
+        
+        -- CÁLCULO DINÂMICO DE ALTURA
+        -- Pega a quantidade de linhas que os atributos vão quebrar dentro do limite de 200px
+        local _, linhas = fonteIoskeleyPequena:getWrap(linhaAtributos, 200)
+        
+        -- Garante no mínimo 1 linha de altura, caso o herói venha sem nenhum atributo
+        local qtdLinhas = #linhas > 0 and #linhas or 1 
+        
+        -- Multiplica a quantidade de linhas pela altura natural da fonte
+        local alturaDosAtributos = qtdLinhas * fonteIoskeleyPequena:getHeight() * fonteIoskeleyPequena:getLineHeight()
+        
+        -- Desenha a primeira linha de atributos no local padrão
+        love.graphics.printf(linhaAtributos, rectX + 15, rectY + 270, 200, "left")
+        
+        -- Desenha a descrição com o deslocamento (offset) baseado na altura da caixa de atributos
+        local yDescricao = rectY + 270 + alturaDosAtributos + 2 -- 2 pixels de margem/respiro
+        love.graphics.printf(carta.descricao, rectX + 15, yDescricao, 200, "left")
+        
+        -- ========================================================
+        
         love.graphics.setFont(fonteEmoji)
         
         if #carta.itemEquipado > 0 then
@@ -1355,15 +1410,12 @@ function Partida.draw()
     local x, y = love.mouse.getPosition()
     love.graphics.printf(x.." x "..y, 5, 5, 100, "center")
     
-
     BotaoVoltar.draw()
     Partida.desenharBaralhos()
     
     if logicaPartida.faseDoTurno ~= "descarte" then
         Partida.desenharHeroiEscolhido(carta1, carta2)
     end
-    
-
     
     Partida.desenharInventarioAberto()
     Partida.desenharBotaoTurno()
@@ -1377,7 +1429,6 @@ function Partida.draw()
     Partida.desenharInventarioAberto()
     Partida.desenharInspecaoDeCarta()
 
-
     if vencedor then
          Partida.anunciarVitoria()
     end
@@ -1390,7 +1441,7 @@ function Partida.draw()
         love.graphics.printf(logicaPartida.estadoAlvo.mensagem, 0, 300, love.graphics.getWidth(), "center")
         
         local tipo = logicaPartida.estadoAlvo.tipo
-        local tipo = logicaPartida.estadoAlvo.tipo
+        
         if tipo == "mao" then
             local larguraZona = math.max((#logicaPartida.jogador1.mao * 90) + 10, 100) 
             love.graphics.setColor(1, 0.8, 0, 0.3)
@@ -1434,23 +1485,6 @@ function Partida.draw()
                 if podeJogar then love.graphics.setColor(0, 0, 0) else love.graphics.setColor(0.8, 0.8, 0.8) end
                 love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
             end
-            love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
-            love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
-            love.graphics.setLineWidth(2)
-            love.graphics.setColor(1, 0.8, 0, 1)
-            love.graphics.rectangle("line", 220, 150, 1000, 600, 20, 20)
-            love.graphics.setLineWidth(1)
-            
-            for i, carta in ipairs(logicaPartida.jogador1.descarte) do
-                local coluna = (i - 1) % 10 
-                local linha = math.floor((i - 1) / 10) 
-                local xPos = 260 + (coluna * 90)
-                local yPos = 200 + (linha * 110)
-                love.graphics.setColor(1, 1, 1)
-                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
-                love.graphics.setColor(0, 0, 0)
-                love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
-            end
             
         elseif tipo == "aliado" then
             if logicaPartida.jogador1.heroiDoturno then
@@ -1492,6 +1526,28 @@ function Partida.draw()
                 love.graphics.draw(imgCartaDiversa, xPos, 320, 0, 80/747, 100/1024)
                 love.graphics.setColor(0, 0, 0)
                 love.graphics.printf(item.nome, xPos, 330, 80, "center")
+            end
+            
+        elseif tipo == "listaGeral" then
+            -- Fundo translúcido da janela
+            love.graphics.setColor(0.1, 0.1, 0.1, 0.95)
+            love.graphics.rectangle("fill", 220, 150, 1000, 600, 20, 20)
+            
+            -- Mensagem no topo da janela
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.printf(logicaPartida.estadoAlvo.mensagem, 220, 170, 1000, "center")
+            
+            -- Desenha as cartas em formato de Grade (Grid), reaproveitando sua lógica do Descarte
+            for i, carta in ipairs(logicaPartida.estadoAlvo.listaCartas or {}) do
+                local coluna = (i - 1) % 10 
+                local linha = math.floor((i - 1) / 10) 
+                local xPos = 260 + (coluna * 90)
+                local yPos = 200 + (linha * 110)
+                
+                love.graphics.setColor(1, 1, 1)
+                love.graphics.draw(imgCartaDiversa, xPos, yPos, 0, 80/747, 100/1024)
+                love.graphics.setColor(0, 0, 0)
+                love.graphics.printf(carta.nome, xPos, yPos + 20, 80, "center")
             end
         end
     end

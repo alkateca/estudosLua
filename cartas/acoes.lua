@@ -235,5 +235,102 @@ acoes.exumacao = {
     descricao = "Zumbi:\nReceba Espirito -1, Ataque -1 e Defesa -1\nJogue uma Carta do seu descarte"
 }
 
+acoes.banir = {
+    tipo = 4,
+    nome = "Banir!",
+    unica = true,
+    efeitoAtivo = false,
+    descricao = "Escolha uma carta Inimiga Em Jogo ou no Descarte\nExile todas as suas Cópias.\nFinal do Combate: Exile esta Carta",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        local donoInimigo = (dono == partida.jogador1) and partida.jogador2 or partida.jogador1
+        local alvosValidos = {}
+        
+        -- Adiciona as cartas do descarte inimigo na lista de alvos
+        if donoInimigo.descarte then
+            for _, carta in ipairs(donoInimigo.descarte) do
+                table.insert(alvosValidos, carta)
+            end
+        end
+        
+        -- Adiciona os itens equipados de TODOS os inimigos (ativos e bancada)
+        if donoInimigo.aliados then
+            for _, heroiInimigo in ipairs(donoInimigo.aliados) do
+                if heroiInimigo.itemEquipado then
+                    for _, item in ipairs(heroiInimigo.itemEquipado) do
+                        table.insert(alvosValidos, item)
+                    end
+                end
+            end
+        end
+        
+        if #alvosValidos > 0 then
+            partida.estadoAlvo = {
+                ativo = true,
+                tipo = "listaGeral", 
+                mensagem = "Escolha uma carta Inimiga para Banir as cópias",
+                dono = dono,
+                listaCartas = alvosValidos, 
+                
+                callback = function(cartaEscolhida, index)
+                    if cartaEscolhida then
+                        local nomeAlvo = cartaEscolhida.nome
+                        
+                        -- Função genérica para limpar baralho, mão, etc.
+                        local function exilarDeLista(lista)
+                            if not lista then return end
+                            for i = #lista, 1, -1 do
+                                if lista[i] and lista[i].nome == nomeAlvo then
+                                    table.remove(lista, i)
+                                end
+                            end
+                        end
+                        
+                        -- 1. Remove as cartas "Em Jogo" de TODOS os heróis inimigos
+                        if donoInimigo.aliados then
+                            for _, heroiInimigo in ipairs(donoInimigo.aliados) do
+                                
+                                -- Desequipa os itens corretamente para resetar buffs/atributos
+                                if heroiInimigo.itemEquipado then
+                                    for i = #heroiInimigo.itemEquipado, 1, -1 do
+                                        if heroiInimigo.itemEquipado[i].nome == nomeAlvo then
+                                            -- Isso remove os buffs e joga o item no descarte
+                                            partida.desequiparItem(heroiInimigo, donoInimigo, i)
+                                        end
+                                    end
+                                end
+                                
+                                -- Exila magias ativas (se o seu jogo tiver magias persistentes em campo)
+                                exilarDeLista(heroiInimigo.magiasAtivas)
+                            end
+                        end
+
+                        -- 2. Exila as cópias de todas as zonas (Baralho, Mão, Descarte e Fila)
+                        -- Rodamos o descarte no final para garantir que o item 
+                        -- desequipado acima seja exilado também e suma do jogo.
+                        exilarDeLista(donoInimigo.baralho)
+                        exilarDeLista(donoInimigo.mao)
+                        exilarDeLista(donoInimigo.descarte)
+                        exilarDeLista(donoInimigo.cartasEscolhidas)
+                        exilarDeLista(donoInimigo.cartasParaDescarte)
+                    end
+                end
+            }
+            coroutine.yield()
+        end
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        if dono.descarte then
+            for i = #dono.descarte, 1, -1 do
+                if dono.descarte[i] == cartaJogada then
+                    table.remove(dono.descarte, i)
+                    break
+                end
+            end
+        end
+    end
+}
+
 
 return acoes
