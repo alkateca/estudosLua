@@ -6,7 +6,7 @@ itens.quimera = {
     unica = true,
     categoria = "arma",           
     empunhadura = "uma_mao",
-    raca = {"Cristal"},
+    raca = {},
     dano = 0,
     descricao = "+1 de Espirito\n+1 de Defesa\n+1 de Ataque\nNo final do turno:\nRecupere vida igual seu espirito",
     

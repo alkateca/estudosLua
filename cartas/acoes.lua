@@ -23,7 +23,7 @@ acoes.racaoDeEmergencia = {
             tipo = "mao",
             mensagem = "Escolha uma Carta de sua Mão",
             dono = dono,
-            
+            ignoraRestricoes = false,
             callback = function(cartaEscolhida, indexNaMao)
                 table.remove(dono.mao, indexNaMao)
                 table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
@@ -70,7 +70,7 @@ acoes.determinacaoCristalina = {
             tipo = "descarte",
             mensagem = "Escolha uma Carta de seu Descarte",
             dono = dono,
-            
+            ignoraRestricoes = false,
             callback = function(cartaEscolhida, index)
                 table.remove(dono.descarte, index)
                 table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
@@ -104,7 +104,7 @@ acoes.convocacao = {
             tipo = "aliado",
             mensagem = "Escolha um Herói Aliado",
             dono = dono,
-            
+            ignoraRestricoes = false,
             callback = function(cartaEscolhida, index)
                 if cartaEscolhida then
                     cartaEscolhida.estaAtivo = not cartaEscolhida.estaAtivo
@@ -129,7 +129,7 @@ acoes.mirarNaCabeca = {
             tipo = "inimigo",
             mensagem = "Escolha um Herói Inimigo",
             dono = dono,
-            
+            ignoraRestricoes = false,
             callback = function(cartaEscolhida, index)
                 if cartaEscolhida then
                     cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual - 3
@@ -166,6 +166,7 @@ acoes.ritosFunebres = {
                     tipo = "aliado",
                     mensagem = "Escolha um Herói Aliado",
                     dono = dono,
+                    ignoraRestricoes = false,
                     
                     callback = function(cartaEscolhida, index)
                         if cartaEscolhida then
