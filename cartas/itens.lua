@@ -32,7 +32,7 @@ itens.quimera = {
         aliado.defesa = aliado.defesa - 1
     end,
 
-    efeitoFinalDoTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
+    efeitoFinalDoCombate = function(self, aliado, inimigo, dono, partida, cartaJogada)
         if partida.emitirVFX then
             partida.emitirVFX("cura", dono == partida.jogador2 and "inimigo" or "aliado")            
         end
@@ -124,7 +124,7 @@ itens.dragaoCristal = {
 
     efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
         
-        local danoFinal = self.dano - inimigo.espirito
+        local danoFinal = (self.dano + (aliado.DanoBonus or 0)) - (inimigo.espirito + (inimigo.reducaoDano or 0)  + (inimigo.vulnerabilidade or 0))
 
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
@@ -159,8 +159,16 @@ itens.homunculoCarniceiro = {
         for _, racaAtual in ipairs(aliado.raca) do
             if racaAtual == "Zumbi" then
                 
-                inimigo.vidaAtual = inimigo.vidaAtual - 1
-                dono.danoTotal = (dono.danoTotal or 0) + 1
+                local danoDireto = (1 + (aliado.DanoBonus or 0)) - (inimigo.reducaoDano or 0) + (inimigo.vulnerabilidade or 0)
+                
+                if danoDireto > 0 then
+                    inimigo.vidaAtual = inimigo.vidaAtual - danoDireto
+                    dono.danoTotal = (dono.danoTotal or 0) + danoDireto
+                    
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoDireto", inimigo)
+                    end
+                end
 
                 local vidaFaltando = aliado.vidaMaxima - aliado.vidaAtual
                 if vidaFaltando > 0 then
@@ -170,7 +178,6 @@ itens.homunculoCarniceiro = {
                 
                 if partida.emitirVFX then
                     partida.emitirVFX("cura", aliado)
-                    partida.emitirVFX("danoDireto", inimigo)
                 end
             end
         end
@@ -206,13 +213,15 @@ itens.quimeraNegra = {
                     partida.emitirVFX("debuff", inimigo)
                 end
                 
-                if inimigo.vidaAtual > 0 then
-                    inimigo.vidaAtual = inimigo.vidaAtual - 1
-                    dono.danoTotal = (dono.danoTotal or 0) + 1
-                end
+                local danoDireto = (1 + (aliado.DanoBonus or 0)) - (inimigo.reducaoDano or 0) + (inimigo.vulnerabilidade or 0)
                 
-                if partida.emitirVFX then
-                    partida.emitirVFX("danoDireto", inimigo)
+                if inimigo.vidaAtual > 0 and danoDireto > 0 then
+                    inimigo.vidaAtual = inimigo.vidaAtual - danoDireto
+                    dono.danoTotal = (dono.danoTotal or 0) + danoDireto
+                
+                    if partida.emitirVFX then
+                        partida.emitirVFX("danoDireto", inimigo)
+                    end
                 end
             end
         end
@@ -258,7 +267,7 @@ itens.dragast = {
         aliado.espirito = aliado.espirito - 2
     end,
 
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+    efeitoFinalDoCombate = function (self, aliado, inimigo, dono, partida, cartaJogada)
         for _, racaAtual in ipairs(aliado.raca) do
             if racaAtual == "Cavaleiro" then
                 local vidaFaltando = aliado.vidaMaxima - aliado.vidaAtual
@@ -329,5 +338,130 @@ itens.fragmentoAfiado = {
     end
 }
 
+itens.rapieiraDeCristal = {
+    tipo = 3,
+    nome = "Rapieira de Cristal",
+    unica = false,
+    categoria = "arma",
+    empunhadura = "uma_mao",           
+    raca = {"Cristal"},
+    dano = 5,
+    descricao = "Ataque +3.\nFinal do Combate:\nCause 5 de Dano Mágico ao Inimigo.",
 
+    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoInicioDoCombate = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+
+    efeitoAoEquipar = function(self, aliado, dono)
+        aliado.ataque = aliado.ataque + 3
+    end,
+
+    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque - 3
+    end,
+
+    efeitoFinalDoCombate = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        -- Calcula o dano base (5) + bônus do aliado, subtraindo a redução do inimigo
+        local danoFinal = (self.dano + (aliado.DanoBonus or 0)) - (inimigo.reducaoDano or 0) + (inimigo.vulnerabilidade or 0)
+
+        if danoFinal > 0 then
+            inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
+            dono.danoTotal = (dono.danoTotal or 0) + danoFinal
+            
+            if partida.emitirVFX then
+                partida.emitirVFX("danoDireto", inimigo) -- ou "danoMagico" dependendo do seu design
+            end
+        end
+    end
+}
+
+itens.garraEspectral = {
+    tipo = 3,
+    nome = "Garra espectral",
+    unica = true,
+    categoria = "arma",          
+    empunhadura = "uma_mao", 
+    raca = {},
+    dano = 0,
+    descricao = "Ataque +2\nAo jogar: O Inimigo recebe Espirito -2\nInício do Combate: O Inimigo recebe Espirito -2\nSeus Ataques causam Dano Mágico em vez de Fisico",
+    
+    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
+        inimigo.espirito = math.max(0, inimigo.espirito - 2)
+    end,
+    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque + 2
+        aliado.ataqueMagico = true
+        inimigo.espirito = math.max(0, inimigo.espirito - 2)
+
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", aliado)
+            partida.emitirVFX("debuff", inimigo)
+        end
+    end,
+    
+    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque - 2
+        inimigo.espirito = inimigo.espirito + 2
+        aliado.ataqueMagico = false
+    end,
+
+    efeitoFinalDoTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
+       
+    end
+}
+
+itens.grandeMachadoSombrio = {
+    tipo = 3,
+    nome = "Grande Machado Sombrio",
+    unica = true,
+    categoria = "arma",          
+    empunhadura = "duas_maos", 
+    raca = {},
+    dano = 0,
+    descricao = "Ataque +4\nDefesa +2\nOs Inimigos Recebem +1 de Vulnerabilidade",
+    
+    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque + 4
+        aliado.defesa = aliado.defesa + 2
+
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", aliado)
+            partida.emitirVFX("debuff", inimigo)
+        end
+
+        for _, heroiInimigo in ipairs(partida.jogador2.aliados) do
+            heroiInimigo.vulnerabilidade = heroiInimigo.vulnerabilidade + 1
+                if partida.emitirVFX then
+                    partida.emitirVFX("debuff", heroiInimigo)
+                end
+        end
+    end,
+    
+    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.ataque = aliado.ataque - 4
+        aliado.defesa = aliado.defesa - 2
+        for _, heroiInimigo in ipairs(partida.jogador2.aliados) do
+            heroiInimigo.vulnerabilidade = heroiInimigo.vulnerabilidade - 1
+        end    
+
+    end,
+    efeitoFinalDoTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
+       
+    end
+}
 return itens

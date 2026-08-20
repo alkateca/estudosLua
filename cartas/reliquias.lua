@@ -196,13 +196,20 @@ reliquias.artefatoPerfurante = {
         if partida.emitirVFX then
             partida.emitirVFX("debuff", inimigo)
         end
-        inimigo.vidaMaxima = inimigo.vidaMaxima - 1
-        dono.danoTotal = (dono.danoTotal or 0) + 1
-        if inimigo.vidaAtual > inimigo.vidaMaxima then
-            inimigo.vidaAtual = inimigo.vidaMaxima
-        end
-        if partida.emitirVFX then
-            partida.emitirVFX("danoDireto", inimigo)
+        
+        local reducaoVida = (1 + (aliado.DanoBonus or 0)) - (inimigo.reducaoDano or 0)
+        
+        if reducaoVida > 0 then
+            inimigo.vidaMaxima = inimigo.vidaMaxima - reducaoVida
+            dono.danoTotal = (dono.danoTotal or 0) + reducaoVida
+            
+            if inimigo.vidaAtual > inimigo.vidaMaxima then
+                inimigo.vidaAtual = inimigo.vidaMaxima
+            end
+            
+            if partida.emitirVFX then
+                partida.emitirVFX("danoDireto", inimigo)
+            end
         end
     end,
     efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
@@ -222,45 +229,6 @@ reliquias.artefatoPerfurante = {
     end
 }
 
-reliquias.garraEspectral = {
-    tipo = 3,
-    nome = "Garra espectral",
-    unica = true,
-    categoria = "arma",          
-    empunhadura = "uma_mao", 
-    raca = {},
-    dano = 0,
-    descricao = "Ataque +2\nAo jogar: O Inimigo recebe Espirito -2\nInício do Combate: O Inimigo recebe Espirito -2\nSeus Ataques causam Dano Mágico em vez de Fisico",
-    
-    efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
-        inimigo.espirito = math.max(0, inimigo.espirito - 2)
-    end,
-    efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoAoAliadoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoAoMorrer = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    
-    feito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        aliado.ataque = aliado.ataque + 2
-        aliado.ataqueMagico = true
-        inimigo.espirito = math.max(0, inimigo.espirito - 2)
-
-        if partida.emitirVFX then
-            partida.emitirVFX("buff", aliado)
-            partida.emitirVFX("debuff", inimigo)
-        end
-    end,
-    
-    efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        aliado.ataque = aliado.ataque - 2
-        inimigo.espirito = inimigo.espirito + 2
-        aliado.ataqueMagico = false
-    end,
-
-    efeitoFinalDoTurno = function(self, aliado, inimigo, dono, partida, cartaJogada)
-       
-    end
-}
 
 reliquias.liberacaoKael = {
         tipo = 4,
@@ -323,5 +291,7 @@ reliquias.liberacaoKael = {
             coroutine.yield()
         end
 }
+
+
 
 return reliquias

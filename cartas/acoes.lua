@@ -132,15 +132,18 @@ acoes.mirarNaCabeca = {
             ignoraRestricoes = false,
             callback = function(cartaEscolhida, index)
                 if cartaEscolhida then
-                    cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual - 3
+                    local danoDireto = (3 + (aliado.DanoBonus or 0)) - (cartaEscolhida.reducaoDano or 0) + (inimigo.vulnerabilidade or 0)
                     
-                    dono.pontuacao = dono.pontuacao + 3
-
-                    dono.pontuacao = dono.pontuacao + 3
-                    dono.danoTotal = (dono.danoTotal or 0) + 3
-
-                    if partida.emitirVFX then
-                        partida.emitirVFX("danoDireto", cartaEscolhida)
+                    if danoDireto > 0 then
+                        cartaEscolhida.vidaAtual = cartaEscolhida.vidaAtual - danoDireto
+                        
+                        -- Notei que a pontuação original recebia um acréscimo duplo. Mantive corrigido para um único acréscimo com o valor real do dano.
+                        dono.pontuacao = (dono.pontuacao or 0) + danoDireto
+                        dono.danoTotal = (dono.danoTotal or 0) + danoDireto
+    
+                        if partida.emitirVFX then
+                            partida.emitirVFX("danoDireto", cartaEscolhida)
+                        end
                     end
                 end
             end
@@ -332,5 +335,35 @@ acoes.banir = {
     end
 }
 
+acoes.impulsoDePoder = {
+    tipo = 4,
+    nome = "Impulso de Poder",
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Aumente seu Dano Bônus em 2 até o final do turno.",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        aliado.DanoBonus = (aliado.DanoBonus or 0) + 2
+        self.efeitoDoTurno = true
+        
+        if partida.emitirVFX then
+            partida.emitirVFX("buff", aliado)
+        end
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        if self.efeitoDoTurno then
+            aliado.DanoBonus = (aliado.DanoBonus or 0) - 2
+            self.efeitoDoTurno = false
+        end
+    end,
+
+    -- Retenção de segurança para a engine logicaPartida
+    efeitoFinalDoCombate = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        if self.efeitoFinalDoTurno then
+            self:efeitoFinalDoTurno(aliado, inimigo, dono, partida, cartaJogada)
+        end
+    end
+}
 
 return acoes

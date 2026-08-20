@@ -702,6 +702,45 @@ function Partida.desenharInfoHeroi(carta, rectX, rectY, tituloDefault, itemYBase
         love.graphics.setColor(0, 0, 0)
         love.graphics.printf(carta.nome, rectX, rectY + 15, 280, "center")
         
+        -- ========================================================
+        -- CAIXA DE MODIFICADORES DE DANO (Estilo Board Game)
+        -- ========================================================
+        local bonus = carta.DanoBonus or 0
+        local reducao = carta.reducaoDano or 0
+        local vulnerabilidade = carta.vulnerabilidade or 0
+        
+        -- 1. Desenhar o Fundo (A Caixa)
+        if imgModeloBotao then
+            love.graphics.setColor(1, 1, 1) -- Branco puro para a imagem não sair tingida
+            
+            local imgW = imgModeloBotao:getWidth()
+            local imgH = imgModeloBotao:getHeight()
+            
+            -- Definindo o tamanho fixo da caixinha na tela (Ex: 110px de largura, 25px de altura)
+            local scaleX = 104 / imgW
+            local scaleY = 58 / imgH
+            
+            -- Desenhamos a caixa um pouco antes do alinhamento final da direita
+            love.graphics.draw(imgModeloBotao, rectX + 208, rectY + 183, 0, scaleX, scaleY)
+        end
+        
+        -- 2. Desenhar os Valores (Sempre aparecem, iniciando em 0)
+        
+        -- Dano Bônus (Esquerda / Verde)
+        love.graphics.setColor(0.1, 0.8, 0.1) 
+        love.graphics.printf(tostring(bonus), rectX + 210, rectY + 203, 36, "center")
+        
+        -- Redução de Dano (Centro / Vermelho - Fica bem acima do número do espírito)
+        love.graphics.setColor(0.8, 0.1, 0.1) 
+        love.graphics.printf(tostring(reducao), rectX + 244, rectY + 203, 36, "center")
+        
+        -- Vulnerabilidade (Direita / Roxo)
+        love.graphics.setColor(0.6, 0.1, 0.6) 
+        love.graphics.printf(tostring(vulnerabilidade), rectX + 277, rectY + 203, 36, "center")
+        
+        love.graphics.setColor(0, 0, 0) -- Volta pro preto padrão
+        -- ========================================================
+
         love.graphics.printf(carta.espirito, rectX, rectY + 240, 265, "right")
         love.graphics.printf(carta.ataque, rectX, rectY + 280, 265, "right")
         love.graphics.printf(carta.defesa, rectX, rectY + 320, 265, "right")
@@ -768,10 +807,10 @@ function Partida.desenharInfoHeroi(carta, rectX, rectY, tituloDefault, itemYBase
             for i, item in ipairs(carta.itemEquipado) do
                 local xPos = (rectX + 230) + ((i - 1) * 20)
                 love.graphics.setColor(1, 1, 1)
-                love.graphics.draw(imgCartaDiversa, xPos, itemYBase, 0, 80/747, 100/1024)
+                love.graphics.draw(imgCartaDiversa, xPos, itemYBase - 50, 0, 80/747, 100/1024)
                 love.graphics.setColor(0, 0, 0)
                 love.graphics.setFont(fonteIoskeley)
-                love.graphics.printf(item.nome, xPos, itemYBase + 10, 80, "center")
+                love.graphics.printf(item.nome, xPos, itemYBase -40, 80, "center")
             end
         end
         love.graphics.setFont(fonteIoskeley)

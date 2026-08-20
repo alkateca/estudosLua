@@ -7,7 +7,7 @@ magias.bolaDeFogo = {
     tipo = 2,
     nome = "Bola de fogo",
     raca = nil,
-    classeExclusiva = nil, -- Ex: "Transformador", "Criador"
+    classeExclusiva = nil,
     elemento = "fogo",
     unica = false,
     dano = 4,
@@ -16,7 +16,7 @@ magias.bolaDeFogo = {
     descricao = "Afinidade Fogo\nCause 4 mais seu espirito de dano mágico ao inimigo",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
+        local danoFinal = (self.dano + aliado.espirito + (aliado.DanoBonus or 0)) - (inimigo.espirito + (inimigo.reducaoDano or 0)) + (inimigo.vulnerabilidade or 0)
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
@@ -79,7 +79,7 @@ magias.estatica = {
     descricao = "Afinidade Ar\nCause 3 mais seu espirito de dano mágico ao inimigo\nCrie uma Estatica em seu baralho",
     
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        local danoFinal = (self.dano + aliado.espirito) - inimigo.espirito
+        local danoFinal = (self.dano + aliado.espirito + (aliado.DanoBonus or 0)) - (inimigo.espirito + (inimigo.reducaoDano or 0)) + (inimigo.vulnerabilidade or 0)
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
@@ -431,7 +431,7 @@ magias.massacreCristalino = {
         end
 
         local danoMagicoTotal = totalCristais * 2
-        local danoFinal = danoMagicoTotal - inimigo.espirito
+        local danoFinal = (danoMagicoTotal + (aliado.DanoBonus or 0)) - (inimigo.espirito + (inimigo.reducaoDano or 0)) + (inimigo.vulnerabilidade or 0)
         
         if danoFinal > 0 then
             inimigo.vidaAtual = inimigo.vidaAtual - danoFinal
