@@ -529,4 +529,27 @@ magias.autoDefesaMagica = {
 -- ==========================================
 
 
+
+-- ideias
+magias.risadaSarcastica = {
+    tipo = 2,
+    nome = "Risada Sarcástica",
+    raca = nil,
+    classeExclusiva = nil,
+    elemento = "cristal",
+    unica = true,
+    dano = 2,
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    descricao = "Cause X + 2 Dano Mágico ao seu Oponente, onde X é seu Espirito.\nFinal do Combate: Coloque essa carta no Baralho Oponente",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
+
+    end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
+        
+    end
+}
+
 return magias
