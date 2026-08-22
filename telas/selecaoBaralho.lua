@@ -8,6 +8,7 @@ local magias = require("cartas.magias")
 local itens = require("cartas.itens")
 local acoes = require("cartas.acoes")
 local reliquias = require("cartas.reliquias")
+local teurgias = require("cartas.teurgias") -- Nova importação
 
 local bibliotecaCompleta = {}
 
@@ -67,6 +68,7 @@ function Selecao.load()
     for _, c in pairs(itens) do table.insert(bibliotecaCompleta, c) end
     for _, c in pairs(acoes) do table.insert(bibliotecaCompleta, c) end
     for _, c in pairs(reliquias) do table.insert(bibliotecaCompleta, c) end
+    for _, c in pairs(teurgias) do table.insert(bibliotecaCompleta, c) end -- Adicionado as Teurgias na biblioteca!
 
     for i = 1, 3 do
         local nomeArquivo = "baralho_" .. i .. ".lua"

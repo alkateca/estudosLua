@@ -7,6 +7,7 @@ local magias = require("cartas.magias")
 local itens = require("cartas.itens")
 local acoes = require("cartas.acoes")
 local reliquias = require("cartas.reliquias")
+local teurgias = require("cartas.teurgias")
 
 local fonteEmoji
 local fonteIoskeley
@@ -20,9 +21,8 @@ local scrollOverlayY = 0
 local maxScrollOverlay = 0
 
 local slotAtual = 1
-local modoExtraDeck = false -- Controla se os cliques vão para o baralho ou extra deck
+local modoExtraDeck = false
 
--- Estrutura temporária do baralho sendo montado
 local deckEditando = {
     reliquia = nil,
     aliados = {},
@@ -33,17 +33,8 @@ local deckEditando = {
 local mensagemFeedback = ""
 local tempoFeedback = 0
 
-local filtrosAtivos = {
-    heroi = true, magia = true, item = true, acao = true, reliquia = true
-}
-
-local botoesFiltro = {
-    { id = "heroi", nome = "Heróis", y = 120 },
-    { id = "magia", nome = "Magias", y = 170 },
-    { id = "item", nome = "Itens", y = 220 },
-    { id = "acao", nome = "Ações", y = 270 },
-    { id = "reliquia", nome = "Relíquia", y = 320 },
-}
+local filtrosAtivos = {}
+local botoesFiltro = {}
 
 local scrollY = 0
 local velocidadeScroll = 60
@@ -86,9 +77,7 @@ end
 
 local function buscarCartaPorNome(nome)
     for _, c in ipairs(bibliotecaCompleta) do
-        if c.nome == nome then
-            return c
-        end
+        if c.nome == nome then return c end
     end
     return nil
 end
@@ -118,10 +107,46 @@ local function atualizarMaxScrollOverlay()
 end
 
 local function atualizarBiblioteca()
+    local temFiltroTipo = false
+    local temFiltroClasse = false
+    local temFiltroElemento = false
+    
+    for _, btn in ipairs(botoesFiltro) do
+        if filtrosAtivos[btn.id] then
+            if btn.cat == "Tipos" then temFiltroTipo = true
+            elseif btn.cat == "Classes" then temFiltroClasse = true
+            elseif btn.cat == "Elementos" then temFiltroElemento = true
+            end
+        end
+    end
+    
     biblioteca = {}
     for _, c in ipairs(bibliotecaCompleta) do
-        -- Verifica se o filtro da categoria está ativo e bloqueia cartas com reliquia = true
-        if filtrosAtivos[c.tipoFiltro] and c.reliquia ~= true then
+        
+        local passaTipo = not temFiltroTipo
+        if temFiltroTipo and filtrosAtivos[c.tipoFiltro] then
+            passaTipo = true
+        end
+        
+        local passaClasse = not temFiltroClasse
+        if temFiltroClasse and c.classe and type(c.classe) == "table" then
+            for _, cls in ipairs(c.classe) do
+                if filtrosAtivos["cls_" .. string.lower(cls)] then
+                    passaClasse = true
+                    break
+                end
+            end
+        end
+
+        local passaElemento = not temFiltroElemento
+        if temFiltroElemento and c.elemento and type(c.elemento) == "string" and c.elemento ~= "" then
+            local chv = "elem_" .. string.lower(c.elemento)
+            if filtrosAtivos[chv] then 
+                passaElemento = true
+            end
+        end
+
+        if passaTipo and passaClasse and passaElemento and c.reliquia ~= true then
             table.insert(biblioteca, c)
         end
     end
@@ -132,11 +157,10 @@ local function baralhoValido()
     return (#deckEditando.aliados == 3 and #deckEditando.baralho == 20)
 end
 
--- Função para carregar um deck existente do slot selecionado
 function MontarBaralho.carregarSlot(slot)
     slotAtual = slot or 1
     deckEditando = { reliquia = nil, aliados = {}, baralho = {}, extraDeck = {} }
-    modoExtraDeck = false -- Reseta o modo ao trocar de deck
+    modoExtraDeck = false
 
     local nomeArquivo = "baralho_" .. slotAtual .. ".lua"
     local dadosDeck = nil
@@ -187,7 +211,6 @@ function MontarBaralho.load()
     fonteIoskeley = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 16)    
     fonteIoskeleyPequena = love.graphics.newFont("assets/fontes/IoskeleyMonoNerdFont-CondensedBold.ttf", 12)
     local fonteEmojiInline = love.graphics.newFont("assets/fontes/NotoEmoji-VariableFont_wght.ttf", 16)
-    
     fonteIoskeley:setFallbacks(fonteEmojiInline)
 
     bibliotecaCompleta = {}
@@ -196,7 +219,44 @@ function MontarBaralho.load()
     for _, c in pairs(itens) do c.tipoFiltro = "item"; table.insert(bibliotecaCompleta, c) end
     for _, c in pairs(acoes) do c.tipoFiltro = "acao"; table.insert(bibliotecaCompleta, c) end
     for _, c in pairs(reliquias) do c.tipoFiltro = "reliquia"; table.insert(bibliotecaCompleta, c) end
+    for _, c in pairs(teurgias) do c.tipoFiltro = "teurgia"; table.insert(bibliotecaCompleta, c) end
     
+    botoesFiltro = {
+        { id = "heroi", nome = "Heróis", y = 50, cat = "Tipos" },
+        { id = "magia", nome = "Magias", y = 80, cat = "Tipos" },
+        { id = "item", nome = "Itens", y = 110, cat = "Tipos" },
+        { id = "acao", nome = "Ações", y = 140, cat = "Tipos" },
+        { id = "reliquia", nome = "Relíquia", y = 170, cat = "Tipos" },
+        { id = "teurgia", nome = "Teurgia", y = 200, cat = "Tipos" },
+
+        { id = "cls_criador", nome = "Criador", y = 250, cat = "Classes" },
+        { id = "cls_emissor", nome = "Emissor", y = 280, cat = "Classes" },
+        { id = "cls_transformador", nome = "Transform", y = 310, cat = "Classes" },
+    }
+
+    for _, btn in ipairs(botoesFiltro) do
+        filtrosAtivos[btn.id] = false 
+    end
+
+    local elementosUnicos = {}
+    for _, c in ipairs(bibliotecaCompleta) do
+        if c.elemento and type(c.elemento) == "string" and c.elemento ~= "" then
+            local elemStr = string.lower(c.elemento)
+            if not elementosUnicos[elemStr] then
+                elementosUnicos[elemStr] = true
+            end
+        end
+    end
+
+    local yBaseElemento = 360
+    for elem, _ in pairs(elementosUnicos) do
+        local nomeApresentacao = elem:gsub("^%l", string.upper)
+        local btnId = "elem_" .. elem
+        table.insert(botoesFiltro, { id = btnId, nome = nomeApresentacao, y = yBaseElemento, cat = "Elementos" })
+        filtrosAtivos[btnId] = false 
+        yBaseElemento = yBaseElemento + 30
+    end
+
     atualizarBiblioteca()
     MontarBaralho.carregarSlot(slotAtual)
 end
@@ -225,7 +285,6 @@ end
 function MontarBaralho.mousereleased(x, y, button)
     if exibindoDeck then
         local clicouEmCarta = false
-
         if y >= layout.grid.y and y <= layout.grid.y + layout.grid.areaVisivelH then
             local cartasOverlay = agruparCartasDoDeck()
             for i, carta in ipairs(cartasOverlay) do
@@ -242,7 +301,6 @@ function MontarBaralho.mousereleased(x, y, button)
                         elseif carta.tipoFiltro == "reliquia" and deckEditando.reliquia and deckEditando.reliquia.nome == carta.nome then 
                             deckEditando.reliquia = nil
                         elseif removerCopia(carta, deckEditando.baralho) then
-                            -- Sucesso ao remover do baralho principal
                         else 
                             removerCopia(carta, deckEditando.extraDeck) 
                         end
@@ -252,24 +310,19 @@ function MontarBaralho.mousereleased(x, y, button)
                 end
             end
         end
-
-        if not clicouEmCarta then
-            exibindoDeck = false
-        end
+        if not clicouEmCarta then exibindoDeck = false end
         return
     end
 
     BotaoVoltar.mousereleased(x, y, button)
 
     if button == 1 then
-        -- Botão Ver Baralho
         if x >= layout.btnVer.x and x <= layout.btnVer.x + layout.btnVer.w and y >= layout.btnVer.y and y <= layout.btnVer.y + layout.btnVer.h then
             exibindoDeck = true
             atualizarMaxScrollOverlay()
             return
         end
 
-        -- Botões de Slot
         for _, btn in ipairs(layout.slots) do
             if x >= btn.x and x <= btn.x + btn.w and y >= btn.y and y <= btn.y + btn.h then
                 MontarBaralho.carregarSlot(btn.id)
@@ -277,17 +330,14 @@ function MontarBaralho.mousereleased(x, y, button)
             end
         end
 
-        -- Botão Modo Extra Deck
         if x >= layout.btnModoExtra.x and x <= layout.btnModoExtra.x + layout.btnModoExtra.w and y >= layout.btnModoExtra.y and y <= layout.btnModoExtra.y + layout.btnModoExtra.h then
             modoExtraDeck = not modoExtraDeck
             return
         end
 
-        -- Botão Salvar Baralho
         if x >= layout.btnSalvar.x and x <= layout.btnSalvar.x + layout.btnSalvar.w and y >= layout.btnSalvar.y and y <= layout.btnSalvar.y + layout.btnSalvar.h then
             if baralhoValido() then
                 local nomeReliquia = deckEditando.reliquia and deckEditando.reliquia.nome or ""
-
                 local strSave = "return {\n"
                 strSave = strSave .. "    reliquia = " .. string.format("%q", nomeReliquia) .. ",\n"
                 
@@ -311,17 +361,11 @@ function MontarBaralho.mousereleased(x, y, button)
                     if i < #deckEditando.extraDeck then strSave = strSave .. ", " end
                 end
                 strSave = strSave .. "}\n"
-                
                 strSave = strSave .. "}"
 
                 love.filesystem.write("baralho_" .. slotAtual .. ".lua", strSave)
-
-                Jogador["baralho" .. slotAtual] = {
-                    reliquia = nomeReliquia,
-                    aliados = {},
-                    cartas = {},
-                    extraDeck = {}
-                }
+                Jogador["baralho" .. slotAtual] = { reliquia = nomeReliquia, aliados = {}, cartas = {}, extraDeck = {} }
+                
                 for _, c in ipairs(deckEditando.aliados) do table.insert(Jogador["baralho" .. slotAtual].aliados, c.nome) end
                 for _, c in ipairs(deckEditando.baralho) do table.insert(Jogador["baralho" .. slotAtual].cartas, c.nome) end
                 for _, c in ipairs(deckEditando.extraDeck) do table.insert(Jogador["baralho" .. slotAtual].extraDeck, c.nome) end
@@ -336,16 +380,14 @@ function MontarBaralho.mousereleased(x, y, button)
         end
     end
 
-    -- Filtros (Direita)
     for _, btn in ipairs(botoesFiltro) do
-        if x >= 1130 and x <= 1280 and y >= btn.y and y <= btn.y + 30 then
+        if x >= 1130 and x <= 1280 and y >= btn.y and y <= btn.y + 20 then
             filtrosAtivos[btn.id] = not filtrosAtivos[btn.id]
             atualizarBiblioteca()
             return
         end
     end
 
-    -- Cartas da Biblioteca
     if y >= layout.grid.y and y <= layout.grid.y + layout.grid.areaVisivelH then
         for i, carta in ipairs(biblioteca) do
             local col = (i - 1) % layout.grid.colunas
@@ -355,10 +397,8 @@ function MontarBaralho.mousereleased(x, y, button)
             
             if x >= cx and x <= cx + layout.grid.w and y >= cy and y <= cy + layout.grid.h then
                 local maxCopias = carta.unica and 1 or 3
-                
                 if button == 1 then
                     if modoExtraDeck then
-                        -- Heróis geralmente não vão para o Extra Deck, mas relíquias, magias, itens sim
                         if carta.tipoFiltro ~= "heroi" then
                             if #deckEditando.extraDeck < 15 and contarCopias(carta, deckEditando.extraDeck) < maxCopias then
                                 table.insert(deckEditando.extraDeck, carta)
@@ -401,7 +441,6 @@ local function desenharCartasGrade(lista, scrollAtual)
     for i, carta in ipairs(lista) do
         local col = (i - 1) % layout.grid.colunas
         local row = math.floor((i - 1) / layout.grid.colunas)
-        
         local cx = layout.grid.x + (col * layout.grid.espacoX)
         local cy = layout.grid.y + (row * layout.grid.espacoY) - scrollAtual 
         
@@ -411,7 +450,9 @@ local function desenharCartasGrade(lista, scrollAtual)
             elseif carta.tipoFiltro == "magia" then love.graphics.setColor(0.5, 0, 0.5)
             elseif carta.tipoFiltro == "item" then love.graphics.setColor(0, 0.5, 0)
             elseif carta.tipoFiltro == "acao" then love.graphics.setColor(0.8, 0.4, 0)
-            elseif carta.tipoFiltro == "reliquia" then love.graphics.setColor(0.8, 0.8, 0) end
+            elseif carta.tipoFiltro == "reliquia" then love.graphics.setColor(0.8, 0.8, 0) 
+            elseif carta.tipoFiltro == "teurgia" then love.graphics.setColor(0, 0.7, 0.8) 
+            end
             
             love.graphics.rectangle("fill", cx, cy, layout.grid.w, layout.grid.h, 15, 15)
             
@@ -422,7 +463,6 @@ local function desenharCartasGrade(lista, scrollAtual)
                 love.graphics.setFont(fonteIoskeleyPequena)
                 love.graphics.printf(carta.descricao or "Sem efeito.", cx + 40, cy + 240, 200, "center")
                 love.graphics.setFont(fonteIoskeley)
-
                 love.graphics.printf(carta.espirito or 0, cx, cy + 240, 270, "right")
                 love.graphics.printf(carta.ataque or 0, cx, cy + 280, 270, "right")
                 love.graphics.printf(carta.defesa or 0, cx, cy + 320, 270, "right")
@@ -450,7 +490,6 @@ local function desenharCartasGrade(lista, scrollAtual)
             end
         end
     end
-    
     love.graphics.setScissor()
 end
 
@@ -458,37 +497,28 @@ function MontarBaralho.draw()
     BotaoVoltar.draw()
     love.graphics.setFont(fonteIoskeley)
 
-    -- Botão Ver Baralho
     love.graphics.setColor(0.2, 0.2, 0.8)
     love.graphics.rectangle("fill", layout.btnVer.x, layout.btnVer.y, layout.btnVer.w, layout.btnVer.h, 5, 5)
     love.graphics.setColor(1, 1, 1)
     love.graphics.printf("Ver Baralho", layout.btnVer.x, layout.btnVer.y + 20, layout.btnVer.w, "center")
 
-    -- Botão Salvar Baralho
-    if baralhoValido() then
-        love.graphics.setColor(0, 0.8, 0) 
-    else
-        love.graphics.setColor(0.5, 0.5, 0.5) 
-    end
+    if baralhoValido() then love.graphics.setColor(0, 0.8, 0) else love.graphics.setColor(0.5, 0.5, 0.5) end
     love.graphics.rectangle("fill", layout.btnSalvar.x, layout.btnSalvar.y, layout.btnSalvar.w, layout.btnSalvar.h, 5, 5)
     love.graphics.setColor(1, 1, 1)
     love.graphics.printf("Salvar Baralho", layout.btnSalvar.x, layout.btnSalvar.y + 20, layout.btnSalvar.w, "center")
 
-    -- Feedback de salvamento
     if mensagemFeedback ~= "" then
         love.graphics.setColor(1, 1, 0)
         love.graphics.printf(mensagemFeedback, layout.btnSalvar.x, layout.btnSalvar.y + 70, layout.btnSalvar.w, "center")
     end
 
-    -- Contadores
     love.graphics.setColor(1, 1, 1)
     love.graphics.print("Heróis: " .. #deckEditando.aliados .. "/3", 50, 280)
     love.graphics.print("Cartas: " .. #deckEditando.baralho .. "/20", 50, 300)
     love.graphics.print("Relíquia: " .. (deckEditando.reliquia and "1/1" or "0/1"), 50, 320)
     love.graphics.print("Extra Deck: " .. #deckEditando.extraDeck .. "/15", 50, 340)
-
-    -- Botões de Seleção de Slot
     love.graphics.print("Editando Slot:", 50, 370)
+    
     for _, btn in ipairs(layout.slots) do
         if slotAtual == btn.id then
             love.graphics.setColor(0, 0.8, 0)
@@ -502,7 +532,6 @@ function MontarBaralho.draw()
         love.graphics.printf(tostring(btn.id), btn.x, btn.y + 10, btn.w, "center")
     end
 
-    -- Botão Alternar Modo Extra Deck
     if modoExtraDeck then
         love.graphics.setColor(0.8, 0.5, 0)
         love.graphics.rectangle("fill", layout.btnModoExtra.x, layout.btnModoExtra.y, layout.btnModoExtra.w, layout.btnModoExtra.h, 5, 5)
@@ -515,19 +544,25 @@ function MontarBaralho.draw()
         love.graphics.printf("Modo: BARALHO", layout.btnModoExtra.x, layout.btnModoExtra.y + 15, layout.btnModoExtra.w, "center")
     end
 
-    -- Filtros
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Filtros:", 1130, 80)
+    
+    local ultimaCategoria = ""
     for _, btn in ipairs(botoesFiltro) do
+        if btn.cat ~= ultimaCategoria then
+            love.graphics.setColor(0.7, 0.7, 0.7)
+            love.graphics.print(btn.cat .. ":", 1130, btn.y - 20)
+            ultimaCategoria = btn.cat
+        end
+        
         if filtrosAtivos[btn.id] then
             love.graphics.setColor(0, 1, 0)
-            love.graphics.rectangle("fill", 1130, btn.y, 20, 20, 4, 4)
+            love.graphics.rectangle("fill", 1130, btn.y, 16, 16, 4, 4)
         else
-            love.graphics.setColor(1, 0, 0)
-            love.graphics.rectangle("line", 1130, btn.y, 20, 20, 4, 4)
+            love.graphics.setColor(0.5, 0.5, 0.5) 
+            love.graphics.rectangle("line", 1130, btn.y, 16, 16, 4, 4)
         end
         love.graphics.setColor(1, 1, 1)
-        love.graphics.print(btn.nome, 1160, btn.y)
+        love.graphics.print(btn.nome, 1155, btn.y - 2)
     end
 
     desenharCartasGrade(biblioteca, scrollY)
@@ -535,7 +570,6 @@ function MontarBaralho.draw()
     if exibindoDeck then
         love.graphics.setColor(0.1, 0.1, 0.1, 0.9)
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-        
         love.graphics.setColor(1, 1, 1)
         love.graphics.print("Visualizando Baralho Atual (Clique fora para fechar | Botão direito remove)", layout.grid.x, 20)
 

@@ -5,6 +5,7 @@ local magia = require("cartas.magias")
 local item = require("cartas.itens")
 local acao = require("cartas.acoes")
 local reliquia = require("cartas.reliquias")
+local teurgia = require("cartas.teurgias") 
 
 local function deepcopy(orig, copies)
     copies = copies or {}
@@ -44,6 +45,16 @@ logicaPartida.jogador2 = {
     pontuacao = 0, danoTotal = 0, curaTotal = 0
 }
 
+-- =========================================================================
+-- SISTEMA DE FILAS PENDENTES E EVENT BUS
+-- =========================================================================
+logicaPartida.cartasPendentes = {
+    jogador1 = {},
+    jogador2 = {}
+}
+logicaPartida.profundidadeEvento = 0
+local LIMITE_PROFUNDIDADE = 10
+
 function logicaPartida.prepararOponentePVE()
     logicaPartida.jogador2 = {
         reliquia = deepcopy(reliquia.liberacaoMoyra),
@@ -76,11 +87,101 @@ function logicaPartida.resetarPartida()
         aliados = {}, cartasEscolhidas = {}, cartasParaDescarte = {}, heroiDoturno = nil,
         pontuacao = 0, danoTotal = 0, curaTotal = 0
     }
+    logicaPartida.cartasPendentes = { jogador1 = {}, jogador2 = {} }
+    logicaPartida.profundidadeEvento = 0
     logicaPartida.faseDoTurno = "preparacao"
     logicaPartida.turnoAtual = 1
     logicaPartida.filaDeResolucao = {}
     logicaPartida.indiceFila = 1
     logicaPartida.estadoAlvo = { ativo = false, tipo = "", dono = nil, callback = nil }
+end
+
+-- =========================================================================
+-- MOTOR DE EVENTOS (EMITTER)
+-- =========================================================================
+
+function logicaPartida.notificarGatilho(nomeDoGatilho, dadosEvento)
+    if logicaPartida.profundidadeEvento > LIMITE_PROFUNDIDADE then
+        print("ALERTA: Loop infinito evitado no gatilho -> " .. nomeDoGatilho)
+        return
+    end
+
+    logicaPartida.profundidadeEvento = logicaPartida.profundidadeEvento + 1
+    
+    local function checarEAtivar(entidade)
+        if entidade and type(entidade[nomeDoGatilho]) == "function" then
+            entidade[nomeDoGatilho](entidade, dadosEvento, logicaPartida)
+        end
+    end
+
+    for _, heroiVivo in ipairs(logicaPartida.jogador1.aliados) do
+        if heroiVivo.estaVivo then
+            checarEAtivar(heroiVivo)
+            if heroiVivo.itemEquipado then
+                for _, itemReq in ipairs(heroiVivo.itemEquipado) do checarEAtivar(itemReq) end
+            end
+            if heroiVivo.magiasAtivas then
+                for _, magiaReq in ipairs(heroiVivo.magiasAtivas) do checarEAtivar(magiaReq) end
+            end
+        end
+    end
+
+    for _, heroiVivo in ipairs(logicaPartida.jogador2.aliados) do
+        if heroiVivo.estaVivo then
+            checarEAtivar(heroiVivo)
+            if heroiVivo.itemEquipado then
+                for _, itemReq in ipairs(heroiVivo.itemEquipado) do checarEAtivar(itemReq) end
+            end
+            if heroiVivo.magiasAtivas then
+                for _, magiaReq in ipairs(heroiVivo.magiasAtivas) do checarEAtivar(magiaReq) end
+            end
+        end
+    end
+
+    logicaPartida.profundidadeEvento = logicaPartida.profundidadeEvento - 1
+end
+
+function logicaPartida.causarDano(alvo, atacante, donoDoAlvo, quantidadeDano)
+    if quantidadeDano <= 0 or not alvo.estaVivo then return end
+    alvo.vidaAtual = alvo.vidaAtual - quantidadeDano
+    
+    logicaPartida.notificarGatilho("efeitoAoSofrerDano", {alvo = alvo, atacante = atacante, dano = quantidadeDano})
+    logicaPartida.notificarGatilho("efeitoAoCausarDano", {alvo = alvo, atacante = atacante, dano = quantidadeDano})
+end
+
+function logicaPartida.curarVida(alvo, curandeiro, donoDoAlvo, quantidade)
+    if not alvo.estaVivo or alvo.vidaAtual == alvo.vidaMaxima then return end
+    local curaReal = math.min(alvo.vidaMaxima - alvo.vidaAtual, quantidade)
+    alvo.vidaAtual = alvo.vidaAtual + curaReal
+    donoDoAlvo.curaTotal = (donoDoAlvo.curaTotal or 0) + curaReal
+    
+    logicaPartida.notificarGatilho("efeitoAoReceberCura", {alvo = alvo, curandeiro = curandeiro, valorCura = curaReal})
+    if logicaPartida.emitirVFX then logicaPartida.emitirVFX("buff", alvo) end
+end
+
+-- =========================================================================
+-- GERENCIADOR DE CARTAS CRIADAS (SALA DE ESPERA E ZIPPER)
+-- =========================================================================
+function logicaPartida.adicionarCartaCriada(cartaAdd, aliadoAdd, inimigoAdd, donoAdd)
+    local novaJogada = {
+        carta = cartaAdd, aliado = aliadoAdd, inimigo = inimigoAdd, dono = donoAdd, resolvida = false
+    }
+    if donoAdd == logicaPartida.jogador1 then table.insert(logicaPartida.cartasPendentes.jogador1, novaJogada)
+    else table.insert(logicaPartida.cartasPendentes.jogador2, novaJogada) end
+end
+
+function logicaPartida.mesclarPendenciasNoFinalDaFila()
+    local pJ1 = logicaPartida.cartasPendentes.jogador1
+    local pJ2 = logicaPartida.cartasPendentes.jogador2
+    
+    local j1TemIniciativa = (logicaPartida.turnoAtual % 2 ~= 0)
+    local listaPrioridade = j1TemIniciativa and pJ1 or pJ2
+    local listaSecundaria = j1TemIniciativa and pJ2 or pJ1
+    
+    while #listaPrioridade > 0 or #listaSecundaria > 0 do
+        if #listaPrioridade > 0 then table.insert(logicaPartida.filaDeResolucao, table.remove(listaPrioridade, 1)) end
+        if #listaSecundaria > 0 then table.insert(logicaPartida.filaDeResolucao, table.remove(listaSecundaria, 1)) end
+    end
 end
 
 function logicaPartida.comprarCartas(jogador, numeroDeCartas)
@@ -148,16 +249,16 @@ function logicaPartida.efeitos()
 end
 
 function logicaPartida.inicioDaPartidaReliquias()
-    for i, reliquia in ipairs(logicaPartida.jogador1.extraDeck) do
-        if type(reliquia.efeitoInicioDaPartida) == "function" then
-            reliquia:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador1, logicaPartida, nil)
-            reliquia.efeitoAtivo = true
+    for i, req in ipairs(logicaPartida.jogador1.extraDeck) do
+        if type(req.efeitoInicioDaPartida) == "function" then
+            req:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador1, logicaPartida, nil)
+            req.efeitoAtivo = true
         end
     end
-    for i, reliquia in ipairs(logicaPartida.jogador2.extraDeck) do
-        if type(reliquia.efeitoInicioDaPartida) == "function" then
-            reliquia:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador2, logicaPartida, nil)
-            reliquia.efeitoAtivo = true
+    for i, req in ipairs(logicaPartida.jogador2.extraDeck) do
+        if type(req.efeitoInicioDaPartida) == "function" then
+            req:efeitoInicioDaPartida(nil, nil, logicaPartida.jogador2, logicaPartida, nil)
+            req.efeitoAtivo = true
         end
     end
 end
@@ -211,88 +312,102 @@ function logicaPartida.desequiparItem(heroiAlvo, donoDoHeroi, indiceDoItem)
     return false
 end
 
-
 local CUSTO_SLOT = { ["uma_mao"] = 1, ["duas_maos"] = 2, ["tres_maos"] = 3, ["quatro_maos"] = 4 }
 
-
-function logicaPartida.equiparItem(heroi, dono, novoItem)
-    if not heroi.itemEquipado then heroi.itemEquipado = {} end
+function logicaPartida.equiparItem(heroiEq, dono, novoItem)
+    if not heroiEq.itemEquipado then heroiEq.itemEquipado = {} end
 
     if novoItem.categoria == "joia" or novoItem.categoria == "encantamento" then
-        table.insert(heroi.itemEquipado, novoItem)
-        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroi, dono) end
+        table.insert(heroiEq.itemEquipado, novoItem)
+        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroiEq, dono) end
         return
     end
 
     if novoItem.categoria == "armadura" or novoItem.categoria == "escudo" then
-        for i = #heroi.itemEquipado, 1, -1 do
-            if heroi.itemEquipado[i].categoria == novoItem.categoria then
-                logicaPartida.desequiparItem(heroi, dono, i)
+        for i = #heroiEq.itemEquipado, 1, -1 do
+            if heroiEq.itemEquipado[i].categoria == novoItem.categoria then
+                logicaPartida.desequiparItem(heroiEq, dono, i)
             end
         end
-        table.insert(heroi.itemEquipado, novoItem)
-        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroi, dono) end
+        table.insert(heroiEq.itemEquipado, novoItem)
+        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroiEq, dono) end
         return
     end
 
     if novoItem.categoria == "arma" then
-        local capacidadeMaxima = heroi.maxSlots or 2
+        local capacidadeMaxima = heroiEq.maxSlots or 2
         local custoNovo = CUSTO_SLOT[novoItem.empunhadura] or 1
 
         if custoNovo > capacidadeMaxima then return false end
 
         local slotsOcupados = 0
-        for _, item in ipairs(heroi.itemEquipado) do
-            if item.categoria == "arma" then
-                slotsOcupados = slotsOcupados + (CUSTO_SLOT[item.empunhadura] or 1)
+        for _, itemEq in ipairs(heroiEq.itemEquipado) do
+            if itemEq.categoria == "arma" then
+                slotsOcupados = slotsOcupados + (CUSTO_SLOT[itemEq.empunhadura] or 1)
             end
         end
 
         while (slotsOcupados + custoNovo) > capacidadeMaxima do
-            for i = 1, #heroi.itemEquipado do
-                local item = heroi.itemEquipado[i]
-                if item.categoria == "arma" then
-                    slotsOcupados = slotsOcupados - (CUSTO_SLOT[item.empunhadura] or 1)
-                    logicaPartida.desequiparItem(heroi, dono, i)
+            for i = 1, #heroiEq.itemEquipado do
+                local itemEq = heroiEq.itemEquipado[i]
+                if itemEq.categoria == "arma" then
+                    slotsOcupados = slotsOcupados - (CUSTO_SLOT[itemEq.empunhadura] or 1)
+                    logicaPartida.desequiparItem(heroiEq, dono, i)
                     break 
                 end
             end
         end
 
-        table.insert(heroi.itemEquipado, novoItem)
-        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroi, dono) end
+        table.insert(heroiEq.itemEquipado, novoItem)
+        if type(novoItem.efeitoAoEquipar) == "function" then novoItem:efeitoAoEquipar(heroiEq, dono) end
         return true
     end
     
-    table.insert(heroi.itemEquipado, novoItem)
+    table.insert(heroiEq.itemEquipado, novoItem)
 end
-
 
 -- =========================================================================
 -- FASE 1: INÍCIO DO TURNO
 -- =========================================================================
 function logicaPartida.processarInicioDoTurno(callbackAtualizacao, callbackVisual)
     logicaPartida.emitirVFX = callbackVisual
-    local heroi = logicaPartida.jogador1.heroiDoturno
-    local inimigo = logicaPartida.jogador2.heroiDoturno
+    local heroiAtivo = logicaPartida.jogador1.heroiDoturno
+    local inimigoAtivo = logicaPartida.jogador2.heroiDoturno
     
-    if not heroi or not inimigo then return end
+    if not heroiAtivo or not inimigoAtivo then return end
 
-    if type(heroi.efeitoInicioDoTurno) == "function" then heroi.efeitoInicioDoTurno(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil) end
-    if heroi.itemEquipado then
-        for _, itm in ipairs(heroi.itemEquipado) do
-            if type(itm.efeitoInicioDoTurno) == "function" then itm.efeitoInicioDoTurno(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil) end
+    -- ORDEM 1: GATILHOS DE PERSONAGENS
+    if type(heroiAtivo.efeitoInicioDoTurno) == "function" then heroiAtivo.efeitoInicioDoTurno(heroiAtivo, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil) end
+    if type(inimigoAtivo.efeitoInicioDoTurno) == "function" then inimigoAtivo.efeitoInicioDoTurno(inimigoAtivo, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil) end
+
+    -- ORDEM 2: GATILHOS DE ITENS COMUNS (Ignorando Encantamentos)
+    if heroiAtivo.itemEquipado then
+        for _, itm in ipairs(heroiAtivo.itemEquipado) do
+            if itm.categoria ~= "encantamento" and type(itm.efeitoInicioDoTurno) == "function" then itm.efeitoInicioDoTurno(itm, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil) end
+        end
+    end
+    if inimigoAtivo.itemEquipado then
+        for _, itm in ipairs(inimigoAtivo.itemEquipado) do
+            if itm.categoria ~= "encantamento" and type(itm.efeitoInicioDoTurno) == "function" then itm.efeitoInicioDoTurno(itm, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil) end
         end
     end
 
-    if type(inimigo.efeitoInicioDoTurno) == "function" then inimigo.efeitoInicioDoTurno(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil) end
-    if inimigo.itemEquipado then
-        for _, itm in ipairs(inimigo.itemEquipado) do
-            if type(itm.efeitoInicioDoTurno) == "function" then itm.efeitoInicioDoTurno(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil) end
+    -- ORDEM 3: GATILHOS DE ENCANTAMENTOS (Teurgias e Magias equipadas)
+    if heroiAtivo.itemEquipado then
+        for _, itm in ipairs(heroiAtivo.itemEquipado) do
+            if itm.categoria == "encantamento" and type(itm.efeitoInicioDoTurno) == "function" then itm.efeitoInicioDoTurno(itm, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil) end
+        end
+    end
+    if inimigoAtivo.itemEquipado then
+        for _, itm in ipairs(inimigoAtivo.itemEquipado) do
+            if itm.categoria == "encantamento" and type(itm.efeitoInicioDoTurno) == "function" then itm.efeitoInicioDoTurno(itm, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil) end
         end
     end
 
--- Execução dinâmica da fila caso efeitos de Início de Turno tenham gerado cartas automáticas
+    -- NOVO: Puxa qualquer carta passiva criada pelas 3 ordens acima para dentro da Fila
+    logicaPartida.mesclarPendenciasNoFinalDaFila()
+
+    -- Execução da Fila (FIFO - O que entra pro final, espera a vez)
     logicaPartida.indiceFila = 1
     while logicaPartida.indiceFila <= #logicaPartida.filaDeResolucao do
         local jogada = logicaPartida.filaDeResolucao[logicaPartida.indiceFila]
@@ -317,16 +432,18 @@ function logicaPartida.processarInicioDoTurno(callbackAtualizacao, callbackVisua
             end
 
             jogada.resolvida = true
+            
+            -- Intercala no final caso uma carta da fila crie uma nova carta
+            logicaPartida.mesclarPendenciasNoFinalDaFila()
             if callbackAtualizacao then callbackAtualizacao() end
         end
         
-        -- Avança a fila corretamente. Se "Para-raios" colocar algo em "indiceFila + 1", ele pega na próxima volta!
         logicaPartida.indiceFila = logicaPartida.indiceFila + 1
     end
 end
 
 -- =========================================================================
--- FASE 2: RESOLVER CARTAS DA MÃO (Apenas Popula a Mesa)
+-- FASE 2: RESOLVER CARTAS DA MÃO
 -- =========================================================================
 function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)    
     logicaPartida.emitirVFX = callbackVisual
@@ -350,54 +467,72 @@ function logicaPartida.resolverCartasDaMao(callbackAtualizacao, callbackVisual)
 end
 
 -- =========================================================================
--- FASE 3: O COMBATE REAL (Início do Combate -> Executa Cartas -> Dano -> Limpa Mesa)
+-- FASE 3: O COMBATE REAL
 -- =========================================================================
 function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     logicaPartida.emitirVFX = callbackVisual 
-    local heroi = logicaPartida.jogador1.heroiDoturno
-    local inimigo = logicaPartida.jogador2.heroiDoturno
+    local heroiAtivo = logicaPartida.jogador1.heroiDoturno
+    local inimigoAtivo = logicaPartida.jogador2.heroiDoturno
     
     -- 1. GATILHOS DE INÍCIO DE COMBATE
-    if type(heroi.efeitoInicioDoCombate) == "function" then
-        heroi.efeitoInicioDoCombate(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
+    -- Personagens
+    if type(heroiAtivo.efeitoInicioDoCombate) == "function" then
+        heroiAtivo.efeitoInicioDoCombate(heroiAtivo, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
         if callbackAtualizacao then callbackAtualizacao() end
     end
-    if heroi.itemEquipado then
-        for _, itm in ipairs(heroi.itemEquipado) do
-            if type(itm.efeitoInicioDoCombate) == "function" then
-                itm.efeitoInicioDoCombate(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
+    if type(inimigoAtivo.efeitoInicioDoCombate) == "function" then
+        inimigoAtivo.efeitoInicioDoCombate(inimigoAtivo, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
+        if callbackAtualizacao then callbackAtualizacao() end
+    end
+
+    -- Itens
+    if heroiAtivo.itemEquipado then
+        for _, itm in ipairs(heroiAtivo.itemEquipado) do
+            if itm.categoria ~= "encantamento" and type(itm.efeitoInicioDoCombate) == "function" then
+                itm.efeitoInicioDoCombate(itm, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+        end
+    end
+    if inimigoAtivo.itemEquipado then
+        for _, itm in ipairs(inimigoAtivo.itemEquipado) do
+            if itm.categoria ~= "encantamento" and type(itm.efeitoInicioDoCombate) == "function" then
+                itm.efeitoInicioDoCombate(itm, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
                 if callbackAtualizacao then callbackAtualizacao() end
             end
         end
     end
 
-    if type(inimigo.efeitoInicioDoCombate) == "function" then
-        inimigo.efeitoInicioDoCombate(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
-        if callbackAtualizacao then callbackAtualizacao() end
+    -- Encantamentos
+    if heroiAtivo.itemEquipado then
+        for _, itm in ipairs(heroiAtivo.itemEquipado) do
+            if itm.categoria == "encantamento" and type(itm.efeitoInicioDoCombate) == "function" then
+                itm.efeitoInicioDoCombate(itm, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+        end
     end
-    if inimigo.itemEquipado then
-        for _, itm in ipairs(inimigo.itemEquipado) do
-            if type(itm.efeitoInicioDoCombate) == "function" then
-                itm.efeitoInicioDoCombate(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
+    if inimigoAtivo.itemEquipado then
+        for _, itm in ipairs(inimigoAtivo.itemEquipado) do
+            if itm.categoria == "encantamento" and type(itm.efeitoInicioDoCombate) == "function" then
+                itm.efeitoInicioDoCombate(itm, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
                 if callbackAtualizacao then callbackAtualizacao() end
             end
         end
     end
 
-    -- 2. EXECUÇÃO DA MESA (Fila de Resolução Inteira)
--- =====================================
-    -- 2. EXECUÇÃO DA MESA (Fila de Resolução Inteira)
-    -- =====================================
+    -- NOVO: Puxa cartas passivas antes da mesa rodar
+    logicaPartida.mesclarPendenciasNoFinalDaFila()
+
+    -- 2. EXECUÇÃO DA MESA (Fila de Resolução)
     logicaPartida.indiceFila = 1
     while logicaPartida.indiceFila <= #logicaPartida.filaDeResolucao do
         local jogada = logicaPartida.filaDeResolucao[logicaPartida.indiceFila]
         
         if not jogada.resolvida then
             local cartaDaVez = jogada.carta
-            
             if type(cartaDaVez.efeito) == "function" then
                 cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida, cartaDaVez)
-                
                 if not cartaDaVez.exilar then
                     if cartaDaVez.tipo == 3 or cartaDaVez.categoria == "encantamento" then
                         logicaPartida.equiparItem(jogada.aliado, jogada.dono, cartaDaVez)
@@ -409,121 +544,167 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
                     end
                 end
             end
-
             if type(jogada.aliado.efeitoAoJogarCarta) == "function" then
                 jogada.aliado.efeitoAoJogarCarta(jogada.aliado, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida, cartaDaVez)
             end
-
             jogada.resolvida = true
+            
+            -- Intercala dinamicamente 
+            logicaPartida.mesclarPendenciasNoFinalDaFila()
             if callbackAtualizacao then callbackAtualizacao() end
         end
-        
         logicaPartida.indiceFila = logicaPartida.indiceFila + 1
     end
 
     -- 3. COMBATE FÍSICO 
-    local defesaEfetivaHeroi = heroi.defesa
+    local defesaEfetivaHeroi = heroiAtivo.defesa
     local efeitoVisualInimigo = "danoFisico"
     
-    if inimigo.ataqueDireto then
+    if inimigoAtivo.ataqueDireto then
         defesaEfetivaHeroi = 0
         efeitoVisualInimigo = "danoDireto"
-    elseif inimigo.ataqueMagico then
-        defesaEfetivaHeroi = heroi.espirito
+    elseif inimigoAtivo.ataqueMagico then
+        defesaEfetivaHeroi = heroiAtivo.espirito
         efeitoVisualInimigo = "danoMagico"
     end
 
-    local ataqueTotalInimigo = (inimigo.ataque + (inimigo.DanoBonus or 0)) - (heroi.reducaoDano or 0) + (heroi.vulnerabilidade or 0)
+    local ataqueTotalInimigo = (inimigoAtivo.ataque + (inimigoAtivo.DanoBonus or 0)) - (heroiAtivo.reducaoDano or 0) + (heroiAtivo.vulnerabilidade or 0)
     if ataqueTotalInimigo < 0 then ataqueTotalInimigo = 0 end
 
     if ataqueTotalInimigo > defesaEfetivaHeroi then
         local dano = ataqueTotalInimigo - defesaEfetivaHeroi
-        heroi.vidaAtual = heroi.vidaAtual - dano
+        logicaPartida.causarDano(heroiAtivo, inimigoAtivo, logicaPartida.jogador1, dano)
         logicaPartida.jogador2.danoTotal = (logicaPartida.jogador2.danoTotal or 0) + dano
         if callbackVisual then callbackVisual(efeitoVisualInimigo, "aliado") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
-    local defesaEfetivaInimigo = inimigo.defesa
+    local defesaEfetivaInimigo = inimigoAtivo.defesa
     local efeitoVisualHeroi = "danoFisico"
     
-    if heroi.ataqueDireto then
+    if heroiAtivo.ataqueDireto then
         defesaEfetivaInimigo = 0
         efeitoVisualHeroi = "danoDireto"
-    elseif heroi.ataqueMagico then
-        defesaEfetivaInimigo = inimigo.espirito
+    elseif heroiAtivo.ataqueMagico then
+        defesaEfetivaInimigo = inimigoAtivo.espirito
         efeitoVisualHeroi = "danoMagico"
     end
 
-    local ataqueTotalHeroi = (heroi.ataque + (heroi.DanoBonus or 0)) - (inimigo.reducaoDano or 0) + (inimigo.vulnerabilidade or 0)
+    local ataqueTotalHeroi = (heroiAtivo.ataque + (heroiAtivo.DanoBonus or 0)) - (inimigoAtivo.reducaoDano or 0) + (inimigoAtivo.vulnerabilidade or 0)
     if ataqueTotalHeroi < 0 then ataqueTotalHeroi = 0 end
 
     if ataqueTotalHeroi > defesaEfetivaInimigo then
         local dano = ataqueTotalHeroi - defesaEfetivaInimigo
-        inimigo.vidaAtual = inimigo.vidaAtual - dano
+        logicaPartida.causarDano(inimigoAtivo, heroiAtivo, logicaPartida.jogador2, dano)
         logicaPartida.jogador1.danoTotal = (logicaPartida.jogador1.danoTotal or 0) + dano
         if callbackVisual then callbackVisual(efeitoVisualHeroi, "inimigo") end
         if callbackAtualizacao then callbackAtualizacao() end
     end
 
     -- 4. EFEITOS FINAIS DE COMBATE
-    if type(heroi.efeitoFinalDoCombate) == "function" then
-        heroi.efeitoFinalDoCombate(heroi, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
+    -- Personagens
+    if type(heroiAtivo.efeitoFinalDoCombate) == "function" then
+        heroiAtivo.efeitoFinalDoCombate(heroiAtivo, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
         if callbackAtualizacao then callbackAtualizacao() end
     end
-    if type(inimigo.efeitoFinalDoCombate) == "function" then
-        inimigo.efeitoFinalDoCombate(inimigo, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
+    if type(inimigoAtivo.efeitoFinalDoCombate) == "function" then
+        inimigoAtivo.efeitoFinalDoCombate(inimigoAtivo, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
         if callbackAtualizacao then callbackAtualizacao() end
     end
-    if heroi.itemEquipado then
-        for _, itm in ipairs(heroi.itemEquipado) do
-            if type(itm.efeitoFinalDoCombate) == "function" then
-                itm.efeitoFinalDoCombate(itm, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
+    
+    -- Itens
+    if heroiAtivo.itemEquipado then
+        for _, itm in ipairs(heroiAtivo.itemEquipado) do
+            if itm.categoria ~= "encantamento" and type(itm.efeitoFinalDoCombate) == "function" then
+                itm.efeitoFinalDoCombate(itm, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
                 if callbackAtualizacao then callbackAtualizacao() end
             end
         end
     end
-    if inimigo.itemEquipado then
-        for _, itm in ipairs(inimigo.itemEquipado) do
-            if type(itm.efeitoFinalDoCombate) == "function" then
-                itm.efeitoFinalDoCombate(itm, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
+    if inimigoAtivo.itemEquipado then
+        for _, itm in ipairs(inimigoAtivo.itemEquipado) do
+            if itm.categoria ~= "encantamento" and type(itm.efeitoFinalDoCombate) == "function" then
+                itm.efeitoFinalDoCombate(itm, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
                 if callbackAtualizacao then callbackAtualizacao() end
             end
         end
     end
 
-    if heroi.magiasAtivas then
-        for j = #heroi.magiasAtivas, 1, -1 do
-            local magiaAtiva = heroi.magiasAtivas[j]
+    -- Encantamentos
+    if heroiAtivo.itemEquipado then
+        for _, itm in ipairs(heroiAtivo.itemEquipado) do
+            if itm.categoria == "encantamento" and type(itm.efeitoFinalDoCombate) == "function" then
+                itm.efeitoFinalDoCombate(itm, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+        end
+    end
+    if inimigoAtivo.itemEquipado then
+        for _, itm in ipairs(inimigoAtivo.itemEquipado) do
+            if itm.categoria == "encantamento" and type(itm.efeitoFinalDoCombate) == "function" then
+                itm.efeitoFinalDoCombate(itm, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
+                if callbackAtualizacao then callbackAtualizacao() end
+            end
+        end
+    end
+
+    -- Magias Ativas (Que duram 1 turno e são expurgadas)
+    if heroiAtivo.magiasAtivas then
+        for j = #heroiAtivo.magiasAtivas, 1, -1 do
+            local magiaAtiva = heroiAtivo.magiasAtivas[j]
             if type(magiaAtiva.efeitoFinalDoCombate) == "function" then
-                magiaAtiva.efeitoFinalDoCombate(magiaAtiva, heroi, inimigo, logicaPartida.jogador1, logicaPartida, nil)
+                magiaAtiva.efeitoFinalDoCombate(magiaAtiva, heroiAtivo, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil)
                 if callbackAtualizacao then callbackAtualizacao() end
             end
             table.insert(logicaPartida.jogador1.descarte, magiaAtiva)
-            table.remove(heroi.magiasAtivas, j)
+            table.remove(heroiAtivo.magiasAtivas, j)
         end
     end
 
-    if inimigo.magiasAtivas then
-        for j = #inimigo.magiasAtivas, 1, -1 do
-            local magiaAtiva = inimigo.magiasAtivas[j]
+    if inimigoAtivo.magiasAtivas then
+        for j = #inimigoAtivo.magiasAtivas, 1, -1 do
+            local magiaAtiva = inimigoAtivo.magiasAtivas[j]
             if type(magiaAtiva.efeitoFinalDoCombate) == "function" then
-                magiaAtiva.efeitoFinalDoCombate(magiaAtiva, inimigo, heroi, logicaPartida.jogador2, logicaPartida, nil)
+                magiaAtiva.efeitoFinalDoCombate(magiaAtiva, inimigoAtivo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil)
                 if callbackAtualizacao then callbackAtualizacao() end
             end
             table.insert(logicaPartida.jogador2.descarte, magiaAtiva)
-            table.remove(inimigo.magiasAtivas, j)
+            table.remove(inimigoAtivo.magiasAtivas, j)
         end
+    end
+
+    -- NOVO: Loop Pós-Combate (Se o "Final do Combate" jogou alguma carta extra no tabuleiro)
+    logicaPartida.mesclarPendenciasNoFinalDaFila()
+    while logicaPartida.indiceFila <= #logicaPartida.filaDeResolucao do
+        local jogada = logicaPartida.filaDeResolucao[logicaPartida.indiceFila]
+        if not jogada.resolvida then
+            local cartaDaVez = jogada.carta
+            if type(cartaDaVez.efeito) == "function" then
+                cartaDaVez.efeito(cartaDaVez, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida, cartaDaVez)
+                if not cartaDaVez.exilar then
+                    if cartaDaVez.tipo == 3 or cartaDaVez.categoria == "encantamento" then
+                        logicaPartida.equiparItem(jogada.aliado, jogada.dono, cartaDaVez)
+                    end
+                end
+            end
+            if type(jogada.aliado.efeitoAoJogarCarta) == "function" then
+                jogada.aliado.efeitoAoJogarCarta(jogada.aliado, jogada.aliado, jogada.inimigo, jogada.dono, logicaPartida, cartaDaVez)
+            end
+            jogada.resolvida = true
+            logicaPartida.mesclarPendenciasNoFinalDaFila()
+            if callbackAtualizacao then callbackAtualizacao() end
+        end
+        logicaPartida.indiceFila = logicaPartida.indiceFila + 1
     end
 
     -- 5. RESOLUÇÃO DE MORTES
     for _, aliado in ipairs(logicaPartida.jogador1.aliados) do
         if aliado.vidaAtual <= 0 and aliado.estaVivo then        
             aliado.estaVivo = false
-            if type(aliado.efeitoAoMorrer) == "function" then aliado.efeitoAoMorrer(aliado, aliado, inimigo, logicaPartida.jogador1, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
+            if type(aliado.efeitoAoMorrer) == "function" then aliado.efeitoAoMorrer(aliado, aliado, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
             if aliado.itemEquipado then for j = #aliado.itemEquipado, 1, -1 do logicaPartida.desequiparItem(aliado, logicaPartida.jogador1, j) end end
             for _, outroAliado in ipairs(logicaPartida.jogador1.aliados) do
-                if outroAliado.estaVivo and type(outroAliado.efeitoAoAliadoMorrer) == "function" then outroAliado.efeitoAoAliadoMorrer(outroAliado, aliado, inimigo, logicaPartida.jogador1, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
+                if outroAliado.estaVivo and type(outroAliado.efeitoAoAliadoMorrer) == "function" then outroAliado.efeitoAoAliadoMorrer(outroAliado, aliado, inimigoAtivo, logicaPartida.jogador1, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
             end
         end
     end
@@ -531,26 +712,26 @@ function logicaPartida.calcularDanoFisico(callbackAtualizacao, callbackVisual)
     for _, inimigoAlvo in ipairs(logicaPartida.jogador2.aliados) do
         if inimigoAlvo.vidaAtual <= 0 and inimigoAlvo.estaVivo then        
             inimigoAlvo.estaVivo = false
-            if type(inimigoAlvo.efeitoAoMorrer) == "function" then inimigoAlvo.efeitoAoMorrer(inimigoAlvo, inimigoAlvo, heroi, logicaPartida.jogador2, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
+            if type(inimigoAlvo.efeitoAoMorrer) == "function" then inimigoAlvo.efeitoAoMorrer(inimigoAlvo, inimigoAlvo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
             if inimigoAlvo.itemEquipado then for j = #inimigoAlvo.itemEquipado, 1, -1 do logicaPartida.desequiparItem(inimigoAlvo, logicaPartida.jogador2, j) end end
             for _, outroInimigo in ipairs(logicaPartida.jogador2.aliados) do
-                if outroInimigo.estaVivo and type(outroInimigo.efeitoAoAliadoMorrer) == "function" then outroInimigo.efeitoAoAliadoMorrer(outroInimigo, inimigoAlvo, heroi, logicaPartida.jogador2, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
+                if outroInimigo.estaVivo and type(outroInimigo.efeitoAoAliadoMorrer) == "function" then outroInimigo.efeitoAoAliadoMorrer(outroInimigo, inimigoAlvo, heroiAtivo, logicaPartida.jogador2, logicaPartida, nil); if callbackAtualizacao then callbackAtualizacao() end end
             end
         end
     end
     
-    heroi.estaAtivo = false
-    inimigo.estaAtivo = false
+    heroiAtivo.estaAtivo = false
+    inimigoAtivo.estaAtivo = false
     logicaPartida.atualizarEstadoAtivo()
 
     -- 6. LIMPEZA FINAL DA FILA NA MESA
     for _, jogada in ipairs(logicaPartida.filaDeResolucao) do
-        local carta = jogada.carta
-        local dono = jogada.dono
-        if not carta.exilar then
-            if carta.tipo ~= 3 and carta.categoria ~= "encantamento" then
-                if type(carta.efeitoFinalDoCombate) ~= "function" and type(carta.efeitoFinalDoTurno) ~= "function" then
-                    table.insert(dono.descarte, carta)
+        local cartaL = jogada.carta
+        local donoL = jogada.dono
+        if not cartaL.exilar then
+            if cartaL.tipo ~= 3 and cartaL.categoria ~= "encantamento" then
+                if type(cartaL.efeitoFinalDoCombate) ~= "function" and type(cartaL.efeitoFinalDoTurno) ~= "function" then
+                    table.insert(donoL.descarte, cartaL)
                 end
             end
         end
@@ -580,8 +761,12 @@ function logicaPartida.entreTurnos(callbackAtualizacao, callbackVisual)
     end
 end
 
-function logicaPartida.podeJogarCarta(heroi, carta)
-    if not heroi or not carta then return false end
+-- =========================================================================
+-- VERIFICAÇÃO DE REGRAS DE JOGADA (Validando a classe Transformador)
+-- =========================================================================
+function logicaPartida.podeJogarCarta(heroiChk, carta)
+    if not heroiChk or not carta then return false end
+    
     local function possuiAtributo(lista, valor)
         if not lista or not valor then return false end
         local valorBuscado = string.lower(tostring(valor))
@@ -592,12 +777,14 @@ function logicaPartida.podeJogarCarta(heroi, carta)
         return false
     end
 
-    local ehConstructo = possuiAtributo(heroi.raca, "constructo")
-    local ehGoblin = possuiAtributo(heroi.raca, "goblin")
-    local ehEmissor = possuiAtributo(heroi.classe, "emissor")
+    local ehConstructo = possuiAtributo(heroiChk.raca, "constructo")
+    local ehGoblin = possuiAtributo(heroiChk.raca, "goblin")
+    local ehEmissor = possuiAtributo(heroiChk.classe, "emissor")
+    
+    local ehTransformador = possuiAtributo(heroiChk.classe, "transformador")
 
     if carta.classeExclusiva and carta.classeExclusiva ~= "" then
-        if not possuiAtributo(heroi.classe, carta.classeExclusiva) then return false end
+        if not possuiAtributo(heroiChk.classe, carta.classeExclusiva) then return false end
     end
 
     if carta.raca and ((type(carta.raca) == "table" and #carta.raca > 0) or (type(carta.raca) == "string" and carta.raca ~= "")) then
@@ -605,17 +792,27 @@ function logicaPartida.podeJogarCarta(heroi, carta)
         if not ignoraRaca then
             local racaPermitida = false
             if type(carta.raca) == "table" then
-                for _, r in ipairs(carta.raca) do if possuiAtributo(heroi.raca, r) then racaPermitida = true break end end
-            elseif type(carta.raca) == "string" then racaPermitida = possuiAtributo(heroi.raca, carta.raca) end
+                for _, r in ipairs(carta.raca) do if possuiAtributo(heroiChk.raca, r) then racaPermitida = true break end end
+            elseif type(carta.raca) == "string" then racaPermitida = possuiAtributo(heroiChk.raca, carta.raca) end
             if not racaPermitida then return false end
         end
     end
 
-    if carta.tipo == 2 and carta.elemento then
-        local possuiAfinidade = possuiAtributo(heroi.afinidade, carta.elemento)
-        local magiaLiberada = ehGoblin or ehEmissor
-        if not (possuiAfinidade or magiaLiberada) then return false end
+    if (carta.tipo == 2 or carta.tipo == 5) and carta.elemento then
+        local possuiAfinidade = possuiAtributo(heroiChk.afinidade, carta.elemento)
+        
+        if carta.tipo == 5 then 
+            if not (possuiAfinidade or ehTransformador) then 
+                return false 
+            end
+        elseif carta.tipo == 2 then
+            local magiaLiberada = ehGoblin or ehEmissor
+            if not (possuiAfinidade or magiaLiberada) then 
+                return false 
+            end
+        end
     end
+    
     return true
 end
 

@@ -48,18 +48,12 @@ magias.maestriaComChamas = {
         local i = 0
         while i < 3 do
             i = i + 1
-            table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-            carta = magias.bolaDeFogo,
-            aliado = aliado,
-            inimigo = inimigo,
-            dono = dono,
-            resolvida = false
-        })
+            -- Correção aqui (Agora a mesa processará as bolas de fogo no final, e se o inimigo criar algo no meio, elas intercalam!)
+            partida.adicionarCartaCriada(magias.bolaDeFogo, aliado, inimigo, dono)
         end
-
     end,
 
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)      
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)       
     end,
 }
 -- ==========================================
@@ -120,13 +114,8 @@ magias.paraRaios = {
             partida.emitirVFX("buff", aliado)
         end
         
-        table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-            carta = magias.estatica,
-            aliado = aliado,
-            inimigo = inimigo,
-            dono = dono,
-            resolvida = false
-        })
+        -- Correção aqui
+        partida.adicionarCartaCriada(magias.estatica, aliado, inimigo, dono)
         self.efeitoAtivo = true
     end,
     
@@ -531,25 +520,6 @@ magias.autoDefesaMagica = {
 
 
 -- ideias
-magias.risadaSarcastica = {
-    tipo = 2,
-    nome = "Risada Sarcástica",
-    raca = nil,
-    classeExclusiva = nil,
-    elemento = "cristal",
-    unica = true,
-    dano = 2,
-    efeitoAtivo = false,
-    efeitoDoTurno = false,
-    descricao = "Cause X + 2 Dano Mágico ao seu Oponente, onde X é seu Espirito.\nFinal do Combate: Coloque essa carta no Baralho Oponente",
-    
-    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
 
-    end,
-    
-    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
-        
-    end
-}
 
 return magias

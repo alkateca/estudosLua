@@ -12,9 +12,8 @@ acoes.racaoDeEmergencia = {
         if dono == partida.jogador2 then
             local cartaAleatoria = dono.mao[1]
             table.remove(dono.mao, 1)
-            table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-                carta = cartaAleatoria, aliado = aliado, inimigo = inimigo, dono = dono, resolvida = false
-            })
+            -- Correção aqui
+            partida.adicionarCartaCriada(cartaAleatoria, aliado, inimigo, dono)
             return
         end
 
@@ -26,18 +25,12 @@ acoes.racaoDeEmergencia = {
             ignoraRestricoes = false,
             callback = function(cartaEscolhida, indexNaMao)
                 table.remove(dono.mao, indexNaMao)
-                table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-                    carta = cartaEscolhida,
-                    aliado = aliado,
-                    inimigo = inimigo,
-                    dono = dono,
-                    resolvida = false
-                })
+                -- Correção aqui
+                partida.adicionarCartaCriada(cartaEscolhida, aliado, inimigo, dono)
             end
         }
         
         coroutine.yield()
-
     end,
     descricao = "Compre duas cartas\nJogue uma Carta de sua Mão"
 }
@@ -59,9 +52,8 @@ acoes.determinacaoCristalina = {
         if dono == partida.jogador2 then
             local cartaAleatoria = dono.descarte[1]
             table.remove(dono.descarte, 1)
-            table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-                carta = cartaAleatoria, aliado = aliado, inimigo = inimigo, dono = dono, resolvida = false
-            })
+            -- Correção aqui
+            partida.adicionarCartaCriada(cartaAleatoria, aliado, inimigo, dono)
             return
         end
 
@@ -73,18 +65,12 @@ acoes.determinacaoCristalina = {
             ignoraRestricoes = false,
             callback = function(cartaEscolhida, index)
                 table.remove(dono.descarte, index)
-                table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-                    carta = cartaEscolhida,
-                    aliado = aliado,
-                    inimigo = inimigo,
-                    dono = dono,
-                    resolvida = false
-                })
+                -- Correção aqui
+                partida.adicionarCartaCriada(cartaEscolhida, aliado, inimigo, dono)
             end
         }
         
         coroutine.yield()
-
     end,
     efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.ataque = aliado.ataque - 1
@@ -205,7 +191,6 @@ acoes.exumacao = {
     nome = "Exumação",
     efeitoAtivo = false,
     efeito = function (self, aliado, inimigo, dono, partida, cartaJogada)
-
         aliado.espirito = math.max(0, aliado.espirito - 1)
         aliado.ataque = math.max(0, aliado.ataque - 1)
         aliado.defesa = math.max(0, aliado.defesa - 1)
@@ -220,20 +205,14 @@ acoes.exumacao = {
                     
                     callback = function(cartaEscolhida, index)
                         table.remove(dono.descarte, index)
-                        table.insert(partida.filaDeResolucao, partida.indiceFila + 1, {
-                            carta = cartaEscolhida,
-                            aliado = aliado,
-                            inimigo = inimigo,
-                            dono = dono,
-                            resolvida = false
-                        })
+                        -- Correção aqui
+                        partida.adicionarCartaCriada(cartaEscolhida, aliado, inimigo, dono)
                     end
                 }
             end
         end
 
         coroutine.yield()
-
     end,
     descricao = "Zumbi:\nReceba Espirito -1, Ataque -1 e Defesa -1\nJogue uma Carta do seu descarte"
 }
@@ -364,6 +343,21 @@ acoes.impulsoDePoder = {
             self:efeitoFinalDoTurno(aliado, inimigo, dono, partida, cartaJogada)
         end
     end
+}
+
+acoes.tristeza = {
+    tipo = 4,
+    nome = "Tristeza",
+    efeitoAtivo = false,
+    efeitoDoTurno = false,
+    exilar = true,
+    descricao = "Me exile.\n Quem bate esquece, quem apanha não",
+    
+    efeito = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+    
+    efeitoFinalDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
+
+    efeitoFinalDoCombate = function (self, aliado, inimigo, dono, partida, cartaJogada) end
 }
 
 return acoes

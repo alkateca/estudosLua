@@ -390,7 +390,7 @@ itens.garraEspectral = {
     descricao = "Ataque +2\nAo jogar: O Inimigo recebe Espirito -2\nInício do Combate: O Inimigo recebe Espirito -2\nSeus Ataques causam Dano Mágico em vez de Fisico",
     
     efeitoInicioDaPartida = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
-    efeitoInicioDoTurno = function (self, aliado, inimigo, dono, partida, cartaJogada) 
+    efeitoInicioDoCombate = function (self, aliado, inimigo, dono, partida, cartaJogada) 
         inimigo.espirito = math.max(0, inimigo.espirito - 2)
     end,
     efeitoAoJogarCarta = function (self, aliado, inimigo, dono, partida, cartaJogada) end,
@@ -410,7 +410,6 @@ itens.garraEspectral = {
     
     efeitoDesequipar = function (self, aliado, inimigo, dono, partida, cartaJogada)
         aliado.ataque = aliado.ataque - 2
-        inimigo.espirito = inimigo.espirito + 2
         aliado.ataqueMagico = false
     end,
 

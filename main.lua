@@ -15,7 +15,7 @@ function love.load()
     MontarBaralho.load()
     DebugRoom.load() 
     
-    estadoAtualGlobal = "debugRoom"
+    estadoAtualGlobal = "menu"
    
 end
 
